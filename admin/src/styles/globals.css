@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "funnect_text";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: local("funnect_text"), url("/fonts/Inter-Medium.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Advio";
+  font-weight: bold;
+  font-display: swap;
+  src: local("Advio"), url("/fonts/advio/Advio Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Advio_2";
+  src: url("/fonts/mw_bold.ttf");
+}
+
+@layer base {
+  body {
+    @apply text-black dark:text-white;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: transparent;
+    transition: all 300ms ease;
+  }
+
+  *::-webkit-scrollbar {
+    @apply w-[5px] h-[5px] absolute top-0 right-0 bg-transparent transition-[width] duration-300;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    @apply rounded-[30px] bg-[rgb(15,118,110)] transition-all duration-300 absolute top-0 left-0;
+  }
+
+}
+
+.apexcharts-tooltip {
+  color: black;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide::-ms-overflow-style {
+  display: none;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+.scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: all 300ms ease;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  transition: width 300ms ease;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: transparent;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 30px;
+  background-color: rgb(15 118 110);
+  transition: all 300ms ease;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.apexcharts-legend-series .apexcharts-legend-marker {
+  left: -4px !important;
+  top: 2px !important;
+}
+
+.apexcharts-text tspan {
+  color: black;
+}
+.apexcharts-yaxis-label tspan {
+  fill: rgb(115, 115, 115);
+}
+.apexcharts-xaxis-label tspan {
+  fill: rgb(115, 115, 115);
+}
