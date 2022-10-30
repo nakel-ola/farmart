@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { gql, useMutation, useQuery } from "@apollo/client";
 import Head from "next/head";
 import React from "react";
@@ -80,7 +81,12 @@ const CategoriesQuery = gql`
     banners {
       id
       image
+      title
+      link
+      description
     }
   }
 `;
+
+
 export default Products;

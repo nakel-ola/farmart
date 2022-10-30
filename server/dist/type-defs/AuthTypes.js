@@ -24,6 +24,10 @@ const AuthTypes = (0, graphql_tag_1.gql) `
     updatedAt: Date!
   }
 
+  type ValidateCode {
+    validate: Boolean!
+  }
+
   input UserInput {
     email: String!
     name: String!
@@ -53,6 +57,12 @@ const AuthTypes = (0, graphql_tag_1.gql) `
     name: String!
     email: String!
     password: String!
+    validationToken: String!
+  }
+
+  input ValidateCodeInput {
+    name: String!
+    email: String!
     validationToken: String!
   }
 
@@ -92,6 +102,7 @@ const AuthTypes = (0, graphql_tag_1.gql) `
     register(input: RegisterInput!): User!
     login(input: LoginInput!): User!
     forgetPassword(input: ForgetPasswordInput!): ForgetPassword!
+    validateCode(input: ValidateCodeInput!): ValidateCode!
     changePassword(input: ChangePasswordInput!): User!
     updatePassword(input: UpdatePasswordInput!): User!
     modifyUser(input: UserInput!): Msg!

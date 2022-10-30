@@ -33,12 +33,11 @@ const RegisterMutation = gql`
 var emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
 const validate = (data: FormType): boolean => {
-  const { firstName, lastName, email, gender, phoneNumber, password } = data;
+  const { firstName, lastName, email, phoneNumber, password } = data;
   let name = firstName + " " + lastName;
   if (
     name.length >= 5 &&
     email.match(emailRegex) &&
-    (gender === "Male" || gender === "Female") &&
     phoneNumber.length >= 10 &&
     password.length === 8
   ) {
@@ -51,7 +50,6 @@ type FormType = {
   firstName: string;
   lastName: string;
   email: string;
-  gender: string;
   phoneNumber: string;
   password: string;
 };
@@ -67,13 +65,11 @@ const SignUpCard = (props: any) => {
     firstName: "",
     lastName: "",
     email: "",
-    gender: "",
     phoneNumber: "",
     password: "",
   });
 
   const [toggle, setToggle] = useState(false);
-  const [checked, setChecked] = useState(false);
 
 
   const [register] = useMutation(RegisterMutation);
@@ -87,7 +83,6 @@ const SignUpCard = (props: any) => {
     const newForm = {
       name: form.firstName + " " + form.lastName,
       email: form.email,
-      gender: form.gender,
       phoneNumber: form.phoneNumber,
       password: form.password,
     };
@@ -192,8 +187,8 @@ const SignUpCard = (props: any) => {
           }
         />
 
-        <Button type="submit" className="my-2" disabled={validate(form)}>
-          Sign In
+        <Button type="submit" className="my-2 mt-5" disabled={validate(form)}>
+          Create Account
         </Button>
       </form>
 

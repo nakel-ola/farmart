@@ -3,10 +3,10 @@ import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
+import PopupTemplate from "../../components/PopupTemplate";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import { remove } from "../../redux/features/dialogSlice";
 import ImageCard from "./ImageCard";
-
 const CreateBanner = gql`
   mutation CreateBanner($input: CreateBannerInput!) {
     createBanner(input: $input) {
@@ -17,6 +17,8 @@ const CreateBanner = gql`
 
 type FormType = {
   image: File | null;
+  title: string;
+  description: string;
   link: string;
 };
 
@@ -27,70 +29,85 @@ const BannerCard = ({ func }: { func: any }) => {
 
   const [form, setForm] = useState<FormType>({
     image: null,
+    title: "",
+    description: "",
     link: "",
   });
 
   const [createBanner] = useMutation(CreateBanner);
 
-  useOnClickOutside(ref, () => dispatch(remove({ type: "banner" })));
+  let close = () => dispatch(remove({ type: "banner" }));
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     await createBanner({
       variables: {
         input: {
           image: form.image,
-          link: form.link
-        }
+          title: form.title,
+          description: form.description,
+          link: form.link,
+        },
       },
       onCompleted: (data) => {
         console.log(data);
-        func?.()
-        dispatch(remove({ type: "banner" }))
-      }
+        func?.();
+        dispatch(remove({ type: "banner" }));
+      },
     });
   };
 
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
   return (
-    <div className="fixed top-0 w-full h-full bg-black/70 grid place-items-center z-[99999999]">
-      <div
-        ref={ref}
-        className="w-[350px] min-h-[150px] bg-white dark:bg-dark rounded-xl shadow grid place-items-center"
-      >
-        <div className="flex items-center justify-between w-[90%] my-2">
-          <p className="text-lg text-dark dark:text-white font-medium">
-            {" "}
-            Create banner
-          </p>
+    <PopupTemplate title="Create banner" onOutsideClick={close} showEditButton={false}>
+      <form onSubmit={handleSubmit} className="w-full pb-[10px]">
+        <InputCard
+          title="Title"
+          name="title"
+          id="title"
+          value={form.title}
+          onChange={handleChange}
+        />
+        <InputCard
+          title="Description"
+          name="description"
+          id="description"
+          value={form.description}
+          onChange={handleChange}
+        />
+
+        <ImageCard
+          title="Image"
+          image={form.image}
+          onChange={(file: File) => setForm({ ...form, image: file })}
+        />
+
+        <InputCard
+          title="Link"
+          name="link"
+          id="link"
+          value={form.link}
+          onChange={handleChange}
+          placeholder="shop link button"
+        />
+
+        <div className="flex items-center justify-center mt-5">
+          <Button
+            type="button"
+            className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white"
+            onClick={close}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" className="bg-primary text-white">
+            Create
+          </Button>
         </div>
-
-        <form onSubmit={handleSubmit} className="w-full pb-[10px]">
-          <ImageCard title="Image" image={form.image} onChange={(file: File) => setForm({ ...form, image: file})} />
-
-          <InputCard
-            title="Url"
-            value={form.link}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setForm({ ...form, link: e.target.value })
-            }
-            placeholder="url when clicked"
-          />
-
-          <div className="flex items-center justify-center pt-[10px]">
-            <Button
-              type="button"
-              className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white"
-              onClick={() => dispatch(remove({ type: "banner" }))}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" className="bg-primary text-white">
-              Create
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </form>
+    </PopupTemplate>
   );
 };
 

@@ -58,7 +58,7 @@ const userSchema = new Schema({
   },
   gender: {
     type: SchemaTypes.String,
-    required: true,
+    required: false,
   },
   birthday: {
     type: SchemaTypes.Date,

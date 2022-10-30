@@ -10,6 +10,7 @@ import { nanoid } from "../helper";
 import ImageUplaod from "../helper/ImageUpload";
 import authenticated from "../middleware/authenticated";
 import db from "../models";
+import nodemainer from "nodemailer";
 import type { ReqBody } from "../typing";
 import type { ErrorMsg, Msg } from "../typing/custom";
 import type {
@@ -77,7 +78,7 @@ const employeeRegister = authenticated(
 
       (req.session as any).grocery_admin = token;
 
-      return merge({ __typename: "Employee" }, newUser);
+      return merge({ __typename: "Employee" }, newUser) as any;
     } catch (err) {
       console.error(err);
       throw new Error(err.message);
@@ -222,7 +223,7 @@ const employeeChangePassword = async (
 
     await db.validateSchema.deleteOne({ email, name });
 
-    return merge({ __typename: "Employee" }, newUser);
+    return merge({ __typename: "Employee" }, newUser) as any;
   } catch (e) {
     console.log(e);
     throw new Error(e.message);

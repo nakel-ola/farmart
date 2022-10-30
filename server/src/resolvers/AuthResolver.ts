@@ -1,21 +1,44 @@
 import { compareSync, genSaltSync, hashSync } from "bcryptjs";
+import type { Upload } from "graphql-upload-minimal";
 import jwt from "jsonwebtoken";
 import { merge } from "lodash";
 import mongoose from "mongoose";
 import { v4 } from "uuid";
 import xss from "xss";
 import config from "../config";
-import db from "../models";
-import type { Upload } from "graphql-upload-minimal";
+import {
+  passwordChangeMail,
+  verificationMail,
+  welcomeMsg,
+} from "../data/emailData";
+import { nanoidV2 } from "../helper";
+import emailer from "../helper/emailer";
 import ImageUplaod from "../helper/ImageUpload";
 import authenticated from "../middleware/authenticated";
+import db from "../models";
 import type { ReqBody } from "../typing";
-import type { LoginArgs,ForgetPasswordArgs,ChangePasswordArgs, ValidationTokenType, UpdatePasswordArgs } from "../typing/employee";
-import { nanoidV2 } from "../helper";
-import type { BlockUserArgs, ModifyUserArgs, RegisterArgs, UserDataType, UsersArgs, UserType } from "../typing/auth";
+import type {
+  BlockUserArgs,
+  ModifyUserArgs,
+  RegisterArgs,
+  UserDataType,
+  UsersArgs,
+  UserType,
+} from "../typing/auth";
 import type { Msg } from "../typing/custom";
+import type {
+  ChangePasswordArgs,
+  ForgetPasswordArgs,
+  LoginArgs,
+  UpdatePasswordArgs,
+  ValidateCodeArgs,
+  ValidationTokenType,
+} from "../typing/employee";
 
-const register = async (args: RegisterArgs, req: ReqBody): Promise<UserType> => {
+const register = async (
+  args: RegisterArgs,
+  req: ReqBody
+): Promise<UserType> => {
   try {
     let name = xss(args.input.name),
       email = xss(args.input.email),
@@ -52,6 +75,14 @@ const register = async (args: RegisterArgs, req: ReqBody): Promise<UserType> => 
     );
 
     (req.session as any).grocery = token;
+
+    await emailer({
+      from: '"Grocery Team" nunuolamilekan@gmail.com',
+      to: email,
+      subject: "Welcome to the Grocery family!",
+      text: "",
+      html: welcomeMsg({ name }),
+    });
     return merge(
       { __typename: "User" },
       {
@@ -66,7 +97,7 @@ const register = async (args: RegisterArgs, req: ReqBody): Promise<UserType> => 
         updatedAt: (newUser as any).updatedAt,
         blocked: newUser.blocked,
       }
-    );
+    ) as any;
   } catch (e) {
     console.log(e);
     throw new Error(e.message);
@@ -101,19 +132,21 @@ const login = async (args: LoginArgs, req: ReqBody): Promise<UserType> => {
 
     (req.session as any).grocery = token;
 
-    return merge({ __typename: "User" }, user);
+    return merge({ __typename: "User" }, user) as any;
   } catch (e) {
     console.log(e);
     throw new Error(e.message);
   }
 };
 
-const forgetPassword = async (args: ForgetPasswordArgs): Promise<ValidationTokenType> => {
+const forgetPassword = async (
+  args: ForgetPasswordArgs
+): Promise<ValidationTokenType> => {
   try {
     let name = xss(args.input.name),
       email = xss(args.input.email);
 
-    let id = nanoidV2("0123456789",5);
+    let id = nanoidV2("0123456789", 5);
 
     const user = await db.userSchema.findOne({ email, name });
 
@@ -130,6 +163,14 @@ const forgetPassword = async (args: ForgetPasswordArgs): Promise<ValidationToken
 
     await db.validateSchema.create(obj);
 
+    emailer({
+      from: "noreply@info.grocery.com.ng",
+      to: email,
+      subject: "Your Grocery.org verification code",
+      text: null,
+      html: verificationMail({ code: id, name }),
+    });
+
     return { validationToken: id };
   } catch (e) {
     console.log(e);
@@ -137,7 +178,35 @@ const forgetPassword = async (args: ForgetPasswordArgs): Promise<ValidationToken
   }
 };
 
-const changePassword = async (args: ChangePasswordArgs, req: ReqBody): Promise<UserType> => {
+const validateCode = async (
+  args: ValidateCodeArgs
+): Promise<{ validate: boolean }> => {
+  try {
+    let name = xss(args.input.name),
+      email = xss(args.input.email),
+      validationToken = xss(args.input.validationToken);
+
+    const validate = await db.validateSchema.findOne({
+      email,
+      name,
+      validationToken,
+    });
+
+    if (!validate) {
+      return { validate: false };
+    }
+
+    return { validate: true };
+  } catch (e) {
+    console.log(e);
+    throw new Error(e.message);
+  }
+};
+
+const changePassword = async (
+  args: ChangePasswordArgs,
+  req: ReqBody
+): Promise<UserType> => {
   try {
     let name = xss(args.input.name),
       email = xss(args.input.email),
@@ -183,6 +252,14 @@ const changePassword = async (args: ChangePasswordArgs, req: ReqBody): Promise<U
 
     await db.validateSchema.deleteOne({ email, name });
 
+    emailer({
+      from: "noreply@info.grocery.com.ng",
+      to: email,
+      subject: "Your password was changed",
+      text: null,
+      html: passwordChangeMail({ name, email }),
+    });
+
     return merge({ __typename: "User", newUser });
   } catch (e) {
     console.log(e);
@@ -190,179 +267,197 @@ const changePassword = async (args: ChangePasswordArgs, req: ReqBody): Promise<U
   }
 };
 
-const modifyUser = authenticated(async (args: ModifyUserArgs, req: ReqBody): Promise<Msg> => {
-  try {
-    let userId = xss(req.userId),
-      input = args.input,
-      email = xss(input.email),
-      name = xss(input.name),
-      gender = input.gender ? xss(input.gender) : null,
-      birthday = input.birthday ? xss(input.birthday) : null,
-      phoneNumber = input.phoneNumber ? xss(input.phoneNumber) : null;
+const modifyUser = authenticated(
+  async (args: ModifyUserArgs, req: ReqBody): Promise<Msg> => {
+    try {
+      let userId = xss(req.userId),
+        input = args.input,
+        email = xss(input.email),
+        name = xss(input.name),
+        gender = input.gender ? xss(input.gender) : null,
+        birthday = input.birthday ? xss(input.birthday) : null,
+        phoneNumber = input.phoneNumber ? xss(input.phoneNumber) : null;
 
-    const user = await db.userSchema.updateOne(
-      { _id: userId, email },
-      { name, gender, birthday, phoneNumber }
-    );
+      const user = await db.userSchema.updateOne(
+        { _id: userId, email },
+        { name, gender, birthday, phoneNumber }
+      );
 
-    if (!user) {
-      throw new Error("Something went wrong");
-    }
-    return { msg: "Successfully updated" };
-  } catch (error) {
-    console.log(error);
-    throw new Error(error.message);
-  }
-});
-
-const updatePassword = authenticated(async (args: UpdatePasswordArgs, req: ReqBody): Promise<UserType> => {
-  try {
-    let userId = xss(req.userId),
-      input = args.input,
-      email = xss(input.email),
-      oldPassword = xss(input.oldPassword),
-      newPassword = xss(input.newPassword);
-
-    const user = await db.userSchema.findOne({ _id: userId, email });
-
-    if (!user) {
-      throw new Error("Something went wrong");
-    }
-
-    const isPassword = compareSync(oldPassword, user.password);
-
-    if (!isPassword) {
-      throw new Error("Something went wrong");
-    }
-
-    const salt = genSaltSync(config.saltRounds);
-
-    const hash = hashSync(newPassword, salt);
-
-    const newUser = await db.userSchema.updateOne(
-      { _id: userId, email },
-      { password: hash }
-    );
-
-    if (!newUser) {
-      throw new Error("Something went wrong");
-    }
-
-    const token = jwt.sign(
-      { id: user._id, name: user.name, email, photoUrl: user.photoUrl },
-      config.jwt_key,
-      { expiresIn: config.expiresIn }
-    );
-
-    (req.session as any).grocery = token;
-
-    return merge({ __typename: "User" }, user);
-  } catch (e) {
-    console.log(e);
-    throw new Error(e.message);
-  }
-});
-
-const user = authenticated(async (args: { customerId?: string }, req: ReqBody): Promise<UserType> => {
-  try {
-    let userId = req.userId,
-      admin = req.admin,
-      customerId = args.customerId;
-    if (!mongoose.Types.ObjectId.isValid(customerId ?? userId)) {
-      throw new Error("No such user");
-    }
-
-    if (customerId && !admin) {
-      throw new Error("You don't have permission to acccess this user");
-    }
-
-    const user = await db.userSchema.findOne(
-      { _id: customerId ?? userId },
-      {
-        birthday: 1,
-        email: 1,
-        gender: 1,
-        name: 1,
-        phoneNumber: 1,
-        photoUrl: 1,
-        blocked: 1,
-        updatedAt: 1,
-        createdAt: 1,
+      if (!user) {
+        throw new Error("Something went wrong");
       }
-    );
-    if (!user) {
-      throw new Error("Something went wrong");
+      return { msg: "Successfully updated" };
+    } catch (error) {
+      console.log(error);
+      throw new Error(error.message);
     }
-    return merge({ __typename: "User" }, user);
-  } catch (error) {
-    console.log(error);
-    throw new Error(error.message);
   }
-});
+);
 
-const users = authenticated(async (args: UsersArgs, req: ReqBody): Promise<UserDataType> => {
-  try {
-    let isAdmin = req.admin,
-      admin = Boolean(xss(`${args.input.admin}`)),
-      page = Number(xss(`${args.input.page ?? 1}`)),
-      limit = Number(xss(`${args.input.limit ?? 10}`)),
-      start = (page - 1) * limit,
-      end = limit + start;
+const updatePassword = authenticated(
+  async (args: UpdatePasswordArgs, req: ReqBody): Promise<UserType> => {
+    try {
+      let userId = xss(req.userId),
+        input = args.input,
+        email = xss(input.email),
+        oldPassword = xss(input.oldPassword),
+        newPassword = xss(input.newPassword);
 
-    if (!isAdmin) {
-      throw new Error("Can't get any users for you");
-    }
+      const user = await db.userSchema.findOne({ _id: userId, email });
 
-    const newUser = await db.userSchema.find(
-      { admin },
-      {
-        birthday: 1,
-        email: 1,
-        gender: 1,
-        name: 1,
-        phoneNumber: 1,
-        photoUrl: 1,
-        blocked: 1,
-        updatedAt: 1,
-        createdAt: 1,
+      if (!user) {
+        throw new Error("Something went wrong");
       }
-    );
 
-    return {
-      __typename: "UsersData",
-      page,
-      totalItems: newUser.length,
-      results: newUser.slice(start, end) as any,
-    };
-  } catch (e) {
-    console.log(e);
-  }
-});
+      const isPassword = compareSync(oldPassword, user.password);
 
-const blockUser = authenticated(async (args: BlockUserArgs, req: ReqBody): Promise<Msg> => {
-  try {
-    let admin = req.admin,
-      customerId = xss(args.input.customerId),
-      email = xss(args.input.email),
-      blocked = Boolean(xss(`${args.input.blocked}`));
-    if (!admin) {
-      throw Error("You don't have permission to block this user");
+      if (!isPassword) {
+        throw new Error("Something went wrong");
+      }
+
+      const salt = genSaltSync(config.saltRounds);
+
+      const hash = hashSync(newPassword, salt);
+
+      const newUser = await db.userSchema.updateOne(
+        { _id: userId, email },
+        { password: hash }
+      );
+
+      if (!newUser) {
+        throw new Error("Something went wrong");
+      }
+
+      const token = jwt.sign(
+        { id: user._id, name: user.name, email, photoUrl: user.photoUrl },
+        config.jwt_key,
+        { expiresIn: config.expiresIn }
+      );
+
+      (req.session as any).grocery = token;
+
+      emailer({
+        from: "noreply@info.grocery.com.ng",
+        to: email,
+        subject: "	Your password was changed",
+        text: null,
+        html: passwordChangeMail({ name, email }),
+      });
+
+      return merge({ __typename: "User" }, user) as any;
+    } catch (e) {
+      console.log(e);
+      throw new Error(e.message);
     }
-
-    const user = await db.userSchema.updateOne(
-      { _id: customerId, email },
-      { blocked }
-    );
-
-    if (!user) {
-      throw new Error("Something went wrong");
-    }
-    return { msg: "User Blocked successfully" };
-  } catch (err) {
-    console.log(err);
-    throw new Error(err.message);
   }
-});
+);
+
+const user = authenticated(
+  async (args: { customerId?: string }, req: ReqBody): Promise<UserType> => {
+    try {
+      let userId = req.userId,
+        admin = req.admin,
+        customerId = args.customerId;
+      if (!mongoose.Types.ObjectId.isValid(customerId ?? userId)) {
+        throw new Error("No such user");
+      }
+
+      if (customerId && !admin) {
+        throw new Error("You don't have permission to acccess this user");
+      }
+
+      const user = await db.userSchema.findOne(
+        { _id: customerId ?? userId },
+        {
+          birthday: 1,
+          email: 1,
+          gender: 1,
+          name: 1,
+          phoneNumber: 1,
+          photoUrl: 1,
+          blocked: 1,
+          updatedAt: 1,
+          createdAt: 1,
+        }
+      );
+      if (!user) {
+        throw new Error("Something went wrong");
+      }
+      return merge({ __typename: "User" }, user) as any;
+    } catch (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+  }
+);
+
+const users = authenticated(
+  async (args: UsersArgs, req: ReqBody): Promise<UserDataType> => {
+    try {
+      let isAdmin = req.admin,
+        admin = Boolean(xss(`${args.input.admin}`)),
+        page = Number(xss(`${args.input.page ?? 1}`)),
+        limit = Number(xss(`${args.input.limit ?? 10}`)),
+        start = (page - 1) * limit,
+        end = limit + start;
+
+      if (!isAdmin) {
+        throw new Error("Can't get any users for you");
+      }
+
+      const newUser = await db.userSchema.find(
+        { admin },
+        {
+          birthday: 1,
+          email: 1,
+          gender: 1,
+          name: 1,
+          phoneNumber: 1,
+          photoUrl: 1,
+          blocked: 1,
+          updatedAt: 1,
+          createdAt: 1,
+        }
+      );
+
+      return {
+        __typename: "UsersData",
+        page,
+        totalItems: newUser.length,
+        results: newUser.slice(start, end) as any,
+      };
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
+
+const blockUser = authenticated(
+  async (args: BlockUserArgs, req: ReqBody): Promise<Msg> => {
+    try {
+      let admin = req.admin,
+        customerId = xss(args.input.customerId),
+        email = xss(args.input.email),
+        blocked = Boolean(xss(`${args.input.blocked}`));
+      if (!admin) {
+        throw Error("You don't have permission to block this user");
+      }
+
+      const user = await db.userSchema.updateOne(
+        { _id: customerId, email },
+        { blocked }
+      );
+
+      if (!user) {
+        throw new Error("Something went wrong");
+      }
+      return { msg: "User Blocked successfully" };
+    } catch (err) {
+      console.log(err);
+      throw new Error(err.message);
+    }
+  }
+);
 
 const updatePhotoUrl = authenticated(
   async (args: { image: Upload }, req: ReqBody) => {
@@ -400,4 +495,5 @@ export default {
   users,
   blockUser,
   updatePhotoUrl,
+  validateCode,
 };

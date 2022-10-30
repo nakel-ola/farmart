@@ -118,3 +118,11 @@ export type ErrorMsg = {
   __typename: string;
   error: string;
 };
+
+export type BannerType = {
+  id: string;
+  image: string;
+  title: string;
+  description: string;
+  link: string;
+}

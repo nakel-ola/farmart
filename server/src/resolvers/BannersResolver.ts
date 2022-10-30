@@ -4,6 +4,7 @@ import db from "../models";
 import type { CreateBannerArgs } from "../typing/banners";
 import type { Msg } from "../typing/custom";
 import type { ReqBody } from "../typing";
+import xss from "xss";
 
 const banners = async () => {
   const data = await db.bannerSchema.find();
@@ -15,7 +16,9 @@ const createBanner = authenticated(
     try {
       let admin = req.admin,
         image = args.input.image,
-        link = args.input.link;
+        title = xss(args.input.title),
+        description = xss(args.input.description),
+        link = xss(args.input.link);
 
       if (!admin) {
         throw new Error("You don't have permission");
@@ -23,7 +26,7 @@ const createBanner = authenticated(
 
       const newImage = await ImageUplaod(image.file);
 
-      await db.bannerSchema.create({ image: newImage.url, link });
+      await db.bannerSchema.create({ image: newImage.url, link, title,description });
 
       return { msg: "Banner created successfully" };
     } catch (err) {

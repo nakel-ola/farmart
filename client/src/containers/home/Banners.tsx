@@ -1,18 +1,26 @@
+/* eslint-disable @next/next/no-img-element */
+
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
+import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import { BannerType } from "../../../typing";
+import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 
 const BannerQuery = gql`
   query Banners {
     banners {
       image
+      title
+      description
+      link
     }
   }
 `;
 
 function Banners() {
   const [active, setActive] = useState<number>(0);
-  const [items, setItems] = useState<{ image: string }[]>([]);
+  const [items, setItems] = useState<BannerType[]>([]);
 
   useQuery(BannerQuery, {
     onCompleted: (data) => setItems(data.banners),
@@ -29,8 +37,8 @@ function Banners() {
   return items.length > 0 ? (
     <div className="relative flex flex-col items-center justify-center rounded-lg overflow-hidden bg-white dark:bg-dark dark:lg:bg-transparent lg:bg-transparent">
       <div className="flex w-[100%] items-center rounded-lg overflow-x-scroll pb-[20px] scrollbar relative">
-        {items.map((item, i) => (
-          <Image
+        {items.map((item: BannerType, i: number) => (
+          <ImageCard
             key={i}
             i={i}
             {...item}
@@ -72,15 +80,22 @@ function Banners() {
     </div>
   ) : null;
 }
-
-interface HtmlDivElement {
-  current: HTMLDivElement;
+interface ImageCardProps extends BannerType {
+  i: number;
+  active: number;
+  setActive: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Image = (props: any) => {
-  const { image, i, active } = props;
+const ImageCard = (props: ImageCardProps) => {
+  const { image, i, active, description, title,link,setActive } = props;
 
-  const ref = useRef() as HtmlDivElement;
+  const ref = useRef<HTMLDivElement>(null);
+
+  const router = useRouter();
+
+  const entry = useIntersectionObserver(ref, { threshold: 1});
+
+  const isVisible = !!entry?.isIntersecting;
 
   useEffect(() => {
     if (i === active) {
@@ -92,17 +107,38 @@ const Image = (props: any) => {
     }
   }, [i, active]);
 
+  useEffect(() => {
+    if(isVisible) {
+      setActive(i)
+    }
+  },[isVisible,setActive,i])
+
   return (
     <div
       ref={ref}
-      className="md:w-[70%] rounded-lg shrink-0 md:hover:scale-105 overflow-hidden m-[5px] md:m-[10px] transition-transform duration-300 ease "
+      className="relative md:w-[70%] rounded-lg shrink-0 md:hover:scale-105 overflow-hidden m-[5px] md:m-[10px] transition-transform duration-300 ease "
     >
       <img
         src={image}
         alt=""
-        className="md:h-[320px] w-[300px] h-[150px] md:w-full object-cover"
+        className="relative md:h-[280px] w-[300px] h-[150px] md:w-full object-cover"
       />
+
+      <article className="absolute top-0 w-full h-full bg-gradient-to-r from-black/30  to-black/10 flex flex-col justify-evenly p-5">
+        <div className="w-[100%] md:w-[50%]">
+          <h1 className="text-white text-xl md:text-3xl font-bold">{title}</h1>
+          <p className="text-white my-1 md:my-2 text-sm md:text-base">
+            {description}
+          </p>
+        </div>
+
+        <button className="w-fit bg-white px-2 py-1 rounded-lg hover:scale-105 active:scale-95 font-medium" onClick={() => link && router.push(link)}>
+          Shop Now
+        </button>
+      </article>
     </div>
   );
 };
+
+
 export default Banners;

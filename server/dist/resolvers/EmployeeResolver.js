@@ -23,6 +23,7 @@ const helper_1 = require("../helper");
 const ImageUpload_1 = __importDefault(require("../helper/ImageUpload"));
 const authenticated_1 = __importDefault(require("../middleware/authenticated"));
 const models_1 = __importDefault(require("../models"));
+require("nodemailer");
 const employeeRegister = (0, authenticated_1.default)((args, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let name = (0, xss_1.default)(args.input.name), email = (0, xss_1.default)(args.input.email), gender = (0, xss_1.default)(args.input.gender), phoneNumber = (0, xss_1.default)(args.input.phoneNumber), level = (0, xss_1.default)(args.input.level), password = (0, xss_1.default)(args.input.password);

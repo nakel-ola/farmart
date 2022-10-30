@@ -27,6 +27,13 @@ export type CreateEmployeeInviteArgs = {
       validationToken: string;
     };
   };
+  export type ValidateCodeArgs = {
+    input: {
+      name: string;
+      email: string;
+      validationToken: string;
+    };
+  };
   export type UpdatePasswordArgs = {
     input: {
       email: string;

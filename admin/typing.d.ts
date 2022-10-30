@@ -188,6 +188,8 @@ export type GraphQLEmployeesResponse = {
 
 export type BannerType = {
   id: string;
+  title: string;
+  description: string;
   image: string;
   link: string;
 };

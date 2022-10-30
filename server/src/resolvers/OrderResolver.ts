@@ -203,7 +203,7 @@ const order = authenticated(
         ? db.orderSchema.findOne({ _id: orderId })
         : db.orderSchema.findOne({ userId, _id: orderId }));
 
-      const data = merge({ __typename: "Order" }, order);
+      const data = merge({ __typename: "Order" }, order) as any;
 
       return data;
     } catch (e) {

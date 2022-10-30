@@ -19,10 +19,12 @@ const mongoose_1 = __importDefault(require("mongoose"));
 require("uuid");
 const xss_1 = __importDefault(require("xss"));
 const config_1 = __importDefault(require("../config"));
-const models_1 = __importDefault(require("../models"));
+const emailData_1 = require("../data/emailData");
+const helper_1 = require("../helper");
+const emailer_1 = __importDefault(require("../helper/emailer"));
 const ImageUpload_1 = __importDefault(require("../helper/ImageUpload"));
 const authenticated_1 = __importDefault(require("../middleware/authenticated"));
-const helper_1 = require("../helper");
+const models_1 = __importDefault(require("../models"));
 const register = (args, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let name = (0, xss_1.default)(args.input.name), email = (0, xss_1.default)(args.input.email), phoneNumber = (0, xss_1.default)(args.input.phoneNumber), password = (0, xss_1.default)(args.input.password);
@@ -45,6 +47,13 @@ const register = (args, req) => __awaiter(void 0, void 0, void 0, function* () {
         const newUser = yield models_1.default.userSchema.create(obj);
         const token = jsonwebtoken_1.default.sign({ id: newUser._id.toString(), blocked: false }, config_1.default.jwt_key, { expiresIn: config_1.default.expiresIn });
         req.session.grocery = token;
+        yield (0, emailer_1.default)({
+            from: '"Grocery Team" nunuolamilekan@gmail.com',
+            to: email,
+            subject: "Welcome to the Grocery family!",
+            text: "",
+            html: (0, emailData_1.welcomeMsg)({ name }),
+        });
         return (0, lodash_1.merge)({ __typename: "User" }, {
             id: newUser._id.toString(),
             email: newUser.email,
@@ -101,7 +110,32 @@ const forgetPassword = (args) => __awaiter(void 0, void 0, void 0, function* () 
             expiresIn: Date.now,
         };
         yield models_1.default.validateSchema.create(obj);
+        (0, emailer_1.default)({
+            from: "noreply@info.grocery.com.ng",
+            to: email,
+            subject: "Your Grocery.org verification code",
+            text: null,
+            html: (0, emailData_1.verificationMail)({ code: id, name }),
+        });
         return { validationToken: id };
+    }
+    catch (e) {
+        console.log(e);
+        throw new Error(e.message);
+    }
+});
+const validateCode = (args) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let name = (0, xss_1.default)(args.input.name), email = (0, xss_1.default)(args.input.email), validationToken = (0, xss_1.default)(args.input.validationToken);
+        const validate = yield models_1.default.validateSchema.findOne({
+            email,
+            name,
+            validationToken,
+        });
+        if (!validate) {
+            return { validate: false };
+        }
+        return { validate: true };
     }
     catch (e) {
         console.log(e);
@@ -132,6 +166,13 @@ const changePassword = (args, req) => __awaiter(void 0, void 0, void 0, function
         const token = jsonwebtoken_1.default.sign({ id: newUser._id, blocked: newUser.blocked }, config_1.default.jwt_key, { expiresIn: config_1.default.expiresIn });
         req.session.grocery = token;
         yield models_1.default.validateSchema.deleteOne({ email, name });
+        (0, emailer_1.default)({
+            from: "noreply@info.grocery.com.ng",
+            to: email,
+            subject: "Your password was changed",
+            text: null,
+            html: (0, emailData_1.passwordChangeMail)({ name, email }),
+        });
         return (0, lodash_1.merge)({ __typename: "User", newUser });
     }
     catch (e) {
@@ -172,6 +213,13 @@ const updatePassword = (0, authenticated_1.default)((args, req) => __awaiter(voi
         }
         const token = jsonwebtoken_1.default.sign({ id: user._id, name: user.name, email, photoUrl: user.photoUrl }, config_1.default.jwt_key, { expiresIn: config_1.default.expiresIn });
         req.session.grocery = token;
+        (0, emailer_1.default)({
+            from: "noreply@info.grocery.com.ng",
+            to: email,
+            subject: "	Your password was changed",
+            text: null,
+            html: (0, emailData_1.passwordChangeMail)({ name, email }),
+        });
         return (0, lodash_1.merge)({ __typename: "User" }, user);
     }
     catch (e) {
@@ -282,4 +330,5 @@ exports.default = {
     users,
     blockUser,
     updatePhotoUrl,
+    validateCode,
 };

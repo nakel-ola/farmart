@@ -24,6 +24,10 @@ const AuthTypes = gql`
     updatedAt: Date!
   }
 
+  type ValidateCode {
+    validate: Boolean!
+  }
+
   input UserInput {
     email: String!
     name: String!
@@ -53,6 +57,12 @@ const AuthTypes = gql`
     name: String!
     email: String!
     password: String!
+    validationToken: String!
+  }
+
+  input ValidateCodeInput {
+    name: String!
+    email: String!
     validationToken: String!
   }
 
@@ -92,6 +102,7 @@ const AuthTypes = gql`
     register(input: RegisterInput!): User!
     login(input: LoginInput!): User!
     forgetPassword(input: ForgetPasswordInput!): ForgetPassword!
+    validateCode(input: ValidateCodeInput!): ValidateCode!
     changePassword(input: ChangePasswordInput!): User!
     updatePassword(input: UpdatePasswordInput!): User!
     modifyUser(input: UserInput!): Msg!

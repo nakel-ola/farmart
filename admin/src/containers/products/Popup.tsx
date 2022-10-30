@@ -258,7 +258,7 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
           onChange={handleChange}
         />
 
-        <div className="flex items-center justify-center  mt-5">
+        <div className="flex items-center justify-center mt-5">
           <Button
             type="button"
             className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white"
