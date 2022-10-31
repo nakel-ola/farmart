@@ -1,7 +1,9 @@
 import fs from "fs";
+import type { FileUpload } from "graphql-upload-minimal";
 import path from "path";
-import type { FileUpload } from "graphql-upload-minimal"
+import { format } from "util";
 import { nanoid } from ".";
+import { bucket } from "./gcloud";
 
 type ImageUploadType = {
   url: string;
@@ -13,19 +15,31 @@ const ImageUplaod = ({
   createReadStream,
 }: FileUpload): Promise<ImageUploadType> =>
   new Promise((resolve, reject) => {
-    let name = nanoid(5) + "-" + filename;
-
-    let url = `http://localhost:4000/images/${name}`;
-
+    const blob = bucket.file(filename);
     let stream = createReadStream();
+
     stream
       .pipe(
-        fs.createWriteStream(
-          path.resolve(__dirname, `../../public/images/${name}`)
-        )
+        bucket.file(filename).createWriteStream({
+          resumable: false,
+          gzip: true,
+        })
       )
-      .on("finish", () => resolve({ url, name }))
-      .on("error", (e) => reject(e));
-  });
+      .on("error", (err: any) => reject(err)) // reject on error
+      .on("finish", async () => {
+        const publicUrl = format(
+          `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+        );
 
+        try {
+          await bucket.file(filename).makePublic();
+        } catch {
+          console.log(
+            `Uploaded the file successfully: ${filename}, but public access is denied!`
+          );
+        }
+        console.log(publicUrl);
+        resolve({ url: publicUrl, name: filename });
+      });
+  });
 export default ImageUplaod;

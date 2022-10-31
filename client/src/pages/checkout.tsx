@@ -96,7 +96,7 @@ const Checkout: NextPage = () => {
       coupon: coupon ? {
         id: coupon.id,
         email: coupon.email,
-        coupon: coupon.coupon,
+        coupon: coupon.code,
         discount: coupon.discount,
         userId: coupon.userId,
         description: coupon.description,

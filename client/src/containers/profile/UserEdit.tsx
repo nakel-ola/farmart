@@ -60,7 +60,7 @@ const UserEdit = ({ func }: { func: any }) => {
   const dispatch = useDispatch();
   const { userEdit } = useSelector(selectDialog);
 
-  const [form, setForm] = useState<FormType>(splitData(userEdit.product));
+  const [form, setForm] = useState<FormType>(splitData(userEdit.data));
 
   const [modifyUser] = useMutation(ModifyMutation);
 
@@ -76,7 +76,7 @@ const UserEdit = ({ func }: { func: any }) => {
     await modifyUser({
       variables: {
         input: {
-          email: userEdit.product.email,
+          email: userEdit.data.email,
           name: form.firstName + " " + form.lastName,
           gender: form.gender,
           birthday: form.birthday,
@@ -163,7 +163,7 @@ const UserEdit = ({ func }: { func: any }) => {
           </Button>
           <Button
             type="submit"
-            disabled={validate(form, userEdit.product)}
+            disabled={validate(form, userEdit.data)}
             className="bg-primary text-white disabled:opacity-40"
           >
             Save Change

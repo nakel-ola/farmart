@@ -36,22 +36,22 @@
 }
 
 .MuiDrawer-paper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    background-color: transparent !important;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: transparent !important;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 }
 .MuiDrawer-paperAnchorBottom {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    background-color: transparent !important;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: transparent !important;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 }
 
 .scrollbar::-webkit-scrollbar {
@@ -88,4 +88,20 @@
   position: absolute;
   top: 0;
   right: 0;
+}
+
+
+
+.MuiSlider-thumb {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.MuiSlider-rail {
+  height: 4px !important;
+  border-radius: 15px !important;
+}
+
+.MuiSlider-track {
+  height: 4px !important;
 }

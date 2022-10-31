@@ -11,6 +11,7 @@
   "author": "Nunu Olamilekan",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/storage": "^6.6.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.0",
     "connect-mongo": "^4.6.0",

@@ -28,7 +28,7 @@ const PopupTemplate = (props: PopupTemplateProps) => {
     <div className={clsx("fixed top-0 w-full h-full bg-black/70 grid place-items-center z-10", className)}>
       <div
         ref={ref}
-        className="w-[350px] bg-white dark:bg-dark rounded-lg pb-2 shadow"
+        className="w-[350px] max-w-fit max-h-[90vh] overflow-y-scroll bg-white dark:bg-dark rounded-lg pb-2 shadow"
       >
         <div className="w-full flex items-center justify-between px-[15px] py-[10px] border-b-[1px] border-b-slate-100 dark:border-b-neutral-800">
           <p className="text-[1rem] text-black dark:text-white font-[500]">

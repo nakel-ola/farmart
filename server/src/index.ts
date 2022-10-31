@@ -23,7 +23,6 @@ const app = express();
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: false }));
 app.use(cors);
-
 app.use(cookieParser());
 app.use((req: ReqBody, res, next) => {
   let options = {
@@ -41,17 +40,19 @@ app.use((req: ReqBody, res, next) => {
   const sessionHandler = session(options);
   return sessionHandler(req, res, next);
 });
-
 app.use(express.static(path.resolve(__dirname, "../public")));
 
 export const schema = buildSchema(print(typeDefs));
+
+
+console.log(config)
 
 mongoose
   .connect(config.mongodb_uri)
   .then(() => {
     app.use(
       "/graphql",
-      graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
+      graphqlUploadExpress({ maxFileSize: 2 * 1024 * 1024, maxFiles: 1 }),
       graphqlHTTP({
         schema,
         rootValue: resolvers,

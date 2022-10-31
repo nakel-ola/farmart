@@ -1,18 +1,38 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const _1 = require(".");
+require("fs");
+require("path");
+const util_1 = require("util");
+require(".");
+const gcloud_1 = require("./gcloud");
 const ImageUplaod = ({ filename, createReadStream, }) => new Promise((resolve, reject) => {
-    let name = (0, _1.nanoid)(5) + "-" + filename;
-    let url = `http://localhost:4000/images/${name}`;
+    const blob = gcloud_1.bucket.file(filename);
     let stream = createReadStream();
     stream
-        .pipe(fs_1.default.createWriteStream(path_1.default.resolve(__dirname, `../../public/images/${name}`)))
-        .on("finish", () => resolve({ url, name }))
-        .on("error", (e) => reject(e));
+        .pipe(gcloud_1.bucket.file(filename).createWriteStream({
+        resumable: false,
+        gzip: true,
+    }))
+        .on("error", (err) => reject(err)) // reject on error
+        .on("finish", () => __awaiter(void 0, void 0, void 0, function* () {
+        const publicUrl = (0, util_1.format)(`https://storage.googleapis.com/${gcloud_1.bucket.name}/${blob.name}`);
+        try {
+            yield gcloud_1.bucket.file(filename).makePublic();
+        }
+        catch (_a) {
+            console.log(`Uploaded the file successfully: ${filename}, but public access is denied!`);
+        }
+        console.log(publicUrl);
+        resolve({ url: publicUrl, name: filename });
+    }));
 });
 exports.default = ImageUplaod;

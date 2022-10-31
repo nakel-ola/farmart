@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React, { forwardRef,InputHTMLAttributes } from "react";
 import { IoClose, IoSearch } from "react-icons/io5";
-// import NumberFormat from "react-number-format";
+import { NumericFormat } from "react-number-format";
 
 export interface InputFieldProps<T = any> extends InputHTMLAttributes<T> {
   [key: string]: any;
@@ -51,7 +51,7 @@ function InputField(props: InputFieldProps, ref?: any) {
           <IconLeft className="text-[18px] mr-[5px] text-[#212121] dark:text-white" />
         ))}
 
-      <input
+      {/* <input
         className={clsx(
           "text-[1rem] bg-transparent dark:text-white/90 border-none outline-none w-[95%] text-black dark:text-white mr-auto autofill:bg-transparent ",
           inputClassName
@@ -61,19 +61,18 @@ function InputField(props: InputFieldProps, ref?: any) {
         value={value}
         readOnly={readOnly}
         {...other}
-      />
+      /> */}
 
-      {/* {isPrice ? (
-        <NumberFormat
-          thousandSeparator
+      {isPrice ? (
+        <NumericFormat
+          prefix="$"
           className={clsx(
             "text-[1rem] bg-transparent dark:text-white/90 border-none outline-none w-[95%] text-black dark:text-white mr-auto autofill:bg-transparent ",
             inputClassName
           )}
-          value={value}
+          value={Number(value).toFixed(2)}
           getInputRef={ref}
           readOnly={readOnly}
-          {...other}
         />
       ) : (
         <input
@@ -87,7 +86,7 @@ function InputField(props: InputFieldProps, ref?: any) {
           readOnly={readOnly}
           {...other}
         />
-      )} */}
+      )}
 
       {value &&
         typeof clearInput === "function" &&

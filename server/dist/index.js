@@ -44,10 +44,11 @@ app.use((req, res, next) => {
 });
 app.use(express_1.default.static(path_1.default.resolve(__dirname, "../public")));
 exports.schema = (0, graphql_1.buildSchema)((0, graphql_1.print)(type_defs_1.default));
+console.log(config_1.default);
 mongoose_1.default
     .connect(config_1.default.mongodb_uri)
     .then(() => {
-    app.use("/graphql", (0, graphql_upload_minimal_1.graphqlUploadExpress)({ maxFileSize: 10000000, maxFiles: 10 }), (0, express_graphql_1.graphqlHTTP)({
+    app.use("/graphql", (0, graphql_upload_minimal_1.graphqlUploadExpress)({ maxFileSize: 2 * 1024 * 1024, maxFiles: 1 }), (0, express_graphql_1.graphqlHTTP)({
         schema: exports.schema,
         rootValue: resolvers_1.default,
         graphiql: true,

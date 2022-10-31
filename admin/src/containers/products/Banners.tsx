@@ -35,6 +35,7 @@ const Banners = ({ data,canEdit }: { data: BannerType[]; canEdit: boolean }) => 
             active={active}
           />
         ))}
+        <AddCard />
       </div>
       {active !== 0 && (
         <div
@@ -65,6 +66,7 @@ const Banners = ({ data,canEdit }: { data: BannerType[]; canEdit: boolean }) => 
             onClick={() => setActive(index)}
           />
         ))}
+        
       </div>
     </div>
   );

@@ -89,8 +89,8 @@ const AddressForm = ({ func }: Props) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<FormType>(
-    address.product
-      ? splitData(address.product)
+    address.data
+      ? splitData(address.data)
       : {
           firstName: "",
           lastName: "",
@@ -144,11 +144,11 @@ const AddressForm = ({ func }: Props) => {
       city,
     } = form;
 
-    if (address.product) {
+    if (address.data) {
       modifyAddress({
         variables: {
           input: {
-            id: address.product.id,
+            id: address.data.id,
             name: firstName + " " + lastName,
             phoneNumber,
             phoneNumber2,

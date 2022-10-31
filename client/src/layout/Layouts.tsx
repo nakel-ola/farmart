@@ -1,9 +1,12 @@
 import clsx from "clsx";
 import { forwardRef, ReactNode, Ref, RefObject, useState } from "react";
+import { useSelector } from "react-redux";
 import CartCard from "../components/CartCard";
+import FilterCard from "../components/FilterCard";
 import MenuCard from "../components/MenuCard";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
+import { selectDialog } from "../redux/features/dialogSlice";
 
 type Props = {
   children: ReactNode;
@@ -16,6 +19,8 @@ const Layouts = forwardRef(
     ref: Ref<HTMLDivElement>
   ) => {
     const [toggle, setToggle] = useState(false);
+
+    const dialogState = useSelector(selectDialog)
 
     return (
       <div className="h-screen bg-white dark:bg-dark overflow-hidden transition-all duration-300 ease-in-out">
@@ -35,6 +40,8 @@ const Layouts = forwardRef(
 
           {!disabled && <CartCard />}
         </main>
+
+        {dialogState.filter.open && <FilterCard />}
       </div>
     );
   }

@@ -5,6 +5,7 @@ import categoryReducer, { CategoryState } from "./features/categorySlice";
 import orderReducer, { OrderState } from "./features/orderSlice";
 import userReducer, { UserState } from "./features/userSlice";
 import dialogReducer, { DialogState } from "./features/dialogSlice";
+import filterReducer, { FilterState } from "./features/filterSlice";
 
 
 
@@ -14,6 +15,7 @@ export type RootState = {
   category: CategoryState;
   order: OrderState;
   dialog: DialogState;
+  filter: FilterState;
 }
 const combinedReducer = combineReducers({
   basket: basketReducer,
@@ -21,6 +23,7 @@ const combinedReducer = combineReducers({
   dialog: dialogReducer,
   category: categoryReducer,
   order: orderReducer,
+  filter: filterReducer
 });
 
 const masterReducer = (state: any, action: AnyAction) => {

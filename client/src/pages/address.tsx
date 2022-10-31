@@ -65,7 +65,7 @@ const Address = () => {
                 dispatch(
                   add({
                     open: true,
-                    product: null,
+                    data: null,
                     type: "address",
                   })
                 )

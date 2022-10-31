@@ -4,7 +4,7 @@ import { RootState } from "../store";
 
 type Option = {
   open: boolean;
-  product: any | null;
+  data: any | null;
   func?(value?: any): void;
 };
 
@@ -22,14 +22,15 @@ export type DialogState = {
   address: Option;
   selectAddress: Option;
   delivery: Option;
+  filter: Option;
 };
 
-type Type = "edit" | "delete" | "category" | "banner" | "block" | "coupon" | "couponDelete" | "inbox" | "userEdit" | "invite" | "address" | "selectAddress" | "delivery";
+type Type = "edit" | "delete" | "category" | "banner" | "block" | "coupon" | "couponDelete" | "inbox" | "userEdit" | "invite" | "address" | "selectAddress" | "delivery" | "filter";
 
 type PayloadProps = {
   type: Type;
   open: boolean;
-  product: any | null;
+  data: any | null;
 };
 
 
@@ -38,63 +39,67 @@ export const dialogSlice = createSlice({
   initialState: {
     edit: {
       open: false,
-      product: null
+      data: null
     },
     delete: {
       open: false,
-      product: null
+      data: null
     },
     category: {
       open: false,
-      product: null
+      data: null
     },
     banner: {
       open: false,
-      product: null
+      data: null
     },
     block: {
       open: false,
-      product: null
+      data: null
     },
     coupon: {
       open: false,
-      product: null
+      data: null
     },
     couponDelete: {
       open: false,
-      product: null
+      data: null
     },
     inbox: {
       open: false,
-      product: null
+      data: null
     },
     userEdit: {
       open: false,
-      product: null
+      data: null
     },
     invite: {
       open: false,
-      product: null
+      data: null
     },
     address: {
       open: false,
-      product: null
+      data: null
     },
     selectAddress: {
       open: false,
-      product: null,
+      data: null,
     },
     delivery: {
       open: false,
-      product: null,
+      data: null,
     },
+    filter: {
+      open: false,
+      data: null
+    }
   } as DialogState,
   reducers: {
     add: (state: DialogState, action: PayloadAction<PayloadProps>) => {
       state[action.payload.type] = action.payload;
     },
     remove: (state: DialogState, action: PayloadAction<{ type: Type }>) => {
-      state[action.payload.type] = { open: false, product: null, func: () => {} };
+      state[action.payload.type] = { open: false, data: null, func: () => {} };
     },
   },
 });

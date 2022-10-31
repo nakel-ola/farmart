@@ -129,7 +129,7 @@ const Profile: NextPage = () => {
                 dispatch(
                   add({
                     open: true,
-                    product: newData,
+                    data: newData,
                     type: "userEdit",
                   })
                 )
