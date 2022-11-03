@@ -15,7 +15,16 @@ import TitleCard from "./TitleCard";
 const PasswordMutation = gql`
   mutation EmployeeChangePassword($input: ChangePasswordInput!) {
     employeeChangePassword(input: $input) {
-      token
+      id
+      email
+      name
+      photoUrl
+      level
+      gender
+      birthday
+      phoneNumber
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -99,7 +108,6 @@ const PasswordCard = (props: { setLoading(value: boolean):void}) => {
           title="Password"
           id="password"
           name="password"
-          className="border-[1.5px] border-transparent hover:border-primary"
           type={toggle ? "text" : "password"}
           value={form.password}
           onChange={handleChange}
@@ -132,7 +140,6 @@ const PasswordCard = (props: { setLoading(value: boolean):void}) => {
           title="Confirm Password"
           id="confirmPassword"
           name="confirmPassword"
-          className="border-[1.5px] border-transparent hover:border-primary"
           type={toggle ? "text" : "password"}
           value={form.confirmPassword}
           onChange={handleChange}

@@ -30,7 +30,7 @@ function MyApp({ Component, ...others }: AppProps) {
 
   return (
     <Provider store={store}>
-      <PersistGate persistor={persistor(store)} loading={<div>Loading</div>}>
+      <PersistGate persistor={persistor(store)} loading={<PageLoader fill />}>
         <ApolloProvider client={client}>
           <ThemeProvider
             enableSystem={true}

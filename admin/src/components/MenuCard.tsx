@@ -20,7 +20,7 @@ const MenuCard = ({
     <div
       className={
         toggle
-          ? "fixed top-0 right-0 h-screen w-full lg:hidden bg-black/50 z-[9999999]"
+          ? "fixed top-0 right-0 h-screen w-full lg:hidden bg-black/50 z-[1]"
           : "-z-50"
       }
     >

@@ -19,9 +19,9 @@ const mongoose_1 = __importDefault(require("mongoose"));
 require("uuid");
 const xss_1 = __importDefault(require("xss"));
 const config_1 = __importDefault(require("../config"));
-const emailData_1 = require("../data/emailData");
+require("../data/emailData");
 require("../helper");
-const emailer_1 = __importDefault(require("../helper/emailer"));
+require("../helper/emailer");
 const generateCode_1 = __importDefault(require("../helper/generateCode"));
 const ImageUpload_1 = __importDefault(require("../helper/ImageUpload"));
 const authenticated_1 = __importDefault(require("../middleware/authenticated"));
@@ -206,15 +206,21 @@ const updatePassword = (0, authenticated_1.default)((args, req) => __awaiter(voi
         if (!newUser) {
             throw new Error("Something went wrong");
         }
+        req.res.clearCookie("grocery");
+        req.session.destroy((err) => {
+            if (err) {
+                throw new Error(err.message);
+            }
+        });
         const token = jsonwebtoken_1.default.sign({ id: user._id, name: user.name, email, photoUrl: user.photoUrl }, config_1.default.jwt_key, { expiresIn: config_1.default.expiresIn });
         req.session.grocery = token;
-        (0, emailer_1.default)({
-            from: '"Grocery Team" noreply@grocery.com',
-            to: email,
-            subject: "	Your password was changed",
-            text: null,
-            html: (0, emailData_1.passwordChangeMail)({ name: user.name, email }),
-        });
+        // await emailer({
+        //   from: '"Grocery Team" noreply@grocery.com',
+        //   to: email,
+        //   subject: "	Your password was changed",
+        //   text: null,
+        //   html: passwordChangeMail({ name: user.name, email }),
+        // });
         return (0, lodash_1.merge)({ __typename: "User" }, user);
     }
     catch (e) {

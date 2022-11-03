@@ -187,7 +187,7 @@ const SignUpCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
         />
 
         <Button type="submit" className="my-5" disabled={validate(form)}>
-          Sign In
+          Sign Up
         </Button>
       </form>
 

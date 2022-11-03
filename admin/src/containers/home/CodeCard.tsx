@@ -175,7 +175,7 @@ const CodeCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
       onError: (error: any) => {
         setLoading(false);
         toast.error("Something went wrong", { id: loginToast });
-        console.error(error);
+        console.table(error);
       },
     });
   };

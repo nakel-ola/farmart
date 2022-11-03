@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
+import { ArrowLeft2, ArrowRight2 } from "iconsax-react";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
@@ -49,18 +50,18 @@ function Banners() {
       </div>
       {active !== 0 && (
         <div
-          className="absolute hidden md:inline top-[50%] left-0 translate-y-[-50%] p-[5px] hover:scale-110 transition-transform duration-300 ease hover:bg-slate-50/5 rounded-full"
+          className="absolute hidden md:inline top-[45%] left-0 translate-y-[-45%] p-[5px] hover:scale-110 transition-transform duration-300 ease hover:bg-slate-50/5 rounded-full"
           onClick={handleBack}
         >
-          <IoChevronBack className="text-5xl text-white drop-shadow-xl" />
+          <ArrowLeft2 size={48} className="text-white drop-shadow-xl" />
         </div>
       )}
       {active !== items.length - 1 && (
         <div
-          className="absolute hidden md:inline top-[50%] right-2 rounded-full translate-y-[-50%] p-[5px] hover:scale-110 hover:bg-slate-50/5 transition-transform duration-300 ease"
+          className="absolute hidden md:inline top-[45%] right-2 rounded-full translate-y-[-45%] p-[5px] hover:scale-110 hover:bg-slate-50/5 transition-transform duration-300 ease"
           onClick={handleForward}
         >
-          <IoChevronForward className="text-5xl text-white drop-shadow-xl" />
+          <ArrowRight2 size={48} className="text-white drop-shadow-xl" />
         </div>
       )}
 

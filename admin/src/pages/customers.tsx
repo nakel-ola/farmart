@@ -47,7 +47,6 @@ const Customers = () => {
   const { data, refetch } = useQuery<GraphQLUserResponse>(UsersQuery, {
     variables: { input: { admin: false, limit, page: 1 } },
     fetchPolicy: "network-only",
-    onCompleted: (data) => console.log(data),
     onError: (data) => console.table(data),
   });
 

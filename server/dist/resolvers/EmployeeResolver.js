@@ -16,13 +16,14 @@ const bcryptjs_1 = require("bcryptjs");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const lodash_1 = require("lodash");
 const mongoose_1 = __importDefault(require("mongoose"));
-const uuid_1 = require("uuid");
+require("uuid");
 const xss_1 = __importDefault(require("xss"));
 const config_1 = __importDefault(require("../config"));
 require("../data/emailData");
 const helper_1 = require("../helper");
 require("../helper/clean");
 require("../helper/emailer");
+const generateCode_1 = __importDefault(require("../helper/generateCode"));
 const ImageUpload_1 = __importDefault(require("../helper/ImageUpload"));
 const authenticated_1 = __importDefault(require("../middleware/authenticated"));
 const models_1 = __importDefault(require("../models"));
@@ -119,7 +120,7 @@ const employeeLogin = (args, req) => __awaiter(void 0, void 0, void 0, function*
 const employeeForgetPassword = (args) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let name = (0, xss_1.default)(args.input.name), email = (0, xss_1.default)(args.input.email);
-        let id = (0, uuid_1.v4)();
+        let id = (0, generateCode_1.default)(11111, 99999);
         const user = yield models_1.default.employeeSchema.findOne({ email, name }, { email: 1, name: 1 });
         if (!user) {
             throw new Error("User not found");
@@ -128,10 +129,18 @@ const employeeForgetPassword = (args) => __awaiter(void 0, void 0, void 0, funct
             name,
             email,
             validationToken: id,
-            expiresIn: new Date(),
+            expiresIn: Date.now(),
         };
         yield models_1.default.validateSchema.create(obj);
-        return { validationToken: id };
+        // await emailer({
+        //   from: '"Grocery Team" noreply@grocery.com',
+        //   to: email,
+        //   subject: "Your Grocery app verification code",
+        //   text: null,
+        //   html: verificationMail({ code: id, name }),
+        // });
+        console.log(id);
+        return { validationToken: id.toString() };
     }
     catch (e) {
         console.log(e);
@@ -155,15 +164,7 @@ const employeeChangePassword = (args, req) => __awaiter(void 0, void 0, void 0, 
         if (!user) {
             throw new Error("Something went wrong");
         }
-        const newUser = yield models_1.default.employeeSchema.findOne({ email }, {
-            birthday: 1,
-            email: 1,
-            gender: 1,
-            name: 1,
-            phoneNumber: 1,
-            photoUrl: 1,
-            level: 1,
-        });
+        const newUser = yield models_1.default.employeeSchema.findOne({ email });
         if (!newUser) {
             throw new Error("Something went wrong");
         }
@@ -172,6 +173,13 @@ const employeeChangePassword = (args, req) => __awaiter(void 0, void 0, void 0, 
         });
         req.session.grocery_admin = token;
         yield models_1.default.validateSchema.deleteOne({ email, name });
+        // await emailer({
+        //   from: '"Grocery Team" noreply@grocery.com',
+        //   to: email,
+        //   subject: "Your password was changed",
+        //   text: null,
+        //   html: passwordChangeMail({ name, email }),
+        // });
         return (0, lodash_1.merge)({ __typename: "Employee" }, newUser);
     }
     catch (e) {
@@ -196,11 +204,19 @@ const employeeUpdatePassword = (0, authenticated_1.default)((args, req) => __awa
         if (!newUser) {
             throw new Error("Something went wrong");
         }
+        req.res.clearCookie("grocery_admin");
         req.session.destroy((err) => {
             if (err) {
                 throw new Error(err.message);
             }
         });
+        // await emailer({
+        //   from: '"Grocery Team" noreply@grocery.com',
+        //   to: email,
+        //   subject: "	Your password was changed",
+        //   text: null,
+        //   html: passwordChangeMail({ name: user.name, email }),
+        // });
         const token = jsonwebtoken_1.default.sign({
             id: user._id,
             name: user.name,
@@ -401,9 +417,6 @@ const employeeInvites = (0, authenticated_1.default)((_, req) => __awaiter(void 
 const logout = (0, authenticated_1.default)((_, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         req.res.clearCookie(req.admin ? "grocery_admin" : "grocery");
-        // cookie(req.admin ? "grocery_admin" : "grocery", {
-        //   expires: new Date(0),
-        // })
         req.session.destroy((err) => {
             if (err) {
                 throw new Error(err.message);

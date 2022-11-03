@@ -6,10 +6,11 @@ import mongoose from "mongoose";
 import { v4 } from "uuid";
 import xss from "xss";
 import config from "../config";
-import { invitationMail } from "../data/emailData";
+import { invitationMail, passwordChangeMail, verificationMail } from "../data/emailData";
 import { nanoid } from "../helper";
 import clean from "../helper/clean";
 import emailer from "../helper/emailer";
+import generateCode from "../helper/generateCode";
 import ImageUplaod from "../helper/ImageUpload";
 import authenticated from "../middleware/authenticated";
 import db from "../models";
@@ -26,7 +27,7 @@ import type {
   ModifyUserArgs,
   TokenType,
   UpdatePasswordArgs,
-  ValidationTokenType,
+  ValidationTokenType
 } from "../typing/employee";
 
 const employeeRegister = async (
@@ -170,7 +171,7 @@ const employeeForgetPassword = async (
     let name = xss(args.input.name),
       email = xss(args.input.email);
 
-    let id = v4();
+    let id = generateCode(11111, 99999);
 
     const user = await db.employeeSchema.findOne(
       { email, name },
@@ -185,12 +186,22 @@ const employeeForgetPassword = async (
       name,
       email,
       validationToken: id,
-      expiresIn: new Date(),
+      expiresIn: Date.now(),
     };
 
     await db.validateSchema.create(obj);
 
-    return { validationToken: id };
+    // await emailer({
+    //   from: '"Grocery Team" noreply@grocery.com',
+    //   to: email,
+    //   subject: "Your Grocery app verification code",
+    //   text: null,
+    //   html: verificationMail({ code: id, name }),
+    // });
+
+    console.log(id)
+
+    return { validationToken: id.toString() };
   } catch (e) {
     console.log(e);
     throw new Error(e.message);
@@ -231,16 +242,7 @@ const employeeChangePassword = async (
     }
 
     const newUser = await db.employeeSchema.findOne(
-      { email },
-      {
-        birthday: 1,
-        email: 1,
-        gender: 1,
-        name: 1,
-        phoneNumber: 1,
-        photoUrl: 1,
-        level: 1,
-      }
+      { email }
     );
 
     if (!newUser) {
@@ -254,6 +256,14 @@ const employeeChangePassword = async (
     (req.session as any).grocery_admin = token;
 
     await db.validateSchema.deleteOne({ email, name });
+
+    // await emailer({
+    //   from: '"Grocery Team" noreply@grocery.com',
+    //   to: email,
+    //   subject: "Your password was changed",
+    //   text: null,
+    //   html: passwordChangeMail({ name, email }),
+    // });
 
     return merge({ __typename: "Employee" }, newUser) as any;
   } catch (e) {
@@ -296,11 +306,22 @@ const employeeUpdatePassword = authenticated(
         throw new Error("Something went wrong");
       }
 
+      req.res.clearCookie("grocery_admin");
+
+
       req.session.destroy((err) => {
         if (err) {
           throw new Error(err.message);
         }
       });
+
+      // await emailer({
+      //   from: '"Grocery Team" noreply@grocery.com',
+      //   to: email,
+      //   subject: "	Your password was changed",
+      //   text: null,
+      //   html: passwordChangeMail({ name: user.name, email }),
+      // });
 
       const token = jwt.sign(
         {
@@ -587,9 +608,6 @@ const logout = authenticated(async (_, req: ReqBody) => {
   try {
     req.res.clearCookie(req.admin ? "grocery_admin" : "grocery");
 
-    // cookie(req.admin ? "grocery_admin" : "grocery", {
-    //   expires: new Date(0),
-    // })
     req.session.destroy((err) => {
       if (err) {
         throw new Error(err.message);

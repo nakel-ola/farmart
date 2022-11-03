@@ -323,6 +323,15 @@ const updatePassword = authenticated(
         throw new Error("Something went wrong");
       }
 
+      req.res.clearCookie("grocery");
+
+
+      req.session.destroy((err) => {
+        if (err) {
+          throw new Error(err.message);
+        }
+      });
+
       const token = jwt.sign(
         { id: user._id, name: user.name, email, photoUrl: user.photoUrl },
         config.jwt_key,
@@ -331,13 +340,13 @@ const updatePassword = authenticated(
 
       (req.session as any).grocery = token;
 
-      emailer({
-        from: '"Grocery Team" noreply@grocery.com',
-        to: email,
-        subject: "	Your password was changed",
-        text: null,
-        html: passwordChangeMail({ name: user.name, email }),
-      });
+      // await emailer({
+      //   from: '"Grocery Team" noreply@grocery.com',
+      //   to: email,
+      //   subject: "	Your password was changed",
+      //   text: null,
+      //   html: passwordChangeMail({ name: user.name, email }),
+      // });
 
       return merge({ __typename: "User" }, user) as any;
     } catch (e) {

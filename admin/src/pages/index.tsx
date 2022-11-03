@@ -4,6 +4,7 @@ import { ArrowLeft } from "iconsax-react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
+import ReactLoading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
 import CodeCard from "../containers/home/CodeCard";
 import ForgetCard from "../containers/home/ForgetCard";
@@ -13,13 +14,14 @@ import SignUpCard from "../containers/home/SignUpCard";
 import { login, selectCookies, selectUser } from "../redux/features/userSlice";
 import { EmyployeeQuery } from "./_app";
 
+
+
+
 function Auth() {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const cookies = useSelector(selectCookies);
-
-  console.log(router)
 
   const toggle = router.query.type;
 
@@ -48,6 +50,23 @@ function Auth() {
     getUser();
   }, [getUser]);
 
+
+  const renderCard = () => {
+    switch (toggle) {
+      case "signup":
+        return <SignUpCard setLoading={setLoading} />;
+      case "forget":
+        return <ForgetCard setLoading={setLoading} />;
+      case "code":
+        return <CodeCard setLoading={setLoading} />;
+      case "confirm":
+        return <PasswordCard setLoading={setLoading} />;
+
+      default:
+        return <LogInCard setLoading={setLoading} />;
+    }
+  };
+
   return (
     <div className="flex items-center justify-center h-screen relative">
       <Head>
@@ -65,23 +84,41 @@ function Auth() {
           className="h-full w-full object-contain relative"
         />
       </div>
-      <div className="bg-white dark:bg-dark w-full md:w-[40%] h-full">
+      <div className="bg-white dark:bg-dark w-full md:w-[40%] h-full relative overflow-y-scroll">
         {toggle && (
           <button
-            className="absolute top-0 left-0 m-2 h-[35px] w-[35px] flex items-center justify-center hover:bg-slate-100 hover:dark:bg-neutral-800 rounded-full"
+            className="sticky top-0 z-[10] m-2 h-[35px] w-[35px] flex items-center justify-center hover:bg-slate-100 hover:dark:bg-neutral-800 rounded-full"
             onClick={() => router.back()}
           >
             <ArrowLeft size={25} className="text-white" />
           </button>
         )}
-        {router.pathname === "/" && !toggle && (
+
+        <div className="relative h-[calc(100%-60px)] w-full">
+          {renderCard()}
+        </div>
+        {/* {router.pathname === "/" && !toggle && (
           <LogInCard setLoading={setLoading} />
         )}
         {toggle === "signup" && <SignUpCard setLoading={setLoading} />}
         {toggle === "forget" && <ForgetCard setLoading={setLoading} />}
         {toggle === "code" && <CodeCard setLoading={setLoading} />}
-        {toggle === "confirm" && <PasswordCard setLoading={setLoading} />}
+        {toggle === "confirm" && <PasswordCard setLoading={setLoading} />} */}
       </div>
+
+      {loading && (
+        <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.6)] grid place-items-center z-10">
+          <div className="flex items-center justify-center flex-col">
+            <ReactLoading type="spinningBubbles" />
+            <p className="text-white text-[1.2rem] p-[8px]">
+              {toggle === "signin" && "Logging In"}
+              {toggle === "signup" && "Creating Account"}
+              {toggle === "forget" && "Validating"}
+              {toggle === "confirm" && "Creating Password"}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

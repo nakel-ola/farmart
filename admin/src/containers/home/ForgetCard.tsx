@@ -1,7 +1,7 @@
 /* importing required files and packages */
 import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import Button from "../../components/Button";
@@ -30,8 +30,8 @@ const validate = (form: FormProps): boolean => {
 
   if (
     email.match(emailRegex) &&
-    firstName.length >= 5 &&
-    lastName.length >= 5
+    firstName.length >= 4 &&
+    lastName.length >= 4
   ) {
     return false;
   }
@@ -53,19 +53,25 @@ const ForgetCard = (props: { setLoading(value: boolean): void }) => {
 
   const [forgetPassword] = useMutation(ForgetMutation);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
     let loginToast = toast.loading("Loading......");
+
+    const newData = {
+      name: form.firstName + " " + form.lastName,
+      email: form.email,
+    };
 
     setLoading(true);
 
     forgetPassword({
-      variables: { input: form },
+      variables: { input: newData },
       onCompleted: (data) => {
         router.push("?type=code");
         dispatch(
           forget({
             validationToken: data.employeeForgetPassword.validationToken,
-            ...form,
+            ...newData,
           })
         );
         setLoading(false);
@@ -74,7 +80,7 @@ const ForgetCard = (props: { setLoading(value: boolean): void }) => {
       onError: (error: any) => {
         setLoading(false);
         toast.error("Something went wrong", { id: loginToast });
-        console.error(error);
+        console.table(error);
       },
     });
     setLoading(false);
@@ -118,7 +124,6 @@ const ForgetCard = (props: { setLoading(value: boolean): void }) => {
           id="email"
           name="email"
           type="text"
-          className="border-[1.5px] border-transparent hover:border-primary"
           value={form.email}
           onChange={handleChange}
         />
