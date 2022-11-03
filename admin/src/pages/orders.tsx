@@ -2,7 +2,7 @@ import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import clsx from "clsx";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, MouseEvent, useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Lottie from "react-lottie-player";
 import NumberFormat from "react-number-format";
@@ -109,6 +109,7 @@ export const FilterById = gql`
     }
   }
 `;
+
 export const FilterByStatus = gql`
   query FilterByStatus($input: FilterByStatusInput!) {
     filterByStatus(input: $input) {
@@ -196,7 +197,7 @@ const Orders = () => {
     });
   };
 
-  const handleSortClick = (e: MouseEvent<HTMLDivElement>, selected: string) => {
+  const handleSortClick = useCallback((e: MouseEvent<HTMLDivElement>, selected: string) => {
     let status = selected.toLowerCase();
     if(e) {
       router.push(status === "all" ? "/orders" : `/orders?type=${status}`);
@@ -228,13 +229,13 @@ const Orders = () => {
       }
       setActive(status);
     }
-  };
+  },[filterByStatus,active,refetch,router]);
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     let e: any;
     let selected = router.query?.type?.toString() ?? "All";
     handleSortClick(e, selected);
-  };
+  },[handleSortClick,router.query?.type]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -254,7 +255,7 @@ const Orders = () => {
 
   useEffect(() => {
     getData();
-  }, [router.query.type]);
+  }, [router.query.type,getData]);
 
   return (
     <Layout className="flex items-center flex-col">

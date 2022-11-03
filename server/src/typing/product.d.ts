@@ -55,8 +55,12 @@ export type ProductDataType = {
 export type ProductSearchArgs = {
   input: {
     search: string;
+    price: number[] | null;
+    discount: string[] | null;
+    rating: number | null;
     outOfStock?: boolean;
     offset?: number;
+    category: string[] | null;
     limit?: number;
   };
 };

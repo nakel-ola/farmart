@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { NumericFormat } from "react-number-format";
@@ -7,7 +8,6 @@ import TableHeader from "../../components/TableHeader";
 import TableList from "../../components/TableList";
 import TableRow from "../../components/TableRow";
 import truncate from "../../helper/truncate";
-
 
 const tableList = ["Name", "Price", "Quantity", "Total Price"];
 
@@ -30,19 +30,21 @@ export const ProductQuery = gql`
 
 const OrderProduct = ({ products }: any) => {
   return (
-    <div className="w-[95%] md:w-[80%] -mt-4">
-      <Table>
-        <TableHeader
-          title="Products"
-          showSearch={false}
-          tableList={tableList}
-        />
-        <TableList>
-          {products?.map((product: any, index: number) => (
-            <Card key={index} {...product} />
-          ))}
-        </TableList>
-      </Table>
+    <div className="h-full w-full flex items-center flex-col overflow-hidden">
+      <div className="w-[95%] md:w-[80%] -mt-4">
+        <Table>
+          <TableHeader
+            title="Products"
+            showSearch={false}
+            tableList={tableList}
+          />
+          <TableList>
+            {products?.map((product: any, index: number) => (
+              <Card key={index} {...product} />
+            ))}
+          </TableList>
+        </Table>
+      </div>
     </div>
   );
 };

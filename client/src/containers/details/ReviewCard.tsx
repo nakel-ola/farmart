@@ -1,9 +1,11 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { MessageText1 } from "iconsax-react";
-import { FormEvent, useState } from "react";
+import { MessageText1, Star1 } from "iconsax-react";
+import React, { FormEvent, useState } from "react";
 import { IoCloseCircle, IoSearch } from "react-icons/io5";
+import Rating from "react-rating";
 import { useSelector } from "react-redux";
 import Avatar from "../../components/Avatar";
+import CardTemplate from "../../components/CardTemplate";
 
 const ReviewMutation = gql`
   mutation CreateReview($input: ReviewInput!) {
@@ -30,7 +32,6 @@ const ReviewCard = ({ productId }: { productId: string }) => {
 
   const { data, refetch } = useQuery(ReviewQuery, {
     variables: { productId },
-    onCompleted: (data) => console.log(data),
     onError: (err) => console.table(err),
   });
 
@@ -65,26 +66,27 @@ const ReviewCard = ({ productId }: { productId: string }) => {
   };
 
   return (
-    <div className="w-[95%] md:w-[80%] mt-[10px] dark:bg-dark dark:shadow-black/30 bg-white p-[8px]  shadow-sm rounded-lg">
-      <p className="py-[8px] pl-[15px] pr-[8px] text-[1rem] dark:text-white text-black font-[600]">
-        Reviews
-      </p>
-
-      {data?.reviews?.length > 0 ? (
-        <div className="py-[8px] pl-[15px] pr-[8px] max-h-[300px] overflow-y-scroll">
-          {(data?.reviews as any)?.map((review: any, index: number) => (
-            <Card key={index} {...review} />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center m-2">
-          <MessageText1
-            size={50}
-            className="text-5xl text-neutral-700 dark:text-neutral-400"
-          />
-          <p className="text-black dark:text-white text-lg">No Review yet!</p>
-        </div>
-      )}
+    <CardTemplate title="Rating & Reviews" className="mt-[10px] ">
+      <div className="flex mx-2 flex-col md:flex-row">
+        <RatingCard />
+        {data?.reviews?.length > 0 ? (
+          <div className="py-[8px] pl-[15px] pr-[8px] max-h-[300px] overflow-y-scroll">
+            {(data?.reviews as any)?.map((review: any, index: number) => (
+              <Card key={index} {...review} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center m-2 my-8">
+            <MessageText1
+              size={100}
+              className="text-5xl text-neutral-700 dark:text-neutral-400"
+            />
+            <p className="text-neutral-700 dark:text-neutral-400 text-lg mt-1 font-semibold">
+              No Review yet!
+            </p>
+          </div>
+        )}
+      </div>
 
       {user && (
         <form
@@ -117,7 +119,7 @@ const ReviewCard = ({ productId }: { productId: string }) => {
           </button>
         </form>
       )}
-    </div>
+    </CardTemplate>
   );
 };
 const Card = ({ photoURL, name, message }: any) => {
@@ -130,6 +132,113 @@ const Card = ({ photoURL, name, message }: any) => {
       <p className="ml-12 mb-2 text-neutral-700 dark:text-neutral-400">
         {message}
       </p>
+    </div>
+  );
+};
+
+const progress = (total: number, value: number) => {
+  return (value / total) * 100;
+};
+
+const rating = (v: number[]): number => {
+  v = v.reverse();
+  // AR = 1*a+2*b+3*c+4*d+5*e/(R)
+  let total = v.reduce((amount, item) => item + amount, 0);
+  let n = v.reduce((amount, item, index) => item * (index + 1) + amount, 0);
+  let ar = n / total;
+  return Number(ar.toFixed(1));
+};
+
+const RatingCard = () => {
+  const items = [
+    {
+      name: "5",
+      value: 194,
+    },
+    {
+      name: "4",
+      value: 50,
+    },
+    {
+      name: "3",
+      value: 13,
+    },
+    {
+      name: "2",
+      value: 7,
+    },
+    {
+      name: "1",
+      value: 2,
+    },
+  ];
+
+  let total = items.reduce((amount, item) => item.value + amount, 0);
+
+  const newRating = rating(items.map((item) => item.value));
+  return (
+    <div className="flex justify-center w-[95%] md:w-[35%] flex-col m-2">
+      <div className="w-full h-[180px] bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center flex-col">
+        <h1 className="text-yellow text-3xl font-bold my-2">
+          {newRating} / 5
+        </h1>
+
+        <span className="flex items-center my-2">
+          <Rating
+            initialRating={newRating!}
+            readonly
+            fullSymbol={
+              <Star1
+                size={25}
+                variant="Bold"
+                className="text-yellow text-[20px]"
+              />
+            }
+            emptySymbol={
+              <Star1
+                size={25}
+                variant="Bold"
+                className="text-[#bdbdbd] text-[20px]"
+              />
+            }
+          />
+        </span>
+
+        <p className="my-2 text-lg text-black dark:text-white">
+          {total} verified ratings
+        </p>
+      </div>
+      <div className="my-2">
+        {items.map((item, index) => (
+          <div key={index} className="flex items-center">
+            <div className="flex items-center flex-1">
+              <p className="px-2 text-lg font-semibold text-black dark:text-white">
+                {item.name}
+              </p>
+              <span className="">
+                <Star1
+                  size={25}
+                  variant="Bold"
+                  className="text-yellow text-[20px]"
+                />
+              </span>
+
+              <p className="text-neutral-600 dark:text-neutral-400 mx-2">
+                ({item.value})
+              </p>
+            </div>
+
+            <span className="w-[150px] rounded-full h-3 bg-slate-100 dark:bg-neutral-800 flex overflow-hidden">
+              <span
+                className="bg-yellow h-full"
+                style={{
+                  width: progress(total, item.value) + "px",
+                }}
+              ></span>
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

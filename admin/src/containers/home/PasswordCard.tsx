@@ -5,11 +5,9 @@ import { decode } from "jsonwebtoken";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
 import toast from "react-hot-toast";
-import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
-import InputField from "../../components/InputField";
 import { login, selectValidateUser } from "../../redux/features/userSlice";
 import { JwtUserType } from "./LogInCard";
 import TitleCard from "./TitleCard";
@@ -46,7 +44,7 @@ const PasswordCard = (props: { setLoading(value: boolean):void}) => {
 
   const { setLoading } = props;
 
-  const [form, setForm] = useState<FormProps>({
+  const [form, setForm] = useState<Required<FormProps>>({
     password: "",
     confirmPassword: "",
   });
@@ -72,8 +70,7 @@ const PasswordCard = (props: { setLoading(value: boolean):void}) => {
         },
       },
       onCompleted: (data) => {
-        const value = decode(data.employeeChangePassword.token) as JwtUserType;
-        dispatch(login({ token: data.employeeChangePassword.token, ...value }));
+        dispatch(login(data.employeeChangePassword));
         toast.success("Login Successfully", { id: loginToast });
         router.replace("/dashboard");
       },

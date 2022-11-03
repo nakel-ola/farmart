@@ -1,3 +1,5 @@
+import { gql, useMutation } from "@apollo/client";
+import { useRouter } from "next/router";
 import React, {
   ChangeEvent,
   ClipboardEvent,
@@ -8,14 +10,29 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { toast } from "react-hot-toast";
+import { useSelector } from "react-redux";
 import Button from "../../components/Button";
 import usePrevious from "../../hooks/usePrevious";
+import { selectValidateUser } from "../../redux/features/userSlice";
 import TitleCard from "./TitleCard";
 
 let numInputs = 5,
   isInputNum: boolean;
 
-const CodeCard = (props: { setLoading(value: boolean): void }) => {
+const CodeQuery = gql`
+  mutation ValidateCode($input: ValidateCodeInput!) {
+    validateCode(input: $input) {
+      validate
+    }
+  }
+`;
+
+const CodeCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
+  const validate = useSelector(selectValidateUser);
+
+  const router = useRouter();
+
   const [input, setInput] = useState("");
   const [state, setState] = useState({
     activeInput: 0,
@@ -25,6 +42,8 @@ const CodeCard = (props: { setLoading(value: boolean): void }) => {
   });
 
   const getOtpValue = () => (input ? input.toString().split("") : []);
+
+  const [validateCode] = useMutation(CodeQuery);
 
   const handleOtpChange = (otp: number[] | string[]) => {
     const otpValue = otp.join("");
@@ -134,11 +153,43 @@ const CodeCard = (props: { setLoading(value: boolean): void }) => {
     }
   };
 
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    let loginToast = toast.loading("Loading......");
+    setLoading(true);
+
+    await validateCode({
+      variables: {
+        input: {
+          ...validate,
+          validationToken: input,
+        },
+      },
+      onCompleted: (data) => {
+        if (data.validateCode.validate) {
+          router.push("?type=confirm");
+          toast.success("Successfully Validated", { id: loginToast });
+        } else {
+          toast.error("Invalid Code", { id: loginToast });
+        }
+        setLoading(false);
+      },
+      onError: (error: any) => {
+        setLoading(false);
+        toast.error("Something went wrong", { id: loginToast });
+        console.error(error);
+      },
+    });
+  };
+
   return (
     <div className="w-full flex items-center justify-center flex-col mt-5">
       <TitleCard title="Enter you verification code" />
 
-      <form className="w-full grid place-items-center py-[5px]">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full grid place-items-center py-[5px]"
+      >
         <div className="w-[80%] flex items-center justify-center">
           {Array(5)
             .fill(1)
@@ -195,11 +246,13 @@ const CodeInput = ({
   const prevFocus = usePrevious(focus);
   const prevValue = usePrevious(value);
 
+  // const [focus, setfocus] = useState()
+
   useEffect(() => {
     if (inputRef.current && focus && shouldAutoFocus) {
       inputRef.current.focus();
     }
-  }, []);
+  }, [focus, inputRef, shouldAutoFocus]);
 
   useEffect(() => {
     const inputEl = inputRef.current;
@@ -207,22 +260,28 @@ const CodeInput = ({
       inputEl.focus();
       inputEl.select();
     }
-  }, [focus]);
+  }, [focus, inputRef, prevFocus]);
 
   useEffect(() => {
     if (inputRef.current && prevValue !== value) {
       inputRef.current.value = value ?? "";
     }
-  }, [value]);
+  }, [value, inputRef, prevValue]);
   return (
-    <div className="w-[40px] h-[40px] rounded-lg flex items-center justify-center p-[5px] mt-[8px] mr-[8px] transition-all duration-300 ease hover:shadow-sm bg-slate-100 dark:bg-neutral-800">
+    <div
+      className={`w-[40px] h-[40px] rounded-lg flex items-center justify-center p-[5px] mt-[8px] mr-[15px] transition-all duration-300 ease hover:shadow-sm bg-slate-100 dark:bg-neutral-800 ring-2 ring-offset-2  ${
+        focus
+          ? "ring-primary/30 ring-offset-primary/80"
+          : "ring-transparent ring-offset-transparent"
+      }`}
+    >
       <input
         aria-label={`${index === 0 ? "Please enter verification code." : ""}${
           isInputNum ? "Digit" : "Character"
         }${index + 1}`}
         ref={inputRef}
         autoComplete="off"
-        className="text-[1rem] bg-transparent dark:text-white/90 border-none outline-none w-[95%] text-black dark:text-white mr-auto autofill:bg-transparent text-center"
+        className="text-lg bg-transparent dark:text-white/90 border-none outline-none w-[95%] text-black dark:text-white mr-auto autofill:bg-transparent text-center font-bold"
         maxLength={1}
         value={value}
         type="tel"

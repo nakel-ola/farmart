@@ -1,9 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 import { Add, Minus } from "iconsax-react";
 import React from "react";
 import { IoClose } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { Basket } from "../../../typing";
-import numberFormat from "../../helper/numberFormat";
 import { add, remove } from "../../redux/features/basketSlice";
 
 function Card(props: Basket) {
@@ -55,7 +55,7 @@ function Card(props: Basket) {
   };
 
   return (
-    <div className="flex mx-[5px] my-[10px] shadow-sm bg-white dark:bg-dark dark:shadow-black/30 rounded-lg relative">
+    <div className="flex mx-[5px] my-[10px] bg-white dark:bg-dark rounded-lg relative">
       <div className="overflow-hidden rounded-lg shrink-0 m-[3px]">
         <img
           src={image?.url}
@@ -103,10 +103,6 @@ function Card(props: Basket) {
           </button>
         </div>
       </div>
-
-      {/* <div className="absolute top-0 right-0 p-[5px] hover:scale-110 transition-transform duration-300 ease">
-        <IoClose className="text-black dark:text-white" />
-      </div> */}
     </div>
   );
 }

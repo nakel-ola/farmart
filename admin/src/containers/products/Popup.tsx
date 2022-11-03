@@ -101,8 +101,8 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
   };
 
   useEffect(() => {
-    if (edit?.product) setForm(edit?.product);
-  }, [edit?.product]);
+    if (edit?.data) setForm(edit?.data);
+  }, [edit?.data]);
 
   const close = () => dispatch(remove({ type: "edit" }));
 
@@ -110,7 +110,7 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
     e.preventDefault();
     let loginToast = toast.loading("Loading......");
 
-    if (!edit?.product) {
+    if (!edit?.data) {
       createProduct({
         variables: {
           input: {
@@ -140,7 +140,7 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
       modifyProduct({
         variables: {
           input: {
-            id: edit?.product.id,
+            id: edit?.data.id,
             slug: generateSlug(form.title),
             category: form.category,
             description: form.description,
@@ -268,10 +268,10 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
           </Button>
           <Button
             type="submit"
-            disabled={edit?.product ? modifyVerify(form, edit) : verify(form)}
+            disabled={edit?.data ? modifyVerify(form, edit) : verify(form)}
             className="bg-primary text-white"
           >
-            {edit?.product ? "Save Change" : "Create"}
+            {edit?.data ? "Save Change" : "Create"}
           </Button>
         </div>
       </form>

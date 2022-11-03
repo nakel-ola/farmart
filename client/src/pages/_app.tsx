@@ -5,12 +5,14 @@ import { Router } from "next/router";
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { Provider } from "react-redux";
+import { persistStore } from "redux-persist";
+import { PersistGate } from "redux-persist/integration/react";
 import PageLoader from "../components/PageLoader";
 import { initializeApollo, useApollo } from "../hooks/useApollo";
 import Wrapper from "../layout/Wrapper";
 import { add } from "../redux/features/categorySlice";
 import { login, setCookies } from "../redux/features/userSlice";
-import { RootState, wrapper } from "../redux/store";
+import { RootState, wrapper,persistor } from "../redux/store";
 import "../styles/globals.css";
 import { ThemeProvider } from "../styles/theme";
 
@@ -28,21 +30,23 @@ function MyApp({ Component, ...others }: AppProps) {
 
   return (
     <Provider store={store}>
-      <ApolloProvider client={client}>
-        <ThemeProvider
-          enableSystem={true}
-          attribute="class"
-          storageKey="wujo-theme"
-          defaultTheme="light"
-        >
-          <Wrapper>
-            <Toaster />
+      <PersistGate persistor={persistor(store)} loading={<div>Loading</div>}>
+        <ApolloProvider client={client}>
+          <ThemeProvider
+            enableSystem={true}
+            attribute="class"
+            storageKey="wujo-theme"
+            defaultTheme="light"
+          >
+            <Wrapper>
+              <Toaster />
 
-            <Component {...pageProps} />
-            {loading && <PageLoader />}
-          </Wrapper>
-        </ThemeProvider>
-      </ApolloProvider>
+              <Component {...pageProps} />
+              {loading && <PageLoader />}
+            </Wrapper>
+          </ThemeProvider>
+        </ApolloProvider>
+      </PersistGate>
     </Provider>
   );
 }
@@ -91,7 +95,7 @@ MyApp.getInitialProps = wrapper.getInitialPageProps(
           query: CategoriesQuery,
         })
         .then((result: any) => {
-          store.dispatch(add(result.data.categories));
+          store.dispatch(add([{ name: "All" }, ...result.data.categories]));
         });
     }
 

@@ -118,7 +118,6 @@ const LogInCard = (props: { setLoading(value: boolean):void}) => {
           id="email"
           name="email"
           type="text"
-          className="border-[1.5px] border-transparent hover:border-primary"
           value={form.email}
           onChange={handleChange}
         />
@@ -127,7 +126,6 @@ const LogInCard = (props: { setLoading(value: boolean):void}) => {
           title="Password"
           id="password"
           name="password"
-          className="border-[1.5px] border-transparent hover:border-primary"
           type={toggle ? "text" : "password"}
           value={form.password}
           onChange={handleChange}

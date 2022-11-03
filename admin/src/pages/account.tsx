@@ -133,7 +133,7 @@ const Account = () => {
 
   const handleDelete = async () => {
     await deleteEmployeeInvite({
-      variables: { id: dialog.delete.product.id },
+      variables: { id: dialog.delete.data.id },
       onCompleted: () => {
         refetch({ employeeId: user?.id });
       },
@@ -168,7 +168,7 @@ const Account = () => {
                     dispatch(
                       add({
                         open: true,
-                        product: newData,
+                        data: newData,
                         type: "employeeEdit",
                       })
                     )
@@ -176,10 +176,14 @@ const Account = () => {
                   showAvatarEditButton
                 />
 
-                <InviteCard
-                  data={data.employeeInvites}
-                  func={() => refetch({ employeeId: user?.id })}
-                />
+                {user?.level === "Gold" ? (
+                  <InviteCard
+                    data={data.employeeInvites}
+                    func={() => refetch({ employeeId: user?.id })}
+                  />
+                ) : (
+                  <div className="mt-8"></div>
+                )}
 
                 <PasswordCard setLoading={setLoading} />
               </div>

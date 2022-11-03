@@ -24,7 +24,7 @@ const BlockCard = ({ func, blocked }: { func: any; blocked: boolean }) => {
 
   const handleBlock = async () => {
     await blockUser({
-      variables: { input: blockState.block.product },
+      variables: { input: blockState.block.data },
       onCompleted: () => func(),
     });
     dispatch(remove({ type: "block" }));

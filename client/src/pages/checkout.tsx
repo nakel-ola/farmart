@@ -5,9 +5,11 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { AddressType } from "../../typing";
 import EmptyCart from "../components/EmptyCart";
 import Header from "../components/Header";
 import LoginCard from "../components/LoginCard";
+import AddressForm from "../containers/address/AddressForm";
 import Address from "../containers/checkout/Address";
 import AddressList from "../containers/checkout/AddressList";
 import Payment from "../containers/checkout/Payment";
@@ -18,13 +20,13 @@ import {
   getBasketTotal,
   removeAll,
   removeCoupon,
-  selectBasket,
-  selectCoupon,
 } from "../redux/features/basketSlice";
 import { selectDialog } from "../redux/features/dialogSlice";
 import { selectUser } from "../redux/features/userSlice";
 import { RootState } from "../redux/store";
 import { AddressesQuery } from "./address";
+
+
 
 const OrderMutation = gql`
   mutation CreateOrder($input: OrderInput!) {
@@ -46,8 +48,10 @@ const Checkout: NextPage = () => {
   >("Door Delivery");
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [pickup, setPickup] = useState("");
-  const [address, setAddress] = useState<any | null>(null);
-  const { basket,coupon,shippingFee } = useSelector((store: RootState) => store.basket);
+  const [address, setAddress] = useState<AddressType | null>(null);
+  const { basket, coupon, shippingFee } = useSelector(
+    (store: RootState) => store.basket
+  );
 
   const dialog = useSelector(selectDialog);
   const user = useSelector(selectUser);
@@ -62,7 +66,7 @@ const Checkout: NextPage = () => {
     onError: (err) => console.table(err),
   });
 
-  useQuery(AddressesQuery, {
+  const { refetch } = useQuery(AddressesQuery, {
     onCompleted: (data) => {
       setAddress(data?.addresses[0]);
     },
@@ -71,20 +75,22 @@ const Checkout: NextPage = () => {
     },
   });
 
+  
+
   const handleCheckout = () => {
     const data = {
       totalPrice: `${Number(getBasketTotal(basket)).toFixed(2)}`,
       pickup,
       address: !pickup
         ? {
-            name: address.name,
-            street: address.street,
-            city: address.city,
-            state: address.state,
-            country: address.country,
-            info: address.info,
-            phoneNumber: address.phoneNumber,
-            phoneNumber2: address.phoneNumber2,
+            name: address!.name,
+            street: address!.street,
+            city: address!.city,
+            state: address!.state,
+            country: address!.country,
+            info: address!.info,
+            phoneNumber: address!.phoneNumber,
+            phoneNumber2: address!.phoneNumber2,
           }
         : null,
       shippingFee: `${shippingFee}`,
@@ -93,18 +99,20 @@ const Checkout: NextPage = () => {
         quantity: b.quantity,
         price: `${b.price * b.quantity}`,
       })),
-      coupon: coupon ? {
-        id: coupon.id,
-        email: coupon.email,
-        coupon: coupon.code,
-        discount: coupon.discount,
-        userId: coupon.userId,
-        description: coupon.description,
-        expiresIn: coupon.expiresIn,
-      } : null,
+      coupon: coupon
+        ? {
+            id: coupon.id,
+            email: coupon.email,
+            coupon: coupon.code,
+            discount: coupon.discount,
+            userId: coupon.userId,
+            description: coupon.description,
+            expiresIn: coupon.expiresIn,
+          }
+        : null,
       paymentMethod,
       deliveryMethod,
-      phoneNumber: pickup ? user?.phoneNumber : null
+      phoneNumber: pickup ? user?.phoneNumber : null,
     };
 
     createOrder({
@@ -182,6 +190,8 @@ const Checkout: NextPage = () => {
           setPickup={setPickup}
         />
       )}
+
+      {dialog.address.open && <AddressForm func={() => refetch()} />}
     </>
   );
 };

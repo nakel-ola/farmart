@@ -1,6 +1,7 @@
 import { Storage } from "@google-cloud/storage";
+import type { FileUpload } from "graphql-upload-minimal";
+import { format } from "util";
 import config from "../config";
-
 
 const storage = new Storage({
   projectId: config.firebase_project_id,
@@ -13,7 +14,12 @@ const storage = new Storage({
   },
 });
 
-export const bucket = storage.bucket("gs://farmart-8bdb8.appspot.com/");
+type ImageUploadType = {
+  url: string;
+  name: string;
+};
+
+export const bucket = storage.bucket(config.firebase_bucket_name);
 
 export const getListFiles = async () => {
   try {
@@ -29,12 +35,42 @@ export const getListFiles = async () => {
 
     console.log(fileInfos);
 
-    // res.status(200).send(fileInfos);
+    return fileInfos;
   } catch (err) {
     console.log(err);
-
-    // res.status(500).send({
-    //   message: "Unable to read list of files!",
-    // });
   }
 };
+
+export const ImageUplaod = ({
+  filename,
+  createReadStream,
+}: FileUpload): Promise<ImageUploadType> =>
+  new Promise((resolve, reject) => {
+    const blob = bucket.file(filename);
+    let stream = createReadStream();
+
+    stream
+      .pipe(
+        bucket.file(filename).createWriteStream({
+          resumable: false,
+          gzip: true,
+        })
+      )
+      .on("error", (err: any) => reject(err)) // reject on error
+      .on("finish", async () => {
+        const publicUrl = format(
+          `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+        );
+
+        try {
+          await bucket.file(filename).makePublic();
+        } catch {
+          console.log(
+            `Uploaded the file successfully: ${filename}, but public access is denied!`
+          );
+        }
+        console.log(publicUrl);
+        resolve({ url: publicUrl, name: filename });
+      });
+  });
+export const deleteFile = async ({ fileName }: { fileName: string }) => await bucket.file(fileName).delete();

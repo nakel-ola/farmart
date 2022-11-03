@@ -18,8 +18,8 @@ const EmployeeTypes = (0, graphql_tag_1.gql) `
     name: String!
     email: String!
     phoneNumber: String!
-    level: String!
     password: String!
+    inviteCode: String!
   }
 
   input EmployeeUserInput {

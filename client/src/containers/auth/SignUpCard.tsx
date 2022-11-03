@@ -1,14 +1,12 @@
 /* importing required files and packages */
-import { from, gql, useMutation } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import { Eye, EyeSlash } from "iconsax-react";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, ReactNode, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import Button from "../../components/Button";
-import Checkbox from "../../components/Checkbox";
 import InputCard from "../../components/InputCard";
-import InputDropdown from "../../components/InputDropdown";
 import { Footer } from "../../pages/auth";
 import { login } from "../../redux/features/userSlice";
 import TitleCard from "./TitleCard";
@@ -91,7 +89,7 @@ const SignUpCard = (props: any) => {
       variables: { input: newForm },
       onCompleted: (data) => {
         dispatch(login(data.register));
-        toast.success("Login Successfully", { id: loginToast });
+        toast.success("Account created successfully", { id: loginToast });
         router.replace("/profile");
       },
       onError: (error: any) => {

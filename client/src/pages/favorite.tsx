@@ -1,20 +1,21 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { HeartSlash } from "iconsax-react";
+import { Heart, HeartSlash } from "iconsax-react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useRef } from "react";
+import ReactLoading from "react-loading";
 import { useSelector } from "react-redux";
+import { Product } from "../../typing";
+import Button from "../components/Button";
 import Header from "../components/Header";
 import InfiniteScroll from "../components/InfiniteScroll";
 import LoginCard from "../components/LoginCard";
 import Card from "../containers/home/Card";
 import { HtmlDivElement } from "../containers/home/Cards";
+import Cards from "../containers/search/Cards";
 import Layouts from "../layout/Layouts";
 import { selectUser } from "../redux/features/userSlice";
-import ReactLoading from "react-loading";
-import Button from "../components/Button";
-
 
 const FavoritesQuery = gql`
   query Favorites($input: FavoriteInput) {
@@ -48,7 +49,7 @@ const RemoveAllMutation = gql`
 `;
 
 const Favorite: NextPage = () => {
-  const user = useSelector(selectUser)
+  const user = useSelector(selectUser);
   const { data, loading, refetch, fetchMore } = useQuery(FavoritesQuery, {
     variables: { input: { offset: 0, limit: 10 } },
   });
@@ -95,51 +96,15 @@ const Favorite: NextPage = () => {
         }
       />
       {user ? (
-        <div className="h-full">
+        <div className="h-full grid place-items-center">
           {!loading ? (
-            data?.favorites.results.length >= 1 ? (
-              <InfiniteScroll
+            data?.favorites && (
+              <CardsContainer
+                data={data?.favorites.results}
                 containerRef={containerRef}
-                hasMore={
-                  data?.favorites.results.length < data?.favorites.totalItems
-                }
-                next={handleFetchMore}
-                className={`${
-                  data?.favorites.results.length <= 3
-                    ? " flex mx-10 flex-wrap md:flex-nowrap"
-                    : "flex flex-wrap justify-center"
-                } transition-all duration-300 ease w-full`}
-                loader={<Loader />}
-              >
-                {data?.favorites.results.map((props: any, i: number) => (
-                  <div key={i}>
-                    <Card
-                      {...props}
-                      refetchAll={() => refetch()}
-                      isFavouriteCard
-                    />
-                  </div>
-                ))}
-              </InfiniteScroll>
-            ) : (
-              <div className="flex-[0.35] ml-[5px] h-[80%] grid place-items-center">
-                <div className="flex items-center justify-center flex-col">
-                  <HeartSlash
-                    size={100}
-                    className="text-neutral-700 dark:text-neutral-400"
-                  />
-                  <p className="text-[1.2rem] text-slate-900 dark:text-white">
-                    No saved Item
-                  </p>
-
-                  <div
-                    className="w-[80%] h-[40px] bg-primary rounded-xl flex items-center justify-center m-[10px]  "
-                    onClick={() => router.back()}
-                  >
-                    <p className="text-white text-[1rem] p-[8px]">Go Back</p>
-                  </div>
-                </div>
-              </div>
+                handleFetchMore={handleFetchMore}
+                totalItems={data?.favorites.totalItems}
+              />
             )
           ) : (
             <div className="w-full h-[80%] grid place-items-center">
@@ -160,6 +125,52 @@ export const Loader = () => {
   return (
     <div className="min-h-[20px] w-full flex items-center justify-center p-[10px]">
       <Button className="bg-transparent text-primary">Loading More..</Button>
+    </div>
+  );
+};
+
+type Props = {
+  data: Product[];
+  containerRef: any;
+  totalItems: number;
+  handleFetchMore: () => void;
+};
+
+const CardsContainer = ({
+  containerRef,
+  data,
+  totalItems,
+  handleFetchMore,
+}: Props) => {
+  return (
+    <div className="my-[20px] w-[95%] pb-2">
+      {data.length > 0 ? (
+        <InfiniteScroll
+          containerRef={containerRef}
+          hasMore={data.length < totalItems}
+          next={handleFetchMore}
+          className={`${
+            data.length <= 3 ? " flex mx-10" : "flex flex-wrap justify-center"
+          } transition-all duration-300 ease w-full`}
+          loader={<Loader />}
+        >
+          {data.map((item: Product, index: number) => (
+            <Card key={index} {...item} />
+          ))}
+        </InfiniteScroll>
+      ) : (
+        <div className="grid my-10 place-items-center">
+          <div className="flex items-center justify-center flex-col">
+            <HeartSlash
+              size={100}
+              className="text-neutral-700 dark:text-neutral-400"
+            />
+            <p className="text-neutral-700 dark:text-neutral-400 text-lg font-semibold my-1">
+              No saved Item
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

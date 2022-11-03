@@ -3,22 +3,22 @@ import { RootState } from "../store";
 
 export type FilterState = {
   filter: {
-    category: string | string[];
-    price: number[];
-    rating: number;
-    discount: string[];
+    category: null | string[];
+    price: number[] | null;
+    rating: number | null;
+    discount: string[] | null;
   } | null;
 };
 
 type PayloadType = {
-  category: string | string[];
-  price: number[];
-  rating: number;
-  discount: string[];
+  category: null | string[];
+  price: number[] | null;
+  rating: number | null ;
+  discount: string[] | null;
 };
 
 export const filterSlice = createSlice({
-  name: "category",
+  name: "filter",
   initialState: {
     filter: null ,
   } as FilterState,

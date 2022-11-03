@@ -1,7 +1,7 @@
 export type Image = {
   name: string;
   url: string;
-}
+};
 
 export type Currency = {
   name: string;
@@ -40,7 +40,7 @@ export type UserType = {
   blocked: boolean;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 export type OrderProduct = {
   id: string;
@@ -77,6 +77,17 @@ export type OrderType = {
   progress: OrderProgress[];
 };
 
+export type AddressType = {
+  name: string;
+  phoneNumber: string;
+  street: string;
+  city: string;
+  state: string;
+  country: string;
+  default?: boolean;
+  info?: string;
+  phoneNumber2?: string;
+};
 export type InboxType = {
   id: string;
   title: string;
@@ -125,4 +136,10 @@ export type BannerType = {
   title: string;
   description: string;
   link: string;
-}
+};
+
+export type ValidateCodeType = {
+  name: string;
+  email: string;
+  validationToken: string;
+};

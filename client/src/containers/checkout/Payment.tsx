@@ -1,4 +1,7 @@
 import { useLazyQuery } from "@apollo/client";
+import { loadStripe } from "@stripe/stripe-js";
+import axios from "axios";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import {
   IoRadioButtonOffOutline,
@@ -15,6 +18,8 @@ import { RootState } from "../../redux/store";
 import { VerifyCouponQuery } from "../sidecart/Footer";
 import PromoCard from "../sidecart/PromoCard";
 
+let stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+
 const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
   const [type, setType] = useState("Paystack");
   const [input, setInput] = useState("");
@@ -23,6 +28,10 @@ const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
     (store: RootState) => store.basket
   );
   const user = useSelector(selectUser);
+
+  const router = useRouter();
+
+  let sessionId= router.query?.session_id
 
   const price = getBasketTotal(basket);
 
@@ -50,11 +59,28 @@ const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
     });
   };
 
+  const createStripeSession = async () => {
+    const stripe = await stripePromise;
+    const res = await axios.post("/api/checkout_sessions", {
+      products: basket,
+      discount: null,
+      email: user?.email,
+    });
+
+    console.log(res.data);
+
+    const result = await stripe?.redirectToCheckout({
+      sessionId: res.data.id,
+    });
+
+    console.log(result);
+  };
+
   return (
     <div className="w-full grid place-items-center mt-5">
       <CardTemplate title="Payment Summary">
         <div className="w-[90%] items-start my-2 ml-[25px] cursor-pointer">
-          <div className="w-[70%] block lg:hidden">
+          <div className="w-[70%]">
             {coupon ? (
               <div className="font-medium text-black dark:text-white">
                 <strong className="text-primary">{coupon?.code}</strong> is
@@ -158,7 +184,7 @@ const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
       </CardTemplate>
 
       <div className="w-full grid place-items-center mb-4">
-        <Button onClick={() => onNext(type)}>Next</Button>
+        <Button onClick={createStripeSession}>{sessionId ? "Proceed" : "Pay Now"}</Button>
       </div>
     </div>
   );

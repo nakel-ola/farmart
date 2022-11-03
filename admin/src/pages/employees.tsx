@@ -2,6 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, useState } from "react";
 import Lottie from "react-lottie-player";
+import { useSelector } from "react-redux";
 import { GraphQLEmployeesResponse, UserType } from "../../typing";
 import Pagination from "../components/Pagination";
 import Table from "../components/Table";
@@ -12,6 +13,7 @@ import TableRow from "../components/TableRow";
 import lottieJson from "../data/lf30_editor_mh2nforn.json";
 import truncate from "../helper/truncate";
 import Layout from "../layout/Layout";
+import { selectUser } from "../redux/features/userSlice";
 import { roundUp } from "./orders";
 
 const tableList: string[] = ["Name", "Phone", "Email", "Gender", "Created"];
@@ -45,6 +47,7 @@ let limit = 10;
 const Employees = () => {
   const router = useRouter();
   const [page, setPage] = useState(1);
+  const user = useSelector(selectUser);
   const { data, refetch } = useQuery<GraphQLEmployeesResponse>(UsersQuery, {
     variables: { input: { admin: true, limit, page: 1 } },
     fetchPolicy: "network-only",
@@ -73,35 +76,35 @@ const Employees = () => {
             <>
               <TableList>
                 {data?.employees?.results.map(
-                  (user: UserType, index: number) => (
+                  (employee: UserType, index: number) => user?.id !== employee.id && (
                     <TableRow
-                      onClick={() => router.push(`/employee/${user.id}`)}
+                      onClick={() => router.push(`/employee/${employee.id}`)}
                       key={index}
                     >
                       <TableContent>
                         <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                          {user.name}
+                          {employee.name}
                         </p>
                       </TableContent>
                       <TableContent>
                         <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                          {user.phoneNumber}
+                          {employee.phoneNumber}
                         </p>
                       </TableContent>
                       <TableContent>
                         <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                          {user.email}
+                          {employee.email}
                         </p>
                       </TableContent>
                       <TableContent>
                         <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                          {user.gender}
+                          {employee.gender}
                         </p>
                       </TableContent>
                       <TableContent>
                         <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
                           {truncate(
-                            new Date(user.createdAt).toDateString(),
+                            new Date(employee.createdAt).toDateString(),
                             15,
                             "middle"
                           )}

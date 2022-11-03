@@ -25,6 +25,7 @@
     "express-graphql": "^0.12.0",
     "express-rate-limit": "^6.6.0",
     "express-session": "^1.17.3",
+    "googleapis": "^109.0.0",
     "graphql": "^15.8.0",
     "graphql-middleware": "^6.1.26",
     "graphql-tag": "^2.12.6",

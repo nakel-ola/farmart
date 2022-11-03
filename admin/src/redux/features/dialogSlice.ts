@@ -4,7 +4,7 @@ import { RootState } from "../store";
 
 type Option = {
   open: boolean;
-  product: any | null;
+  data: any | null;
 };
 
 export type DialogState = {
@@ -25,7 +25,7 @@ type Type = "edit" | "delete" | "category" | "banner" | "block" | "coupon" | "co
 type PayloadProps = {
   type: Type;
   open: boolean;
-  product: any | null;
+  data: any | null;
 };
 
 
@@ -34,43 +34,43 @@ export const dialogSlice = createSlice({
   initialState: {
     edit: {
       open: false,
-      product: null
+      data: null
     },
     delete: {
       open: false,
-      product: null
+      data: null
     },
     category: {
       open: false,
-      product: null
+      data: null
     },
     banner: {
       open: false,
-      product: null
+      data: null
     },
     block: {
       open: false,
-      product: null
+      data: null
     },
     coupon: {
       open: false,
-      product: null
+      data: null
     },
     couponDelete: {
       open: false,
-      product: null
+      data: null
     },
     inbox: {
       open: false,
-      product: null
+      data: null
     },
     employeeEdit: {
       open: false,
-      product: null
+      data: null
     },
     invite: {
       open: false,
-      product: null
+      data: null
     },
   } as DialogState,
   reducers: {
@@ -78,7 +78,7 @@ export const dialogSlice = createSlice({
       state[action.payload.type] = action.payload;
     },
     remove: (state: DialogState, action: PayloadAction<{ type: Type }>) => {
-      state[action.payload.type] = { open: false, product: null };
+      state[action.payload.type] = { open: false, data: null };
     },
   },
 });

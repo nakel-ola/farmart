@@ -17,7 +17,7 @@ const OrderStatus = ({
   );
 
   return (
-    <CardTemplate className="mb-4 -mt-10" title="Order Status">
+    <CardTemplate className="mb-4" title="Order Status">
       <div className="pl-[25px] mt-4 md:w-[60%] w-[80%] ">
         {order.progress.map((item: OrderProgress, index: number) => {
           let isLast = index === order.progress.length - (isCanceled ? 2 : 1);

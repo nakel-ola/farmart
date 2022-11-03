@@ -9,10 +9,11 @@ import config from "../config";
 import {
   passwordChangeMail,
   verificationMail,
-  welcomeMsg,
+  welcomeMsg
 } from "../data/emailData";
 import { nanoidV2 } from "../helper";
 import emailer from "../helper/emailer";
+import generateCode from "../helper/generateCode";
 import ImageUplaod from "../helper/ImageUpload";
 import authenticated from "../middleware/authenticated";
 import db from "../models";
@@ -23,7 +24,7 @@ import type {
   RegisterArgs,
   UserDataType,
   UsersArgs,
-  UserType,
+  UserType
 } from "../typing/auth";
 import type { Msg } from "../typing/custom";
 import type {
@@ -32,7 +33,7 @@ import type {
   LoginArgs,
   UpdatePasswordArgs,
   ValidateCodeArgs,
-  ValidationTokenType,
+  ValidationTokenType
 } from "../typing/employee";
 
 const register = async (
@@ -76,13 +77,13 @@ const register = async (
 
     (req.session as any).grocery = token;
 
-    await emailer({
-      from: '"Grocery Team" nunuolamilekan@gmail.com',
-      to: email,
-      subject: "Welcome to the Grocery family!",
-      text: "",
-      html: welcomeMsg({ name }),
-    });
+    // await emailer({
+    //   from: '"Grocery Team" noreply@grocery.com',
+    //   to: email,
+    //   subject: "Welcome to the Grocery family!",
+    //   text: "",
+    //   html: welcomeMsg({ name }),
+    // });
     return merge(
       { __typename: "User" },
       {
@@ -111,7 +112,7 @@ const login = async (args: LoginArgs, req: ReqBody): Promise<UserType> => {
 
     const user = await db.userSchema.findOne({ email });
 
-    if (!user) {
+    if (!user || user?.blocked) {
       throw new Error("Something went wrong");
     }
 
@@ -146,7 +147,8 @@ const forgetPassword = async (
     let name = xss(args.input.name),
       email = xss(args.input.email);
 
-    let id = nanoidV2("0123456789", 5);
+    // let id = nanoidV2("0123456789", 5, 8);
+    let id = generateCode(11111, 99999)
 
     const user = await db.userSchema.findOne({ email, name });
 
@@ -158,20 +160,23 @@ const forgetPassword = async (
       name,
       email,
       validationToken: id,
-      expiresIn: Date.now,
+      expiresIn: Date.now(),
     };
 
     await db.validateSchema.create(obj);
 
-    emailer({
-      from: "noreply@info.grocery.com.ng",
-      to: email,
-      subject: "Your Grocery.org verification code",
-      text: null,
-      html: verificationMail({ code: id, name }),
-    });
+    // await emailer({
+    //   from: '"Grocery Team" noreply@grocery.com',
+    //   to: email,
+    //   subject: "Your Grocery app verification code",
+    //   text: null,
+    //   html: verificationMail({ code: id, name }),
+    // });
 
-    return { validationToken: id };
+
+    console.log(id)
+
+    return { validationToken: id.toString() };
   } catch (e) {
     console.log(e);
     throw new Error(e.message);
@@ -192,6 +197,7 @@ const validateCode = async (
       validationToken,
     });
 
+    
     if (!validate) {
       return { validate: false };
     }
@@ -210,18 +216,7 @@ const changePassword = async (
   try {
     let name = xss(args.input.name),
       email = xss(args.input.email),
-      password = xss(args.input.password),
-      validationToken = xss(args.input.validationToken);
-
-    const validate = await db.validateSchema.findOne({
-      email,
-      name,
-      validationToken,
-    });
-
-    if (!validate) {
-      throw new Error("Something want wrong");
-    }
+      password = xss(args.input.password);
 
     const salt = genSaltSync(config.saltRounds);
 
@@ -252,15 +247,15 @@ const changePassword = async (
 
     await db.validateSchema.deleteOne({ email, name });
 
-    emailer({
-      from: "noreply@info.grocery.com.ng",
-      to: email,
-      subject: "Your password was changed",
-      text: null,
-      html: passwordChangeMail({ name, email }),
-    });
+    // await emailer({
+    //   from: '"Grocery Team" noreply@grocery.com',
+    //   to: email,
+    //   subject: "Your password was changed",
+    //   text: null,
+    //   html: passwordChangeMail({ name, email }),
+    // });
 
-    return merge({ __typename: "User", newUser });
+    return merge({ __typename: "User" }, newUser) as any;
   } catch (e) {
     console.log(e);
     throw new Error(e.message);
@@ -337,11 +332,11 @@ const updatePassword = authenticated(
       (req.session as any).grocery = token;
 
       emailer({
-        from: "noreply@info.grocery.com.ng",
+        from: '"Grocery Team" noreply@grocery.com',
         to: email,
         subject: "	Your password was changed",
         text: null,
-        html: passwordChangeMail({ name, email }),
+        html: passwordChangeMail({ name: user.name, email }),
       });
 
       return merge({ __typename: "User" }, user) as any;

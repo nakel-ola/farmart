@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef,useState } from "react";
 import { IoClose, IoSearch } from "react-icons/io5";
 import clsx from 'clsx'
 import NumberFormat from "react-number-format";
@@ -38,11 +38,15 @@ function InputField(props: InputFieldProps, ref?: any) {
     ...other
   } = props;
 
+  const [focus, setFocus] = useState<boolean>(false);
+
+
   return (
     <div
       className={clsx(
-        "w-full rounded-lg flex items-center justify-center p-[5px] mt-[8px] mr-[8px] transition-all duration-300 ease hover:shadow-sm bg-slate-100 dark:bg-neutral-800",
+        "w-full rounded-lg flex items-center justify-center p-[5px] mt-[8px] mr-[8px] transition-all duration-300 ease hover:shadow-sm bg-slate-100 dark:bg-neutral-800 ring-2 ring-offset-2",
         error ? "ring-red-500" : "",
+        focus ? "ring-primary/30 ring-offset-primary/80" : "ring-transparent ring-offset-transparent",
         className
       )}
     >
@@ -68,6 +72,8 @@ function InputField(props: InputFieldProps, ref?: any) {
           type={type}
           value={value}
           readOnly={readOnly}
+          onFocus={() => setFocus(true)}
+          onBlur={() => setFocus(false)}
           {...other}
         />
 

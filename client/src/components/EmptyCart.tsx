@@ -11,7 +11,7 @@ const EmptyCart = ({ disabled = false }: { disabled?: boolean }) => {
           size={100}
           className="text-neutral-700 dark:text-neutral-400"
         />
-        <p className="text-black dark:text-white text-md my-1">Cart Empty</p>
+        <p className="text-neutral-700 dark:text-neutral-400 text-lg font-semibold my-1">Cart Empty</p>
 
         {!disabled && (
           <Button onClick={() => router.push("/")}>

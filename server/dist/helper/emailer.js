@@ -12,18 +12,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.transporter = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
-let transporter = nodemailer_1.default.createTransport({
-    host: "smtp.ethereal.email",
+const config_1 = __importDefault(require("../config"));
+exports.transporter = nodemailer_1.default.createTransport({
+    host: "smtp.gmail.com",
     port: 587,
-    secure: false,
     auth: {
-        user: "precious.mosciski@ethereal.email",
-        pass: "cJqhzufgEfXB52rUK8", // generated ethereal password
+        user: config_1.default.stmp_email,
+        pass: config_1.default.stmp_password, // generated ethereal password
     },
 });
 let emailer = ({ from, to, subject, text, html }) => __awaiter(void 0, void 0, void 0, function* () {
-    yield transporter.sendMail({
+    yield exports.transporter.sendMail({
         from,
         to,
         subject,

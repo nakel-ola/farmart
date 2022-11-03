@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { UserType } from "../../../typing";
+import { UserType, ValidateCodeType } from "../../../typing";
 import { RootState } from "../store";
 
 export let key = "wujo_login_profile";
@@ -8,7 +8,7 @@ export const win = typeof window !== "undefined" ? window : {} as Window;
 
 export type UserState  = {
   user: UserType | null;
-  validateUser: any | null;
+  validateUser: ValidateCodeType | null;
   cookies: { grocery: string } | null
 }
 

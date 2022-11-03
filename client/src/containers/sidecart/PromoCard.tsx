@@ -1,7 +1,6 @@
 /* importing required files and packages */
 import { CloseCircle } from "iconsax-react";
 import { ChangeEvent, forwardRef } from "react";
-import { IoCloseOutline, IoSearchOutline } from "react-icons/io5";
 import Button from "../../components/Button";
 
 interface Props {
@@ -28,7 +27,7 @@ const PromoCard = (props: Props, ref: any) => {
   } = props;
 
   return (
-    <div className="w-full rounded-full flex items-center justify-between my-2">
+    <div className="w-fit rounded-full flex items-center justify-between my-2">
       <div className="flex items-center bg-slate-100 dark:bg-neutral-800 py-[5px] px-[10px] rounded-full mr-2">
         <input
           className="font-[1rem] bg-transparent border-none outline-none w-[80%] text-black dark:text-white flex-1 px-[3px]"

@@ -27,8 +27,8 @@ const DeleteCard = ({ func }: { func?: any }) => {
         className="w-[300px] min-h-[150px] bg-white dark:bg-dark rounded-lg shadow grid place-items-center"
       >
         <p
-          className="text-lg text-dark dark:text-white text-center px-2"
-          dangerouslySetInnerHTML={{ __html: dialog.delete.product.message }}
+          className="text-lg font-medium text-dark dark:text-white text-center px-2"
+          dangerouslySetInnerHTML={{ __html: dialog.delete.data.message }}
         >
         </p>
 

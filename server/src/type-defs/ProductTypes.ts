@@ -28,6 +28,7 @@ const ProductTypes = gql`
     price: Float!
     stock: Int!
     rating: Int!
+    discount: String
     currency: Currency!
     createdAt: Date!
     updatedAt: Date!
@@ -115,6 +116,10 @@ const ProductTypes = gql`
   input ProductSearchInput {
     search: String!
     outOfStock: Boolean
+    category: [String]
+    price: [Int]
+    discount: [String]
+    rating: Int
     offset: Int 
     limit: Int
   }

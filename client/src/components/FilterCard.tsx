@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import setting from "../data/setting";
 import { selectCatagory } from "../redux/features/categorySlice";
 import { remove } from "../redux/features/dialogSlice";
-import { add } from "../redux/features/filterSlice";
+import { add, selectFilter } from "../redux/features/filterSlice";
 import Button from "./Button";
 import Divider from "./Divider";
 import InputField from "./InputField";
@@ -17,28 +17,34 @@ import PopupTemplate from "./PopupTemplate";
 
 const FilterCard = () => {
   const dispatch = useDispatch();
-
   const close = () => dispatch(remove({ type: "filter" }));
 
-  const [category, setCategory] = useState<string | string[]>("All");
-  const [price, setPrice] = useState([10, 100]);
-  const [rating, setRating] = useState<number>(2);
-  const [discount, setDiscount] = useState<string[]>([]);
+  let filter = useSelector(selectFilter)
+
+  const [category, setCategory] = useState<string | string[]>(filter?.category ?? "all");
+  const [price, setPrice] = useState(filter?.price ?? [1, 100]);
+  const [rating, setRating] = useState<number | null>(filter?.rating!);
+  const [discount, setDiscount] = useState<string[]>(filter?.discount ?? []);
 
   const handleSave = () => {
     dispatch(
       add({
-        category,
-        discount,
-        price,
+        category: typeof category === "string" ? null : category,
+        discount: discount.length > 0 ? discount : null,
+        price: price.length === 0 ? price : null,
         rating,
       })
     );
-    close()
+    close();
   };
 
   return (
-    <PopupTemplate title="Products Filter" onOutsideClick={close}>
+    <PopupTemplate
+      title="Products Filter"
+      onOutsideClick={close}
+      position="center"
+      className="overflow-y-scroll"
+    >
       <SortCard setActive={setCategory} active={category} />
       <Divider />
 
@@ -68,7 +74,11 @@ const FilterCard = () => {
         >
           Cancel
         </Button>
-        <Button onClick={handleSave} type="submit" className="bg-primary text-white">
+        <Button
+          onClick={handleSave}
+          type="submit"
+          className="bg-primary text-white"
+        >
           Save
         </Button>
       </div>
@@ -80,22 +90,29 @@ type SortType = {
   active: string | string[];
   setActive: Dispatch<SetStateAction<string | string[]>>;
 };
+
 const SortCard = ({ active, setActive }: SortType) => {
   const categories = useSelector(selectCatagory);
 
-  const sortList = [
-    { title: "All" },
-    ...categories.map((item: { name: string }) => ({ title: item.name })),
-  ];
-
   const handleClick = (value: string) => {
-    if (value === "All") {
+    value = value.toLowerCase();
+    if (value === "all") {
       setActive(value);
     } else {
       if (typeof active === "string") {
         setActive([value]);
       } else {
-        setActive([...active, value]);
+        let index = active.indexOf(value);
+
+        if (index !== -1) {
+          let newActive = [...active];
+          newActive.splice(index, 1);
+
+          if (newActive.length === 0) setActive("all");
+          else setActive(newActive);
+        } else {
+          setActive([...active, value]);
+        }
       }
     }
   };
@@ -107,15 +124,15 @@ const SortCard = ({ active, setActive }: SortType) => {
       </p>
 
       <div className="flex items-center overflow-scroll w-full scrollbar-hide pl-4">
-        {sortList.map(({ title }: any, i: number) => {
+        {categories?.map(({ name }: any, i: number) => {
           let selected =
             typeof active === "string"
-              ? active === "All" && i === 0
-              : active.find((a) => a === title);
+              ? active === "all" && i === 0
+              : active.find((a) => a === name.toLowerCase());
           return (
             <div
               key={i}
-              onClick={() => handleClick(title)}
+              onClick={() => handleClick(name)}
               className={`flex justify-center pb-[4px] px-[10px] m-[5px] items-center rounded-lg flex-1 hover:scale-110 transition-all duration-300 ease cursor-pointer ${
                 selected
                   ? "bg-primary"
@@ -124,10 +141,12 @@ const SortCard = ({ active, setActive }: SortType) => {
             >
               <p
                 className={`whitespace-nowrap text-[1rem]  ${
-                  selected ? "text-white" : "text-slate-800 dark:text-white/90"
+                  selected
+                    ? "text-white"
+                    : "text-neutral-600 dark:text-neutral-400"
                 } `}
               >
-                {title}
+                {name}
               </p>
             </div>
           );
@@ -155,7 +174,7 @@ const PriceCard = ({ setValue, value, handleChange }: PriceType) => (
       <Slider
         value={value}
         onChange={handleChange}
-        min={10}
+        min={1}
         max={100}
         style={{
           color: setting.primary,
@@ -166,9 +185,9 @@ const PriceCard = ({ setValue, value, handleChange }: PriceType) => (
 
     <div className="flex items-center justify-center">
       <div className="flex items-center justify-between w-[85%]">
-        <p className="pl-2">Min</p>
+        <p className="pl-2 text-black dark:text-white">Min</p>
 
-        <p className="pr-2">Max</p>
+        <p className="pr-2 text-black dark:text-white">Max</p>
       </div>
     </div>
 
@@ -203,8 +222,8 @@ const PriceCard = ({ setValue, value, handleChange }: PriceType) => (
 );
 
 type RatingProps = {
-  rating: number;
-  setRating: Dispatch<SetStateAction<number>>;
+  rating: number | null;
+  setRating: Dispatch<SetStateAction<number | null>>;
 };
 
 const RatingCard = ({ rating, setRating }: RatingProps) => (
@@ -228,16 +247,19 @@ const RatingCard = ({ rating, setRating }: RatingProps) => (
           {Array(5 - item)
             .fill(1)
             .map((_, i) => (
-              <Star1 key={i} />
+              <Star1 key={i} className="text-black dark:text-white" />
             ))}
-          <p className="pl-2"> & above</p>
+          <p className="pl-2 text-neutral-600 dark:text-neutral-400">
+            {" "}
+            & above
+          </p>
         </span>
 
         <div>
           {rating === i ? (
-            <IoRadioButtonOnOutline className="text-[25px]" />
+            <IoRadioButtonOnOutline className="text-[25px] text-black dark:text-white" />
           ) : (
-            <IoRadioButtonOffOutline className="text-[25px]" />
+            <IoRadioButtonOffOutline className="text-[25px] text-black dark:text-white" />
           )}
         </div>
       </div>
@@ -255,6 +277,10 @@ const DiscountCard = ({ discount, setDiscount }: DiscountProps) => {
     let index = discount.indexOf(value);
     if (index === -1) {
       setDiscount([...discount, value]);
+    } else {
+      let newDiscount = [...discount];
+      newDiscount.splice(index, 1);
+      setDiscount(newDiscount);
     }
   };
   return (
@@ -278,7 +304,9 @@ const DiscountCard = ({ discount, setDiscount }: DiscountProps) => {
             >
               <p
                 className={`whitespace-nowrap text-[1rem]  ${
-                  selected ? "text-white" : "text-slate-800 dark:text-white/90"
+                  selected
+                    ? "text-white"
+                    : "text-neutral-600 dark:text-neutral-400"
                 } `}
               >
                 {item}

@@ -14,20 +14,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const xss_1 = __importDefault(require("xss"));
+const clean_1 = __importDefault(require("../helper/clean"));
 const ImageUpload_1 = __importDefault(require("../helper/ImageUpload"));
 const authenticated_1 = __importDefault(require("../middleware/authenticated"));
 const models_1 = __importDefault(require("../models"));
 const products = (args, req) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     try {
-        let genre = (0, xss_1.default)(args.input.genre), offset = Number((0, xss_1.default)((_a = args.input.offset.toString()) !== null && _a !== void 0 ? _a : "0")), limit = Number((0, xss_1.default)((_b = args.input.limit.toString()) !== null && _b !== void 0 ? _b : "10")) + offset, outOfStock = (_c = args.input) === null || _c === void 0 ? void 0 : _c.outOfStock;
-        let data;
-        if (outOfStock && req.admin) {
-            data = yield models_1.default.productSchema.find(genre ? { stock: 0, category: genre } : { stock: 0 });
-        }
-        else {
-            data = yield models_1.default.productSchema.find(genre ? { category: genre } : {});
-        }
+        let genre = args.input.genre ? (0, xss_1.default)(args.input.genre) : null, offset = Number((0, xss_1.default)((_a = args.input.offset.toString()) !== null && _a !== void 0 ? _a : "0")), limit = Number((0, xss_1.default)((_b = args.input.limit.toString()) !== null && _b !== void 0 ? _b : "10")) + offset, outOfStock = (_c = args.input) === null || _c === void 0 ? void 0 : _c.outOfStock;
+        let filter = (0, clean_1.default)({
+            stock: outOfStock ? 0 : null,
+            category: genre !== null && genre !== void 0 ? genre : null,
+        });
+        let data = yield models_1.default.productSchema.find(filter);
         let newData = {
             genre,
             totalItems: data.length,
@@ -63,23 +62,29 @@ const productById = (args) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 const productSearch = (args) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d, _e, _f;
+    var _d, _e, _f, _g;
     try {
-        let search = (0, xss_1.default)(args.input.search), offset = Number((0, xss_1.default)((_d = args.input.offset.toString()) !== null && _d !== void 0 ? _d : "0")), limit = Number((0, xss_1.default)((_e = args.input.limit.toString()) !== null && _e !== void 0 ? _e : "10")) + offset, outOfStock = (_f = args.input) === null || _f === void 0 ? void 0 : _f.outOfStock;
-        const data = (yield models_1.default.productSchema.find(outOfStock
-            ? {
-                stock: 0,
-                $or: [
-                    { title: new RegExp(search, "i") },
-                    { category: new RegExp(search, "i") },
-                ],
-            }
-            : {
-                $or: [
-                    { title: new RegExp(search, "i") },
-                    { category: new RegExp(search, "i") },
-                ],
-            }));
+        let search = (0, xss_1.default)(args.input.search), price = args.input.price
+            ? (_d = args.input.price) === null || _d === void 0 ? void 0 : _d.map((value) => Number((0, xss_1.default)(value.toString())))
+            : [0, Infinity], discount = args.input.discount
+            ? args.input.discount.map((value) => (0, xss_1.default)(value))
+            : null, category = args.input.category
+            ? args.input.category.map((value) => (0, xss_1.default)(value))
+            : null, rating = args.input.rating
+            ? Number((0, xss_1.default)(args.input.rating.toString()))
+            : 0, offset = Number((0, xss_1.default)((_e = args.input.offset.toString()) !== null && _e !== void 0 ? _e : "0")), limit = Number((0, xss_1.default)((_f = args.input.limit.toString()) !== null && _f !== void 0 ? _f : "10")) + offset, outOfStock = (_g = args.input) === null || _g === void 0 ? void 0 : _g.outOfStock;
+        let filter = (0, clean_1.default)({
+            price: { $lte: price[1], $gte: price[0] },
+            rating: { $gte: rating },
+            discount: discount ? { $in: discount } : null,
+            category: category ? { $in: category } : null,
+            stock: outOfStock ? 0 : null,
+            $or: [
+                { title: new RegExp(search, "i") },
+                { category: new RegExp(search, "i") },
+            ],
+        });
+        const data = (yield models_1.default.productSchema.find(filter));
         let newData = {
             search,
             totalItems: data.length,
@@ -177,14 +182,14 @@ const deleteReview = (0, authenticated_1.default)((args, req) => __awaiter(void 
     }
 }));
 const reviews = (0, authenticated_1.default)((args) => __awaiter(void 0, void 0, void 0, function* () {
-    var _g;
+    var _h;
     try {
         let productId = (0, xss_1.default)(args.productId);
         if (!mongoose_1.default.Types.ObjectId.isValid(productId)) {
             throw new Error("Porduct ID must be a valid");
         }
         const data = (yield models_1.default.productSchema.findOne({ _id: productId }, { reviews: 1 }));
-        return (_g = data.reviews) !== null && _g !== void 0 ? _g : [];
+        return (_h = data.reviews) !== null && _h !== void 0 ? _h : [];
     }
     catch (err) {
         console.log(err);
@@ -229,12 +234,12 @@ const createProduct = (0, authenticated_1.default)((args, req) => __awaiter(void
     }
 }));
 const modifyProduct = (0, authenticated_1.default)((args, req) => __awaiter(void 0, void 0, void 0, function* () {
-    var _h, _j;
+    var _j, _k;
     try {
         let admin = req.admin, input = args.input, id = (0, xss_1.default)(input.id), title = (0, xss_1.default)(input.title), slug = (0, xss_1.default)(input.slug), category = (0, xss_1.default)(input.category), description = (0, xss_1.default)(input.description), image = (input === null || input === void 0 ? void 0 : input.image)
             ? {
-                name: (0, xss_1.default)((_h = input === null || input === void 0 ? void 0 : input.image) === null || _h === void 0 ? void 0 : _h.name),
-                url: (0, xss_1.default)((_j = input === null || input === void 0 ? void 0 : input.image) === null || _j === void 0 ? void 0 : _j.url),
+                name: (0, xss_1.default)((_j = input === null || input === void 0 ? void 0 : input.image) === null || _j === void 0 ? void 0 : _j.name),
+                url: (0, xss_1.default)((_k = input === null || input === void 0 ? void 0 : input.image) === null || _k === void 0 ? void 0 : _k.url),
             }
             : null, imageUpload = input.imageUpload, price = Number((0, xss_1.default)(`${input.price}`)), stock = Number((0, xss_1.default)(`${input.stock}`)), currency = {
             name: (0, xss_1.default)(input.currency.name),

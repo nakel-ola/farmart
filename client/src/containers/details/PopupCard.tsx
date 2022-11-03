@@ -1,6 +1,6 @@
 import React from 'react'
 import { IoClose } from 'react-icons/io5';
-import Items from "../../database/address.json";
+import Items from "../../data/address.json";
 
 
 interface Props {

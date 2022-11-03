@@ -12,8 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getListFiles = exports.bucket = void 0;
+exports.deleteFile = exports.ImageUplaod = exports.getListFiles = exports.bucket = void 0;
 const storage_1 = require("@google-cloud/storage");
+const util_1 = require("util");
 const config_1 = __importDefault(require("../config"));
 const storage = new storage_1.Storage({
     projectId: config_1.default.firebase_project_id,
@@ -25,7 +26,7 @@ const storage = new storage_1.Storage({
         token_url: config_1.default.firebase_token_url,
     },
 });
-exports.bucket = storage.bucket("gs://farmart-8bdb8.appspot.com/");
+exports.bucket = storage.bucket(config_1.default.firebase_bucket_name);
 const getListFiles = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const [files] = yield exports.bucket.getFiles();
@@ -37,13 +38,34 @@ const getListFiles = () => __awaiter(void 0, void 0, void 0, function* () {
             });
         });
         console.log(fileInfos);
-        // res.status(200).send(fileInfos);
+        return fileInfos;
     }
     catch (err) {
         console.log(err);
-        // res.status(500).send({
-        //   message: "Unable to read list of files!",
-        // });
     }
 });
 exports.getListFiles = getListFiles;
+const ImageUplaod = ({ filename, createReadStream, }) => new Promise((resolve, reject) => {
+    const blob = exports.bucket.file(filename);
+    let stream = createReadStream();
+    stream
+        .pipe(exports.bucket.file(filename).createWriteStream({
+        resumable: false,
+        gzip: true,
+    }))
+        .on("error", (err) => reject(err)) // reject on error
+        .on("finish", () => __awaiter(void 0, void 0, void 0, function* () {
+        const publicUrl = (0, util_1.format)(`https://storage.googleapis.com/${exports.bucket.name}/${blob.name}`);
+        try {
+            yield exports.bucket.file(filename).makePublic();
+        }
+        catch (_a) {
+            console.log(`Uploaded the file successfully: ${filename}, but public access is denied!`);
+        }
+        console.log(publicUrl);
+        resolve({ url: publicUrl, name: filename });
+    }));
+});
+exports.ImageUplaod = ImageUplaod;
+const deleteFile = ({ fileName }) => __awaiter(void 0, void 0, void 0, function* () { return yield exports.bucket.file(fileName).delete(); });
+exports.deleteFile = deleteFile;

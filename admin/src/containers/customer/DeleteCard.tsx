@@ -30,7 +30,7 @@ const DeleteCard = ({ func }: {func: any}) => {
 
   const handleDelete = async () => {
     await deleteCoupon({
-      variables: { id: deleteState.couponDelete.product?.id },
+      variables: { id: deleteState.couponDelete.data?.id },
       onCompleted: () => {
         func?.()
         dispatch(remove({ type: "couponDelete"}))
@@ -46,7 +46,7 @@ const DeleteCard = ({ func }: {func: any}) => {
         ref={ref}
         className="w-[300px] h-[150px] bg-white dark:bg-dark rounded-xl shadow grid place-items-center"
       >
-        <p className="text-lg text-dark dark:text-white text-center mx-2">Are you sure you want to delete coupon with code: <strong className="text-red-600">{deleteState.couponDelete.product.coupon}</strong> ?</p>
+        <p className="text-lg text-dark dark:text-white text-center mx-2">Are you sure you want to delete coupon with code: <strong className="text-red-600">{deleteState.couponDelete.data.coupon}</strong> ?</p>
 
         <div className="flex items-center justify-center">
           <Button

@@ -16,7 +16,6 @@ const validateSchema = new Schema(
     },
     expiresIn: {
       type: Date,
-      default: Date.now,
       required: true,
       expires: 300
     },

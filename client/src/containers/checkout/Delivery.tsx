@@ -24,7 +24,7 @@ const Delivery = ({
     <Fragment>
       <CardTemplate className="mb-4" title="Select a delivery method">
         <div
-          className="flex w-[90%] ml-[25px] items-start my-2 cursor-pointer"
+          className="flex w-[90%] ml-[25px] items-start my-2 cursor-pointer py-2"
           onClick={() => {
             setPickup("");
             setDeliveryMethod("Door Delivery");
@@ -58,7 +58,7 @@ const Delivery = ({
         <div
           className="flex w-[90%] items-start my-2 ml-[25px] cursor-pointer"
           onClick={() =>
-            dispatch(add({ open: true, type: "delivery", product: null }))
+            dispatch(add({ open: true, type: "delivery", data: null }))
           }
         >
           <div className="flex justify-center items-center mt-[3px]">

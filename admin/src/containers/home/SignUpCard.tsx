@@ -1,11 +1,31 @@
+import { gql, useMutation } from "@apollo/client";
 import { Eye, EyeSlash } from "iconsax-react";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, FormEvent, ReactNode, useState } from "react";
+import { toast } from "react-hot-toast";
+import { useDispatch } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
-import InputDropdown from "../../components/InputDropdown";
 import { Footer } from "../../pages";
+import { login } from "../../redux/features/userSlice";
 import TitleCard from "./TitleCard";
+
+
+const RegisterMutation = gql`
+  mutation EmployeeRegister($input: EmployeeRegisterInput!) {
+    employeeRegister(input: $input) {
+      id
+      email
+      name
+      photoUrl
+      gender
+      birthday
+      phoneNumber
+      createdAt
+      updatedAt
+    }
+  }
+`;
 
 var emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -15,7 +35,6 @@ const validate = (data: FormType): boolean => {
   if (
     name.length >= 5 &&
     email.match(emailRegex) &&
-    (gender === "Male" || gender === "Female") &&
     phoneNumber.length >= 10 &&
     password.length === 8
   ) {
@@ -33,11 +52,13 @@ type FormType = {
   password: string;
 };
 
-const SignInCard = (props: { setLoading(value: boolean): void }) => {
+const SignUpCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
   const [toggle, setToggle] = useState(false);
 
-  const [form, setForm] = useState<FormType>({
+  const [form, setForm] = useState<Required<FormType>>({
     firstName: "",
     lastName: "",
     email: "",
@@ -45,12 +66,45 @@ const SignInCard = (props: { setLoading(value: boolean): void }) => {
     phoneNumber: "",
     password: "",
   });
+
+
+  const [register] = useMutation(RegisterMutation);
+
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
     setForm({ ...form, [target.name]: target.value });
   };
-  const handleSubmit = (e: FormEvent) => {
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    let loginToast = toast.loading("Loading......");
+
+    setLoading(true);
+
+    const newForm = {
+      name: form.firstName + " " + form.lastName,
+      email: form.email,
+      phoneNumber: form.phoneNumber,
+      password: form.password,
+      inviteCode: router.query.code
+    };
+
+    await register({
+      variables: { input: newForm },
+      onCompleted: (data) => {
+        dispatch(login(data.employeeRegister));
+        toast.success("Account created successfully", { id: loginToast });
+        router.replace("/account");
+      },
+      onError: (error: any) => {
+        setLoading(false);
+        toast.error("Something went wrong", { id: loginToast });
+        console.table(error);
+      },
+    });
+    setLoading(false);
   };
 
   return (
@@ -158,4 +212,4 @@ export const Wrapper = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export default SignInCard;
+export default SignUpCard;

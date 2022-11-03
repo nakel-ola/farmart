@@ -17,4 +17,7 @@ module.exports = {
     firebase_client_email: process.env.FIREBASE_CLIENT_EMAIL,
     firebase_client_id: process.env.FIREBASE_CLIENT_ID,
     firebase_token_url: process.env.FIREBASE_TOKEN_URL,
+    firebase_bucket_name: process.env.FIREBASE_BUCKET_NAME,
+    stmp_email: process.env.STMP_EMAIL,
+    stmp_password: process.env.STMP_PASSWORD
 };

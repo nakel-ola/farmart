@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import xss from "xss";
 import { nanoidV2 } from "../helper";
+import generateCoupon from "../helper/generateCoupon";
 import authenticated from "../middleware/authenticated";
 import db from "../models";
 import type { ReqBody } from "../typing";
@@ -65,7 +66,7 @@ const createCoupon = authenticated(
         description = xss(args.input.description),
         userId = xss(args.input.userId),
         expiresIn = args.input.expiresIn,
-        code = nanoidV2(alphabet, 9);
+        code = generateCoupon(9);
 
       if (!admin) {
         throw new Error("You don't have permission to create coupon");

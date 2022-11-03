@@ -9,7 +9,7 @@ function Footer({ id, ...other }: Product) {
 
   const basket = useSelector(selectBasket);
 
-  const product = basket.find((b: any) => b.id === id);
+  const product = basket.find((b: any) => b.id === id)!;
 
   // --- Adding Product To basket --- //
   const addToCart = () => {

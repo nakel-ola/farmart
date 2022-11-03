@@ -111,7 +111,6 @@ const ProductCards = ({ canEdit }: { canEdit: boolean }) => {
     fetchPolicy: "network-only",
     onCompleted: (data: GraphQLProductResponse) => {
       setData(data);
-      console.log(data);
     },
     onError: (data) => console.table(data),
   });
@@ -197,7 +196,7 @@ const ProductCards = ({ canEdit }: { canEdit: boolean }) => {
             <Button
               className="text-green-600 bg-green-600/10"
               onClick={() =>
-                dispatch(add({ open: true, product: null, type: "edit" }))
+                dispatch(add({ open: true, data: null, type: "edit" }))
               }
             >
               Create product

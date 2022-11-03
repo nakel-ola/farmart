@@ -16,12 +16,21 @@ const BannersTypes = gql`
     link: String
   }
 
+  input EditBannerInput {
+    id: String!
+    title: String!
+    description: String!
+    link: String
+    image: Upload
+  }
+
   extend type Query {
     banners: [Banners!]!
   }
 
   extend type Mutation {
     createBanner(input: CreateBannerInput!): Msg!
+    editBanner(input: EditBannerInput!): Msg!
     deleteBanner(id: ID!): Msg!
   }
 `;

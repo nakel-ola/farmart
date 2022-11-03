@@ -6,11 +6,13 @@ import mongoose from "mongoose";
 import { v4 } from "uuid";
 import xss from "xss";
 import config from "../config";
+import { invitationMail } from "../data/emailData";
 import { nanoid } from "../helper";
+import clean from "../helper/clean";
+import emailer from "../helper/emailer";
 import ImageUplaod from "../helper/ImageUpload";
 import authenticated from "../middleware/authenticated";
 import db from "../models";
-import nodemainer from "nodemailer";
 import type { ReqBody } from "../typing";
 import type { ErrorMsg, Msg } from "../typing/custom";
 import type {
@@ -27,64 +29,94 @@ import type {
   ValidationTokenType,
 } from "../typing/employee";
 
-const employeeRegister = authenticated(
-  async (args, req: ReqBody): Promise<EmployeeTypes> => {
-    try {
-      let name = xss(args.input.name),
-        email = xss(args.input.email),
-        gender = xss(args.input.gender),
-        phoneNumber = xss(args.input.phoneNumber),
-        level = xss(args.input.level),
-        password = xss(args.input.password);
+const employeeRegister = async (
+  args,
+  req: ReqBody,
+  res,
+  context,
+  info
+): Promise<EmployeeTypes> => {
+  try {
+    let name = xss(args.input.name),
+      email = xss(args.input.email),
+      phoneNumber = xss(args.input.phoneNumber),
+      inviteCode = xss(args.input.inviteCode),
+      password = xss(args.input.password);
 
-      const user = await db.employeeSchema.findOne({ email }, { email: 1 });
+    const validate = await verifyInvite({ email, inviteCode });
 
-      if (user) {
-        throw new Error(`User ${user.email} already exists`);
-      }
-
-      const salt = genSaltSync(config.saltRounds),
-        hash = hashSync(password, salt);
-
-      let obj = {
-        name,
-        email,
-        phoneNumber,
-        gender,
-        level,
-        photoUrl: "",
-        birthday: "",
-        addresses: [],
-        password: hash,
-      };
-
-      const newUser = await db.employeeSchema.create(obj, {
-        birthday: 1,
-        email: 1,
-        gender: 1,
-        name: 1,
-        phoneNumber: 1,
-        photoUrl: 1,
-        level: 1,
-        createdAt: 1,
-        updatedAt: 1,
-      } as any);
-
-      const token = jwt.sign(
-        { id: (newUser as any)._id.toString(), level },
-        config.jwt_key,
-        { expiresIn: config.expiresIn }
-      );
-
-      (req.session as any).grocery_admin = token;
-
-      return merge({ __typename: "Employee" }, newUser) as any;
-    } catch (err) {
-      console.error(err);
-      throw new Error(err.message);
+    if (!validate) {
+      throw new Error("Something went wrong");
     }
+
+    const user = await db.employeeSchema.findOne({ email }, { email: 1 });
+
+    if (user) {
+      throw new Error(`User ${user.email} already exists`);
+    }
+
+    const salt = genSaltSync(config.saltRounds),
+      hash = hashSync(password, salt);
+
+    let obj = {
+      name,
+      email,
+      phoneNumber,
+      gender: null,
+      level: validate.level,
+      photoUrl: null,
+      birthday: null,
+      addresses: [],
+      password: hash,
+    };
+
+    const newUser = await db.employeeSchema.create(obj);
+
+    const token = jwt.sign(
+      { id: (newUser as any)._id.toString(), level: validate.level },
+      config.jwt_key,
+      { expiresIn: config.expiresIn }
+    );
+
+    (req.session as any).grocery_admin = token;
+
+    await db.inviteSchema.updateOne(
+      { _id: validate._id, email, inviteCode },
+      { status: "completed" }
+    );
+
+    // await deleteEmployeeInvite(
+    //   { id: validate._id.toString() },
+    //   req,
+    //   res,
+    //   context,
+    //   info
+    // );
+
+    // delete newUser["password"];
+
+    let data = {
+      __typename: "Employee",
+      id: newUser._id.toString(),
+      email: newUser.email,
+      name: newUser.name,
+      gender: newUser.gender,
+      birthday: newUser.birthday,
+      phoneNumber: newUser.phoneNumber,
+      photoUrl: newUser.photoUrl,
+      createdAt: (newUser as any).createdAt,
+      updatedAt: (newUser as any).updatedAt,
+      level: newUser.level,
+    };
+
+    console.log(data);
+
+    return data as any;
+  } catch (err) {
+    console.error(err);
+    throw new Error(err.message);
   }
-);
+};
 
 const employeeLogin = async (
   args: LoginArgs,
@@ -472,7 +504,23 @@ const createEmployeeInvite = authenticated(
         throw new Error("You don't have permission to invite an employee");
       }
 
+      let link = `http://localhost:3001/?type=sign&code=${inviteCode}`;
+
       await db.inviteSchema.create({ email, level, status, inviteCode });
+
+      //  http://localhost:3001/?type=sign&code=ZSX8E
+
+      // invitationMail
+
+      console.log(link);
+
+      // await emailer({
+      //   from: '"Grocery Team" noreply@grocery.com',
+      //   to: email,
+      //   subject: "Your Grocery app verification code",
+      //   text: null,
+      //   html: invitationMail({ link  }),
+      // });
 
       return { msg: "Invite sent successfully" };
     } catch (err) {
@@ -501,6 +549,26 @@ const deleteEmployeeInvite = authenticated(
   }
 );
 
+const verifyInvite = async ({
+  email,
+  inviteCode,
+}: {
+  email: string;
+  inviteCode: string;
+}) => {
+  try {
+    const data = await db.inviteSchema.findOne({ email, inviteCode });
+
+    if (!data) {
+      return false;
+    }
+
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw new Error(err.message);
+  }
+};
 const employeeInvites = authenticated(async (_, req: ReqBody) => {
   try {
     let admin = req.admin;
@@ -508,7 +576,6 @@ const employeeInvites = authenticated(async (_, req: ReqBody) => {
       throw new Error("You have permission");
     }
     const data = await db.inviteSchema.find({});
-
     return data.map((value) => merge({ __typename: "EmployeeInvite" }, value));
   } catch (err) {
     console.log(err);

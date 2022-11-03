@@ -87,7 +87,7 @@ const Product = () => {
 
   const handleDelete = async () => {
     await deleteProduct({
-      variables: { id: dialog.delete.product?.id },
+      variables: { id: dialog.delete.data?.id },
       onCompleted: () => router.back(),
     });
   };
@@ -123,7 +123,7 @@ const Product = () => {
                         dispatch(
                           add({
                             open: true,
-                            product: {
+                            data: {
                               id: data.id,
                               message: "Are u sure you want to delete ?",
                             },

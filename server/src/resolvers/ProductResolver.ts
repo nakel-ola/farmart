@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import xss from "xss";
+import clean from "../helper/clean";
 import ImageUplaod from "../helper/ImageUpload";
 import authenticated from "../middleware/authenticated";
 import db from "../models";
@@ -24,19 +25,16 @@ const products = async (
   req: ReqBody
 ): Promise<ProductDataType> => {
   try {
-    let genre = xss(args.input.genre),
+    let genre = args.input.genre ? xss(args.input.genre) : null,
       offset = Number(xss(args.input.offset.toString() ?? "0")),
       limit = Number(xss(args.input.limit.toString() ?? "10")) + offset,
       outOfStock = args.input?.outOfStock;
-    let data: ProductType[];
 
-    if (outOfStock && req.admin) {
-      data = await db.productSchema.find(
-        genre ? { stock: 0, category: genre } : { stock: 0 }
-      );
-    } else {
-      data = await db.productSchema.find(genre ? { category: genre } : {});
-    }
+    let filter = clean({
+      stock: outOfStock ? 0 : null,
+      category: genre ?? null,
+    });
+    let data: ProductType[] = await db.productSchema.find(filter);
 
     let newData = {
       genre,
@@ -77,26 +75,35 @@ const productSearch = async (
 ): Promise<ProductSearchType> => {
   try {
     let search = xss(args.input.search),
+      price = args.input.price
+        ? args.input.price?.map((value) => Number(xss(value.toString())))
+        : [0, Infinity],
+      discount = args.input.discount
+        ? args.input.discount.map((value) => xss(value))
+        : null,
+      category = args.input.category
+        ? args.input.category.map((value) => xss(value))
+        : null,
+      rating = args.input.rating
+        ? Number(xss(args.input.rating.toString()))
+        : 0,
       offset = Number(xss(args.input.offset.toString() ?? "0")),
       limit = Number(xss(args.input.limit.toString() ?? "10")) + offset,
       outOfStock = args.input?.outOfStock;
 
-    const data = (await db.productSchema.find(
-      outOfStock
-        ? {
-            stock: 0,
-            $or: [
-              { title: new RegExp(search, "i") },
-              { category: new RegExp(search, "i") },
-            ],
-          }
-        : {
-            $or: [
-              { title: new RegExp(search, "i") },
-              { category: new RegExp(search, "i") },
-            ],
-          }
-    )) as ProductType[];
+    let filter = clean({
+      price: { $lte: price[1], $gte: price[0] },
+      rating: { $gte: rating },
+      discount: discount ? { $in: discount } : null,
+      category: category ? { $in: category } : null,
+      stock: outOfStock ? 0 : null,
+      $or: [
+        { title: new RegExp(search, "i") },
+        { category: new RegExp(search, "i") },
+      ],
+    });
+
+    const data = (await db.productSchema.find(filter)) as ProductType[];
 
     let newData = {
       search,

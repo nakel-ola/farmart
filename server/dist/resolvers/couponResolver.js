@@ -14,7 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const xss_1 = __importDefault(require("xss"));
-const helper_1 = require("../helper");
+require("../helper");
+const generateCoupon_1 = __importDefault(require("../helper/generateCoupon"));
 const authenticated_1 = __importDefault(require("../middleware/authenticated"));
 const models_1 = __importDefault(require("../models"));
 let alphabet = "useandom26T198340PX75pxJACKVERYMINDBUSHWOLFGQZbfghjklqvwyzrict";
@@ -49,7 +50,7 @@ const coupons = (0, authenticated_1.default)((args, req) => __awaiter(void 0, vo
 }));
 const createCoupon = (0, authenticated_1.default)((args, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let admin = req.admin, discount = (0, xss_1.default)(args.input.discount.toString()), email = (0, xss_1.default)(args.input.email), description = (0, xss_1.default)(args.input.description), userId = (0, xss_1.default)(args.input.userId), expiresIn = args.input.expiresIn, code = (0, helper_1.nanoidV2)(alphabet, 9);
+        let admin = req.admin, discount = (0, xss_1.default)(args.input.discount.toString()), email = (0, xss_1.default)(args.input.email), description = (0, xss_1.default)(args.input.description), userId = (0, xss_1.default)(args.input.userId), expiresIn = args.input.expiresIn, code = (0, generateCoupon_1.default)(9);
         if (!admin) {
             throw new Error("You don't have permission to create coupon");
         }

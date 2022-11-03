@@ -9,7 +9,7 @@ import numberFormat from "../../helper/numberFormat";
 import {
   AddToFavorites,
   FavoriteQuery,
-  RemoveFromFavorites
+  RemoveFromFavorites,
 } from "../home/Card";
 
 type Props = {
@@ -18,16 +18,22 @@ type Props = {
   category: string;
   rating: number;
   data: boolean;
-  currency: Currency
+  currency: Currency;
 };
 
-const TitleCard = ({ title, category, price, rating, data,currency }: Props) => {
+const TitleCard = ({
+  title,
+  category,
+  price,
+  rating,
+  data,
+  currency,
+}: Props) => {
   const router = useRouter();
 
   // --- Capitalising first letter --- //
   const capitalizeFirstLetter = (string: string) =>
     string?.charAt(0).toUpperCase() + string?.slice(1);
-  const currencyConvert = (num: number) => `${Math.floor(Number(num * 210))}`;
 
   const { user } = useSelector((store: any) => store.user);
 
@@ -64,20 +70,26 @@ const TitleCard = ({ title, category, price, rating, data,currency }: Props) => 
 
   return (
     <div className="w-[95%] md:w-[80%] mt-[10px] bg-white dark:bg-dark dark:shadow-black/30 pb-[12px] p-[5px] pt-[12px] shadow-sm rounded-lg pl-[23px]">
-      <p className="text-[1.2rem] text-black font-[600] dark:text-white">
-        {" "}
-        {title}
-      </p>
-      <div className="flex items-center pt-[5px] pr-[5px]">
-        <p className="text-[0.8rem] text-[#212121] dark:text-white">
+      <div className="flex items-center justify-between">
+        <p className="text-[1.2rem] text-black font-[600] dark:text-white">
+          {" "}
+          {title}
+        </p>
+
+        <div className="w-[40px] h-[25px] rounded-lg mx-[5px] bg-red-600/10 flex items-center justify-center ">
+          <p className="text-red-600 font-semibold text-base"> -20%</p>
+        </div>
+      </div>
+      <div className="flex items-center py-2 pr-[5px]">
+        <p className="text-base text-dark dark:text-white">
           Category:{" "}
         </p>
-        <p className="text-[0.8rem] text-blue-500 pl-[5px]">
+        <p className="text-base text-blue-600 pl-2">
           {capitalizeFirstLetter(category)}
         </p>
       </div>
 
-      <p className="text-[1.2rem] text-black dark:text-white font-[600]">
+      <p className="text-base text-black dark:text-white font-[600]">
         {currency.symbol} {price.toFixed(2)}
       </p>
 
@@ -106,7 +118,8 @@ const TitleCard = ({ title, category, price, rating, data,currency }: Props) => 
         </span>
 
         {user && (
-          <div
+          <button
+            type="button"
             className="flex items-center pt-[5px] pr-[5px]"
             onClick={handleFavorite}
           >
@@ -115,7 +128,7 @@ const TitleCard = ({ title, category, price, rating, data,currency }: Props) => 
               variant={selected ? "Bold" : "Outline"}
               className="text-[#212121] dark:text-neutral-300 text-[25px]"
             />
-          </div>
+          </button>
         )}
       </div>
     </div>

@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { SmsStar, Trash } from "iconsax-react";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +9,7 @@ import TableContent from "../../components/TableContent";
 import TableHeader from "../../components/TableHeader";
 import TableList from "../../components/TableList";
 import TableRow from "../../components/TableRow";
+import { statusColor } from "../../helper/statusColor";
 import { add } from "../../redux/features/dialogSlice";
 import { selectUser } from "../../redux/features/userSlice";
 
@@ -20,7 +22,7 @@ const InviteCard = ({ data, func }: { data: InviteType[]; func: any }) => {
     dispatch(
       add({
         type: "delete",
-        product: {
+        data: {
           message: "Are you sure you want to delete the invite ?",
           id,
         },
@@ -44,7 +46,7 @@ const InviteCard = ({ data, func }: { data: InviteType[]; func: any }) => {
                   dispatch(
                     add({
                       open: true,
-                      product: null,
+                      data: null,
                       type: "invite",
                     })
                   )
@@ -72,7 +74,7 @@ const InviteCard = ({ data, func }: { data: InviteType[]; func: any }) => {
                   </p>
                 </TableContent>
                 <TableContent>
-                  <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap ml-2">
+                  <p className={clsx("text-[0.9rem] font-medium dark:text-neutral-300 whitespace-nowrap ml-2", statusColor(item.status))}>
                     {item.status}
                   </p>
                 </TableContent>

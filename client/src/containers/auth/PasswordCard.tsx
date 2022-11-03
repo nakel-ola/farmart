@@ -26,6 +26,19 @@ const PasswordMutation = gql`
     }
   }
 `;
+
+
+type FormType = {
+  password: string;
+  confirmPassword: string
+}
+const validateForm = (form: FormType): boolean => {
+  const { confirmPassword,password } = form;
+  if(password.length >= 8 && confirmPassword.length >= 8) {
+    return false
+  }
+  return true
+}
 // test21@gmail.com
 // password21
 
@@ -42,26 +55,14 @@ const PasswordCard = (props: any) => {
 
   const router = useRouter();
 
-  const [changePassword] = useMutation(PasswordMutation, {
-    onCompleted: (data) => {
-      dispatch(login({ token: data.changePassword.token }));
-      router.replace("/profile");
-    },
-    onError: (error: any) => {
-      setLoading(false);
-      console.error(error);
-      error.networkError.result.errors.map((error: any) =>
-        toast.error(error.message)
-      );
-    },
-  });
+  const [changePassword] = useMutation(PasswordMutation);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     let loginToast = toast.loading("Loading......");
     setLoading(true);
 
-    changePassword({
+    await changePassword({
       variables: {
         input: {
           password: form.confirmPassword,
@@ -70,13 +71,13 @@ const PasswordCard = (props: any) => {
       },
       onCompleted: (data) => {
         dispatch(login(data.changePassword));
-        toast.success("Login Successfully", { id: loginToast });
+        toast.success("Successfully changed password", { id: loginToast });
         router.replace("/profile");
       },
       onError: (error: any) => {
         setLoading(false);
         toast.error("Something went wrong", { id: loginToast });
-        console.error(error);
+        console.table(error);
       },
     });
     setLoading(false);
@@ -98,7 +99,6 @@ const PasswordCard = (props: any) => {
           title="Password"
           id="password"
           name="password"
-          className="border-[1.5px] border-transparent hover:border-primary"
           type={toggle ? "text" : "password"}
           value={form.password}
           onChange={handleChange}
@@ -131,7 +131,6 @@ const PasswordCard = (props: any) => {
           title="Confirm Password"
           id="confirmPassword"
           name="confirmPassword"
-          className="border-[1.5px] border-transparent hover:border-primary"
           type={toggle ? "text" : "password"}
           value={form.confirmPassword}
           onChange={handleChange}
@@ -159,7 +158,7 @@ const PasswordCard = (props: any) => {
             </div>
           }
         />
-        <Button type="submit" className="my-5" disabled={validate(form)}>
+        <Button type="submit" className="my-5" disabled={validateForm(form)}>
           Confirm
         </Button>
       </form>

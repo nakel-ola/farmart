@@ -1,6 +1,7 @@
 /* importing required files and packages */
+import { SearchNormal1 } from "iconsax-react";
 import { forwardRef } from "react";
-import { IoCloseOutline, IoSearchOutline } from "react-icons/io5";
+import { IoCloseOutline } from "react-icons/io5";
 
 const InputField = (props: any, ref: any) => {
   // --- Destructing pros --- //
@@ -21,7 +22,7 @@ const InputField = (props: any, ref: any) => {
       <div className="flex items-center justify-center p-[5px]">
         {!value &&
           (startAction ?? (
-            <IoSearchOutline className="text-[20px] text-slate-500 dark:text-slate-100/50" />
+            <SearchNormal1 size={20} className="text-slate-500 dark:text-slate-100/50" />
           ))}
       </div>
 
@@ -42,9 +43,9 @@ const InputField = (props: any, ref: any) => {
         />
       )}
 
-      <div className="flex items-center justify-center p-[5px]">
+      <button type="button" className="flex items-center justify-center p-[5px]">
         {endAction && endAction}
-      </div>
+      </button>
     </div>
   );
 };

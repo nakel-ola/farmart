@@ -1,12 +1,12 @@
-import { from, gql, useMutation } from "@apollo/client";
-import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { gql, useMutation } from "@apollo/client";
+import React, { ChangeEvent, FormEvent, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import PopupTemplate from "../../components/PopupTemplate";
-import useOnClickOutside from "../../hooks/useOnClickOutside";
-import { remove } from "../../redux/features/dialogSlice";
+import { remove, selectDialog } from "../../redux/features/dialogSlice";
 import ImageCard from "./ImageCard";
+
 const CreateBanner = gql`
   mutation CreateBanner($input: CreateBannerInput!) {
     createBanner(input: $input) {
@@ -14,6 +14,23 @@ const CreateBanner = gql`
     }
   }
 `;
+const EditBanner = gql`
+  mutation EditBanner($input: EditBannerInput!) {
+    editBanner(input: $input) {
+      msg
+    }
+  }
+`;
+
+const formatForm = (form: any): FormType => {
+  const { id, title, description, image, link } = form;
+  return {
+    title,
+    description,
+    image,
+    link,
+  };
+};
 
 type FormType = {
   image: File | null;
@@ -23,38 +40,67 @@ type FormType = {
 };
 
 const BannerCard = ({ func }: { func: any }) => {
-  const ref = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
+  const dialog = useSelector(selectDialog);
 
-  const [form, setForm] = useState<FormType>({
-    image: null,
-    title: "",
-    description: "",
-    link: "",
-  });
+  let data = dialog.banner?.data;
+
+  const [form, setForm] = useState<FormType>(
+    data
+      ? formatForm(data)
+      : {
+          image: null,
+          title: "",
+          description: "",
+          link: "",
+        }
+  );
 
   const [createBanner] = useMutation(CreateBanner);
+  const [editBanner] = useMutation(EditBanner);
 
   let close = () => dispatch(remove({ type: "banner" }));
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await createBanner({
-      variables: {
-        input: {
-          image: form.image,
-          title: form.title,
-          description: form.description,
-          link: form.link,
+    const onCompleted = (data: any) => {
+      console.log(data);
+      func?.();
+      dispatch(remove({ type: "banner" }));
+    };
+
+    const onError = (err: any) => {
+      console.table(err)
+    }
+    if (data) {
+      await editBanner({
+        variables: {
+          input: {
+            id: data.id,
+            image: form.image,
+            title: form.title,
+            description: form.description,
+            link: form.link,
+          },
         },
-      },
-      onCompleted: (data) => {
-        console.log(data);
-        func?.();
-        dispatch(remove({ type: "banner" }));
-      },
-    });
+        onCompleted,
+        onError
+      });
+    } else {
+      await createBanner({
+        variables: {
+          input: {
+            image: form.image,
+            title: form.title,
+            description: form.description,
+            link: form.link,
+          },
+        },
+        onCompleted,
+        onError
+      });
+    }
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -62,7 +108,11 @@ const BannerCard = ({ func }: { func: any }) => {
   };
 
   return (
-    <PopupTemplate title="Create banner" onOutsideClick={close} showEditButton={false}>
+    <PopupTemplate
+      title={data ? "Edit banner" : "Create banner"}
+      onOutsideClick={close}
+      showEditButton={false}
+    >
       <form onSubmit={handleSubmit} className="w-full pb-[10px]">
         <InputCard
           title="Title"
@@ -81,7 +131,7 @@ const BannerCard = ({ func }: { func: any }) => {
 
         <ImageCard
           title="Image"
-          image={form.image}
+          image={data ? ({ name: data.image } as any) : form.image}
           onChange={(file: File) => setForm({ ...form, image: file })}
         />
 
@@ -103,7 +153,7 @@ const BannerCard = ({ func }: { func: any }) => {
             Cancel
           </Button>
           <Button type="submit" className="bg-primary text-white">
-            Create
+            {data ? "Save Change" : "Create"}
           </Button>
         </div>
       </form>

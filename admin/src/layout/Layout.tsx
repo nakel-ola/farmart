@@ -9,17 +9,15 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import MenuCard from "../components/MenuCard";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import CategoryCard from "../containers/products/CategoryCard";
-import onAuthChange from "../helper/onAuthChange";
 import { EmyployeeQuery } from "../pages/_app";
 import { selectDialog } from "../redux/features/dialogSlice";
 import {
   login,
   logout,
-  selectCookies,
-  selectUser,
 } from "../redux/features/userSlice";
 
 interface LayoutProps {
@@ -31,8 +29,6 @@ function Layout({ children, className }: LayoutProps, ref: any) {
   const [toggle, setToggle] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
-  const user = useSelector(selectUser);
-  const cookies = useSelector(selectCookies);
 
   const [getEmployee] = useLazyQuery(EmyployeeQuery);
 
@@ -62,6 +58,8 @@ function Layout({ children, className }: LayoutProps, ref: any) {
   return (
     <div className="relative h-screen bg-white dark:bg-dark overflow-hidden transition-all duration-300 ease-in-out">
       <Navbar setToggle={setToggle} toggle={toggle} />
+      {toggle && <MenuCard toggle={toggle} setToggle={setToggle} />}
+
       <main
         className="flex justify-between overflow-hidden transition-all duration-300 ease-in-out"
         style={{

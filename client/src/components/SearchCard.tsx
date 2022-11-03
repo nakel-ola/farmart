@@ -1,29 +1,26 @@
-import { CloseCircle, SearchNormal1, Sort } from "iconsax-react";
+import { CloseCircle, SearchNormal1 } from "iconsax-react";
 import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
-import { useDispatch } from "react-redux";
-import { add } from "../redux/features/dialogSlice";
 
 const SearchCard = () => {
   const router = useRouter();
-  const dispatch = useDispatch()
 
-  const [text, setText] = useState("");
+  const [text, setText] = useState(router.query.q ?? "");
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    router.push(`/search/${text}`);
+    router.push(`/search/?q=${text}`);
   };
 
   return (
     <div
-      className={`ml-auto flex items-center ${
-        text ? "flex-[0.5]" : "flex-[0.3]"
+      className={`md:flex items-center mx-2 hidden ${
+        text ? "flex-[0.5]" : "flex-[0.5]"
       }`}
     >
       <form
         onSubmit={handleSubmit}
-        className={`bg-slate-100 dark:bg-neutral-800  items-center py-[5px] px-[10px] rounded-full transition-all duration-300 ease hidden md:flex`}
+        className={`bg-slate-100 flex-1 dark:bg-neutral-800  items-center py-[5px] px-[10px] rounded-full transition-all duration-300 ease hidden md:flex`}
       >
         {!text && (
           <SearchNormal1
@@ -34,7 +31,7 @@ const SearchCard = () => {
 
         <input
           type="text"
-          placeholder="Search by food name"
+          placeholder="Search by product"
           value={text}
           onChange={(e) => setText(e.target.value)}
           className="flex-1 outline-0 border-0 bg-transparent dark:text-slate-100 placeholder:dark:text-slate-100/50"
@@ -55,14 +52,6 @@ const SearchCard = () => {
           disabled={text.length < 1}
         ></button>
       </form>
-
-      <button
-        type="button"
-        className=" ml-2 h-[35px] w-[35px] bg-slate-100 dark:bg-neutral-800 flex items-center justify-center rounded-full"
-        onClick={() => dispatch(add({ data: null, open: true, type: "filter"}))}
-      >
-        <Sort />
-      </button>
     </div>
   );
 };

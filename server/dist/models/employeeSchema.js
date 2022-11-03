@@ -20,7 +20,7 @@ const employeeSchema = new mongoose_1.Schema({
     },
     gender: {
         type: mongoose_1.SchemaTypes.String,
-        required: true,
+        required: false,
     },
     birthday: {
         type: mongoose_1.SchemaTypes.Date,

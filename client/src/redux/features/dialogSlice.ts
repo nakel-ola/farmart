@@ -23,16 +23,16 @@ export type DialogState = {
   selectAddress: Option;
   delivery: Option;
   filter: Option;
+  cart: Option;
 };
 
-type Type = "edit" | "delete" | "category" | "banner" | "block" | "coupon" | "couponDelete" | "inbox" | "userEdit" | "invite" | "address" | "selectAddress" | "delivery" | "filter";
+type Type = "edit" | "delete" | "category" | "banner" | "block" | "coupon" | "couponDelete" | "inbox" | "userEdit" | "invite" | "address" | "selectAddress" | "delivery" | "filter" | "cart";
 
 type PayloadProps = {
   type: Type;
   open: boolean;
   data: any | null;
 };
-
 
 export const dialogSlice = createSlice({
   name: "dialog",
@@ -92,14 +92,18 @@ export const dialogSlice = createSlice({
     filter: {
       open: false,
       data: null
-    }
+    },
+    cart: {
+      open: false,
+      data: null
+    },
   } as DialogState,
   reducers: {
     add: (state: DialogState, action: PayloadAction<PayloadProps>) => {
       state[action.payload.type] = action.payload;
     },
     remove: (state: DialogState, action: PayloadAction<{ type: Type }>) => {
-      state[action.payload.type] = { open: false, data: null, func: () => {} };
+      state[action.payload.type] = { open: false, data: null };
     },
   },
 });

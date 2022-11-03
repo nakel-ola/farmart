@@ -19,14 +19,20 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const uuid_1 = require("uuid");
 const xss_1 = __importDefault(require("xss"));
 const config_1 = __importDefault(require("../config"));
+require("../data/emailData");
 const helper_1 = require("../helper");
+require("../helper/clean");
+require("../helper/emailer");
 const ImageUpload_1 = __importDefault(require("../helper/ImageUpload"));
 const authenticated_1 = __importDefault(require("../middleware/authenticated"));
 const models_1 = __importDefault(require("../models"));
-require("nodemailer");
-const employeeRegister = (0, authenticated_1.default)((args, req) => __awaiter(void 0, void 0, void 0, function* () {
+const employeeRegister = (args, req, res, context, info) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let name = (0, xss_1.default)(args.input.name), email = (0, xss_1.default)(args.input.email), gender = (0, xss_1.default)(args.input.gender), phoneNumber = (0, xss_1.default)(args.input.phoneNumber), level = (0, xss_1.default)(args.input.level), password = (0, xss_1.default)(args.input.password);
+        let name = (0, xss_1.default)(args.input.name), email = (0, xss_1.default)(args.input.email), phoneNumber = (0, xss_1.default)(args.input.phoneNumber), inviteCode = (0, xss_1.default)(args.input.inviteCode), password = (0, xss_1.default)(args.input.password);
+        const validate = yield verifyInvite({ email, inviteCode });
+        if (!validate) {
+            throw new Error("Something went wrong");
+        }
         const user = yield models_1.default.employeeSchema.findOne({ email }, { email: 1 });
         if (user) {
             throw new Error(`User ${user.email} already exists`);
@@ -36,33 +42,46 @@ const employeeRegister = (0, authenticated_1.default)((args, req) => __awaiter(v
             name,
             email,
             phoneNumber,
-            gender,
-            level,
-            photoUrl: "",
-            birthday: "",
+            gender: null,
+            level: validate.level,
+            photoUrl: null,
+            birthday: null,
             addresses: [],
             password: hash,
         };
-        const newUser = yield models_1.default.employeeSchema.create(obj, {
-            birthday: 1,
-            email: 1,
-            gender: 1,
-            name: 1,
-            phoneNumber: 1,
-            photoUrl: 1,
-            level: 1,
-            createdAt: 1,
-            updatedAt: 1,
-        });
-        const token = jsonwebtoken_1.default.sign({ id: newUser._id.toString(), level }, config_1.default.jwt_key, { expiresIn: config_1.default.expiresIn });
+        const newUser = yield models_1.default.employeeSchema.create(obj);
+        const token = jsonwebtoken_1.default.sign({ id: newUser._id.toString(), level: validate.level }, config_1.default.jwt_key, { expiresIn: config_1.default.expiresIn });
         req.session.grocery_admin = token;
-        return (0, lodash_1.merge)({ __typename: "Employee" }, newUser);
+        yield models_1.default.inviteSchema.updateOne({ _id: validate._id, email, inviteCode }, { status: "completed" });
+        // await deleteEmployeeInvite(
+        //   { id: validate._id.toString() },
+        //   req,
+        //   res,
+        //   context,
+        //   info
+        // );
+        // delete newUser["password"];
+        let data = {
+            __typename: "Employee",
+            id: newUser._id.toString(),
+            email: newUser.email,
+            name: newUser.name,
+            gender: newUser.gender,
+            birthday: newUser.birthday,
+            phoneNumber: newUser.phoneNumber,
+            photoUrl: newUser.photoUrl,
+            createdAt: newUser.createdAt,
+            updatedAt: newUser.updatedAt,
+            level: newUser.level,
+        };
+        console.log(data);
+        return data;
     }
     catch (err) {
         console.error(err);
         throw new Error(err.message);
     }
-}));
+});
 const employeeLogin = (args, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let email = (0, xss_1.default)(args.input.email), password = (0, xss_1.default)(args.input.password);
@@ -319,7 +338,18 @@ const createEmployeeInvite = (0, authenticated_1.default)((args, req) => __await
         if (!admin) {
             throw new Error("You don't have permission to invite an employee");
         }
+        let link = `http://localhost:3001/?type=sign&code=${inviteCode}`;
         yield models_1.default.inviteSchema.create({ email, level, status, inviteCode });
+        //  http://localhost:3001/?type=sign&code=ZSX8E
+        // invitationMail
+        console.log(link);
+        // await emailer({
+        //   from: '"Grocery Team" noreply@grocery.com',
+        //   to: email,
+        //   subject: "Your Grocery app verification code",
+        //   text: null,
+        //   html: invitationMail({ link  }),
+        // });
         return { msg: "Invite sent successfully" };
     }
     catch (err) {
@@ -341,6 +371,19 @@ const deleteEmployeeInvite = (0, authenticated_1.default)((args, req) => __await
         throw new Error(err.message);
     }
 }));
+const verifyInvite = ({ email, inviteCode, }) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = yield models_1.default.inviteSchema.findOne({ email, inviteCode });
+        if (!data) {
+            return false;
+        }
+        return data;
+    }
+    catch (err) {
+        console.log(err);
+        throw new Error(err.message);
+    }
+});
 const employeeInvites = (0, authenticated_1.default)((_, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let admin = req.admin;

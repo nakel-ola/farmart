@@ -5,6 +5,8 @@ export const statusColor = (word: string) => {
       return "text-blue-500";
     case "delivered":
       return "text-green-500";
+    case "completed":
+      return "text-green-500";
     case "canceled":
       return "text-red-500";
     default:
@@ -18,6 +20,8 @@ export const statusbg = (word: string) => {
     case "pending":
       return "bg-blue-600/10";
     case "delivered":
+      return "bg-green-500/10";
+    case "completed":
       return "bg-green-500/10";
     case "canceled":
       return "bg-red-500/10";

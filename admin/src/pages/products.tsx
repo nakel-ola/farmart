@@ -33,8 +33,7 @@ const Products = () => {
   });
 
   const [deleteBanner] = useMutation(DeleteBanner, {
-    onCompleted: (data) => {
-      console.log(data);
+    onCompleted: () => {
       refetch();
     },
     onError: (err) => console.table(err),
@@ -64,7 +63,7 @@ const Products = () => {
       {dialog.delete.open && (
         <DeleteCard
           func={() =>
-            deleteBanner({ variables: { id: dialog.delete.product.id } })
+            deleteBanner({ variables: { id: dialog.delete.data.id } })
           }
         />
       )}

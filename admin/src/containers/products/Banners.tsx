@@ -1,53 +1,56 @@
 /* eslint-disable @next/next/no-img-element */
 import { Add, ArrowLeft2, ArrowRight2, Trash } from "iconsax-react";
 import { useRouter } from "next/router";
-import React, { useRef,useState,useEffect } from "react";
-import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { BannerType } from "../../../typing";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 import { add } from "../../redux/features/dialogSlice";
 
-
-const Banners = ({ data,canEdit }: { data: BannerType[]; canEdit: boolean }) => {
+const Banners = ({
+  data,
+  canEdit,
+}: {
+  data: BannerType[];
+  canEdit: boolean;
+}) => {
   const dispatch = useDispatch();
   const [active, setActive] = useState<number>(0);
-  const [items, setItems] = useState<BannerType[]>(data);
-
+  // const [items, setItems] = useState<BannerType[]>(data);
 
   const handleBack = () => {
-    setActive(active === 0 ? items.length - 1 : active - 1);
+    setActive(active === 0 ? data.length - 1 : active - 1);
   };
   const handleForward = () => {
-    setActive(active === items.length - 1 ? 0 : active + 1);
+    setActive(active === data.length - 1 ? 0 : active + 1);
   };
 
-
   return (
-    <div className="relative flex flex-col items-center justify-center rounded-lg overflow-hidden bg-white dark:bg-dark dark:lg:bg-transparent lg:bg-transparent">
-      <div className="flex w-[100%] items-center rounded-lg overflow-x-scroll pb-[20px] scrollbar-hide relative">
-        {items.map((item: BannerType, i: number) => (
+    <div className="relative flex flex-col items-center justify-center rounded-lg overflow-hidden mt-4">
+      <div className="shrink-0 flex w-[100%] items-center rounded-lg overflow-x-scroll pb-[20px] scrollbar-hide relative pl-14 md:pl-0">
+        {data.map((item: BannerType, i: number) => (
           <ImageCard
             key={i}
             i={i}
             {...item}
             setActive={setActive}
             active={active}
+            canEdit={canEdit}
           />
         ))}
-        <AddCard />
+        {canEdit && <AddCard />}
       </div>
       {active !== 0 && (
         <div
-          className="absolute hidden md:inline top-[50%] left-0 translate-y-[-50%] p-[5px] hover:scale-110 transition-transform duration-300 ease hover:bg-slate-50/5 rounded-full"
+          className="absolute hidden md:inline top-[45%] left-0 translate-y-[-45%] p-[5px] hover:scale-110 transition-transform duration-300 ease hover:bg-slate-50/5 rounded-full"
           onClick={handleBack}
         >
           <ArrowLeft2 size={48} className="text-white drop-shadow-xl" />
         </div>
       )}
-      {active !== items.length - 1 && (
+      {active !== data.length - 1 && (
         <div
-          className="absolute hidden md:inline top-[50%] right-2 rounded-full translate-y-[-50%] p-[5px] hover:scale-110 hover:bg-slate-50/5 transition-transform duration-300 ease"
+          className="absolute hidden md:inline top-[45%] right-2 rounded-full translate-y-[-45%] p-[5px] hover:scale-110 hover:bg-slate-50/5 transition-transform duration-300 ease"
           onClick={handleForward}
         >
           <ArrowRight2 size={48} className="text-white drop-shadow-xl" />
@@ -55,7 +58,7 @@ const Banners = ({ data,canEdit }: { data: BannerType[]; canEdit: boolean }) => 
       )}
 
       <div className="flex items-center justify-evenly">
-        {items.map((_, index) => (
+        {data.map((_, index) => (
           <div
             className={`m-[5px] transition-transform duration-1000 ease rounded-full w-[5px] h-[5px] ${
               active === index
@@ -66,7 +69,6 @@ const Banners = ({ data,canEdit }: { data: BannerType[]; canEdit: boolean }) => 
             onClick={() => setActive(index)}
           />
         ))}
-        
       </div>
     </div>
   );
@@ -77,15 +79,15 @@ const AddCard = () => {
 
   return (
     <div
-      className="flex items-center justify-center flex-col m-2 mr-4 cursor-pointer hover:scale-105 active:scale-95 transition-all duration-300 shrink-0"
-      onClick={() =>
-        dispatch(add({ type: "banner", product: null, open: true }))
-      }
+      className="relative w-[40%] md:w-[20%] rounded-lg shrink-0 overflow-hidden m-[5px] mr-10 md:m-[10px] transition-transform duration-300 ease"
+      onClick={() => dispatch(add({ type: "banner", data: null, open: true }))}
     >
-      <div className="h-[50px] w-[50px] rounded-full flex items-center justify-center shadow-sm bg-slate-200 dark:bg-neutral-700 mt-2">
-        <Add size={50} variant="Outline" />
+      <div className="flex items-center flex-col justify-center">
+        <div className="h-[50px] w-[50px] rounded-full flex items-center justify-center shadow-sm bg-slate-200 dark:bg-neutral-700 mt-2">
+          <Add size={50} variant="Outline" />
+        </div>
+        <p className="font-medium">Create banners</p>
       </div>
-      <p className="font-medium">Create banners</p>
     </div>
   );
 };
@@ -94,16 +96,18 @@ interface ImageCardProps extends BannerType {
   i: number;
   active: number;
   setActive: React.Dispatch<React.SetStateAction<number>>;
+  canEdit: boolean;
 }
 
 const ImageCard = (props: ImageCardProps) => {
-  const { image, i, active, description, title,link,setActive } = props;
+  const { image, i, active, description, title, link, setActive, id, canEdit } =
+    props;
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const router = useRouter();
-  
-  const entry = useIntersectionObserver(ref, { threshold: 1});
+  const dispatch = useDispatch();
+
+  const entry = useIntersectionObserver(ref, { threshold: 1 });
 
   const isVisible = !!entry?.isIntersecting;
 
@@ -118,16 +122,15 @@ const ImageCard = (props: ImageCardProps) => {
   }, [i, active]);
 
   useEffect(() => {
-    if(isVisible) {
-      setActive(i)
+    if (isVisible) {
+      setActive(i);
     }
-  },[isVisible,setActive,i])
-
+  }, [isVisible, setActive, i]);
 
   return (
     <div
       ref={ref}
-      className="relative md:w-[70%] rounded-lg shrink-0 md:hover:scale-105 overflow-hidden m-[5px] md:m-[10px] transition-transform duration-300 ease "
+      className="relative md:w-[70%] rounded-lg shrink-0 overflow-hidden m-[5px] md:m-[10px] transition-transform duration-300 ease"
     >
       <img
         src={image}
@@ -143,9 +146,47 @@ const ImageCard = (props: ImageCardProps) => {
           </p>
         </div>
 
-        <button className="w-fit bg-white px-2 py-1 rounded-lg hover:scale-105 active:scale-95 font-medium">
-          Shop Now
-        </button>
+        {canEdit && (
+          <div className="flex">
+            <button
+              className="w-fit bg-white text-black px-2  py-1 rounded-lg hover:scale-105 active:scale-95 font-medium"
+              onClick={() =>
+                dispatch(
+                  add({
+                    type: "banner",
+                    data: {
+                      id,
+                      title,
+                      description,
+                      image,
+                      link,
+                    },
+                    open: true,
+                  })
+                )
+              }
+            >
+              Edit
+            </button>
+            <button
+              className="w-fit bg-red-600 text-white px-2 mx-2 py-1 rounded-lg hover:scale-105 active:scale-95 font-medium"
+              onClick={() =>
+                dispatch(
+                  add({
+                    type: "delete",
+                    data: {
+                      id,
+                      message: "Are you sure you want to delete the banner ? ",
+                    },
+                    open: true,
+                  })
+                )
+              }
+            >
+              Delete
+            </button>
+          </div>
+        )}
       </article>
     </div>
   );

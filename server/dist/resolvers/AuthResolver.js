@@ -20,8 +20,9 @@ require("uuid");
 const xss_1 = __importDefault(require("xss"));
 const config_1 = __importDefault(require("../config"));
 const emailData_1 = require("../data/emailData");
-const helper_1 = require("../helper");
+require("../helper");
 const emailer_1 = __importDefault(require("../helper/emailer"));
+const generateCode_1 = __importDefault(require("../helper/generateCode"));
 const ImageUpload_1 = __importDefault(require("../helper/ImageUpload"));
 const authenticated_1 = __importDefault(require("../middleware/authenticated"));
 const models_1 = __importDefault(require("../models"));
@@ -47,13 +48,13 @@ const register = (args, req) => __awaiter(void 0, void 0, void 0, function* () {
         const newUser = yield models_1.default.userSchema.create(obj);
         const token = jsonwebtoken_1.default.sign({ id: newUser._id.toString(), blocked: false }, config_1.default.jwt_key, { expiresIn: config_1.default.expiresIn });
         req.session.grocery = token;
-        yield (0, emailer_1.default)({
-            from: '"Grocery Team" nunuolamilekan@gmail.com',
-            to: email,
-            subject: "Welcome to the Grocery family!",
-            text: "",
-            html: (0, emailData_1.welcomeMsg)({ name }),
-        });
+        // await emailer({
+        //   from: '"Grocery Team" noreply@grocery.com',
+        //   to: email,
+        //   subject: "Welcome to the Grocery family!",
+        //   text: "",
+        //   html: welcomeMsg({ name }),
+        // });
         return (0, lodash_1.merge)({ __typename: "User" }, {
             id: newUser._id.toString(),
             email: newUser.email,
@@ -76,7 +77,7 @@ const login = (args, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let email = (0, xss_1.default)(args.input.email), password = (0, xss_1.default)(args.input.password);
         const user = yield models_1.default.userSchema.findOne({ email });
-        if (!user) {
+        if (!user || (user === null || user === void 0 ? void 0 : user.blocked)) {
             throw new Error("Something went wrong");
         }
         const isPassword = (0, bcryptjs_1.compareSync)(password, user.password);
@@ -98,7 +99,8 @@ const login = (args, req) => __awaiter(void 0, void 0, void 0, function* () {
 const forgetPassword = (args) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let name = (0, xss_1.default)(args.input.name), email = (0, xss_1.default)(args.input.email);
-        let id = (0, helper_1.nanoidV2)("0123456789", 5);
+        // let id = nanoidV2("0123456789", 5, 8);
+        let id = (0, generateCode_1.default)(11111, 99999);
         const user = yield models_1.default.userSchema.findOne({ email, name });
         if (!user) {
             throw new Error("User not found");
@@ -107,17 +109,18 @@ const forgetPassword = (args) => __awaiter(void 0, void 0, void 0, function* () 
             name,
             email,
             validationToken: id,
-            expiresIn: Date.now,
+            expiresIn: Date.now(),
         };
         yield models_1.default.validateSchema.create(obj);
-        (0, emailer_1.default)({
-            from: "noreply@info.grocery.com.ng",
-            to: email,
-            subject: "Your Grocery.org verification code",
-            text: null,
-            html: (0, emailData_1.verificationMail)({ code: id, name }),
-        });
-        return { validationToken: id };
+        // await emailer({
+        //   from: '"Grocery Team" noreply@grocery.com',
+        //   to: email,
+        //   subject: "Your Grocery app verification code",
+        //   text: null,
+        //   html: verificationMail({ code: id, name }),
+        // });
+        console.log(id);
+        return { validationToken: id.toString() };
     }
     catch (e) {
         console.log(e);
@@ -144,15 +147,7 @@ const validateCode = (args) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const changePassword = (args, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let name = (0, xss_1.default)(args.input.name), email = (0, xss_1.default)(args.input.email), password = (0, xss_1.default)(args.input.password), validationToken = (0, xss_1.default)(args.input.validationToken);
-        const validate = yield models_1.default.validateSchema.findOne({
-            email,
-            name,
-            validationToken,
-        });
-        if (!validate) {
-            throw new Error("Something want wrong");
-        }
+        let name = (0, xss_1.default)(args.input.name), email = (0, xss_1.default)(args.input.email), password = (0, xss_1.default)(args.input.password);
         const salt = (0, bcryptjs_1.genSaltSync)(config_1.default.saltRounds);
         const hash = (0, bcryptjs_1.hashSync)(password, salt);
         const user = yield models_1.default.userSchema.updateOne({ email, name }, { password: hash });
@@ -166,14 +161,14 @@ const changePassword = (args, req) => __awaiter(void 0, void 0, void 0, function
         const token = jsonwebtoken_1.default.sign({ id: newUser._id, blocked: newUser.blocked }, config_1.default.jwt_key, { expiresIn: config_1.default.expiresIn });
         req.session.grocery = token;
         yield models_1.default.validateSchema.deleteOne({ email, name });
-        (0, emailer_1.default)({
-            from: "noreply@info.grocery.com.ng",
-            to: email,
-            subject: "Your password was changed",
-            text: null,
-            html: (0, emailData_1.passwordChangeMail)({ name, email }),
-        });
-        return (0, lodash_1.merge)({ __typename: "User", newUser });
+        // await emailer({
+        //   from: '"Grocery Team" noreply@grocery.com',
+        //   to: email,
+        //   subject: "Your password was changed",
+        //   text: null,
+        //   html: passwordChangeMail({ name, email }),
+        // });
+        return (0, lodash_1.merge)({ __typename: "User" }, newUser);
     }
     catch (e) {
         console.log(e);
@@ -214,11 +209,11 @@ const updatePassword = (0, authenticated_1.default)((args, req) => __awaiter(voi
         const token = jsonwebtoken_1.default.sign({ id: user._id, name: user.name, email, photoUrl: user.photoUrl }, config_1.default.jwt_key, { expiresIn: config_1.default.expiresIn });
         req.session.grocery = token;
         (0, emailer_1.default)({
-            from: "noreply@info.grocery.com.ng",
+            from: '"Grocery Team" noreply@grocery.com',
             to: email,
             subject: "	Your password was changed",
             text: null,
-            html: (0, emailData_1.passwordChangeMail)({ name, email }),
+            html: (0, emailData_1.passwordChangeMail)({ name: user.name, email }),
         });
         return (0, lodash_1.merge)({ __typename: "User" }, user);
     }

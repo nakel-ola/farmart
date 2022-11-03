@@ -25,8 +25,8 @@ const validate = (data: FormType): boolean => {
 
   if (
     email.match(emailRegex) &&
-    firstName.length >= 5 &&
-    lastName.length >= 5
+    firstName.length >= 4 &&
+    lastName.length >= 4
   ) {
     return false;
   }
@@ -46,7 +46,7 @@ const LogInCard = (props: any) => {
 
   const router = useRouter();
 
-  const [form, setForm] = useState<FormType>({
+  const [form, setForm] = useState<Required<FormType>>({
     email: "",
     firstName: "",
     lastName: "",
@@ -67,8 +67,8 @@ const LogInCard = (props: any) => {
     await forgetPassword({
       variables: { input: newData },
       onCompleted: (data) => {
-        router.push("?type=confirm");
-        toast.success("Login Successfully", { id: loginToast });
+        router.push("?type=code");
+        toast.success("Credential verified", { id: loginToast });
         dispatch(
           forget({
             validationToken: data.forgetPassword.validationToken,
@@ -124,7 +124,6 @@ const LogInCard = (props: any) => {
           id="email"
           name="email"
           type="text"
-          className="border-[1.5px] border-transparent hover:border-primary"
           value={form.email}
           onChange={handleChange}
         />

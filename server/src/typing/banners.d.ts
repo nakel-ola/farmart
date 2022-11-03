@@ -8,3 +8,12 @@ export type CreateBannerArgs = {
     image: Upload;
   };
 };
+export type EditBannerArgs = {
+  input: {
+    id: string;
+    title: string;
+    description: string;
+    link: string;
+    image: Upload | string;
+  };
+};

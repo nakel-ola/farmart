@@ -1,45 +1,12 @@
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import { BackSquare, Location, Truck } from "iconsax-react";
-import React, { useState } from "react";
-import InputField from "../../components/InputField";
-import PopupCard from "./PopupCard";
-import PopupField from "./PopupField";
+import { BackSquare, Truck } from "iconsax-react";
+import CardTemplate from "../../components/CardTemplate";
 
-function LocationCard({ error }: { error: any }) {
-  const [address, setAddress] = useState<string>("");
-  const [area, setArea] = useState<string>("");
-  const [toggle, setToggle] = useState<boolean>(false);
-
-  const handleClick = (name: string) => {
-    setArea(name);
-    setToggle(false);
-  };
+function LocationCard() {
   return (
-    <div className="w-[95%] md:w-[80%] mt-[10px] bg-white dark:bg-dark dark:shadow-black/30 pl-[8px] pb-[8px] p-[5px] shadow-sm rounded-lg">
-      <p className="py-[8px] pr-[8px] pl-[15px] text-[1rem] text-black dark:text-white font-[600]">
-        Delivery Details
-      </p>
-      {/* <div className="py-[12px] ml-[20px] w-full">
-        <div className="w-[85%]">
-          <InputField
-            IconLeft={Location}
-            value={address}
-            error={error === "address" || error === "both"}
-            onChange={(e: any) => setAddress(e.target.value)}
-            placeholder="Enter your address"
-            clearInput={() => setAddress("")}
-          />
-        </div>
-
-        <PopupField
-          value={area}
-          error={error === "area" || error === "both"}
-          toggle={toggle}
-          onClick={() => setToggle(!toggle)}
-          placeholder="Select Area"
-        />
-      </div> */}
-
+    <CardTemplate
+      title="Delivery Details"
+      className="mt-[10px]"
+    >
       <Card
         Icon={Truck}
         title="Door Delivery"
@@ -52,22 +19,7 @@ function LocationCard({ error }: { error: any }) {
         title="Return Policy"
         subtitle="No return policy for this product. "
       />
-
-      <SwipeableDrawer
-        anchor="bottom"
-        open={toggle}
-        disableSwipeToOpen={true}
-        disableDiscovery={true}
-        onClose={() => setToggle(false)}
-        onOpen={() => setToggle(true)}
-      >
-        <PopupCard
-          onClose={() => setToggle(false)}
-          handleClick={handleClick}
-          area={area}
-        />
-      </SwipeableDrawer>
-    </div>
+    </CardTemplate>
   );
 }
 

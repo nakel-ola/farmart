@@ -110,7 +110,7 @@ const Customer = () => {
       name: "Email Address",
       value: newData?.email,
     },
-    {
+    newData?.gender && {
       name: "Gender",
       value: newData?.gender,
     },
@@ -120,7 +120,7 @@ const Customer = () => {
     },
     newData?.birthday && {
       name: "Birthday",
-      value: new Date(Number(newData?.birthday)).toDateString(),
+      value: new Date(newData?.birthday).toDateString(),
     },
     {
       name: "Created At",
@@ -139,7 +139,7 @@ const Customer = () => {
 
   const handleDelete = async () => {
     await deleteCoupon({
-      variables: { id: dialog.couponDelete.product?.id },
+      variables: { id: dialog.couponDelete.data?.id },
       onCompleted: () => {
         refetch(args);
       },
@@ -182,7 +182,7 @@ const Customer = () => {
                       className="text-red-600 bg-red-600/10"
                       onClick={() =>
                         dispatch(
-                          add({ open: true, product: blockData, type: "block" })
+                          add({ open: true, data: blockData, type: "block" })
                         )
                       }
                     >

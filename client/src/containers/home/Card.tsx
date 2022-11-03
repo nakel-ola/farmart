@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Add, Heart, InfoCircle, Minus, Trash } from "iconsax-react";
 import { useRouter } from "next/router";
@@ -44,6 +45,7 @@ const Card = (props: any) => {
     rating,
     description,
     refetchAll,
+    discount,
     isFavouriteCard,
   } = props;
 
@@ -138,7 +140,7 @@ const Card = (props: any) => {
     text.length > num ? text.substring(0, num - 2) + " ..." : text;
 
   return (
-    <div className="my-[7px] mx-[2px] lg:m-[7px] flex items-center justify-center flex-col shadow-sm bg-white dark:bg-dark dark:shadow-black/30 pb-[5px] rounded-md w-[150px] md:w-52">
+    <div className="my-[7px] mx-[2px] lg:m-[7px] flex items-center justify-self-auto  flex-col bg-white dark:bg-dark pb-[5px] rounded-lg w-[150px] md:w-52 flex-grow max-w-[230px] shadow-sm dark:shadow-black/40">
       <div className="w-[95%] mt-[2%] relative">
         <div
           onClick={() => router.push(`/product/${slug}`)}
@@ -147,24 +149,29 @@ const Card = (props: any) => {
           <img
             src={image?.url}
             alt=""
-            className="relative h-36 w-40 md:w-56 object-cover rounded-lg hover:scale-125
-             transition-all duration-300 ease"
+            className="relative h-36 w-full md:w-full object-cover rounded-lg hover:scale-125
+             transition-all duration-300 ease "
           />
         </div>
         <button
-          className="absolute top-[5px] right-[5px] w-[25px] h-[25px] rounded-lg m-[5px] bg-slate-100 flex items-center justify-center"
+          className="absolute top-[5px] right-[5px] w-[25px] h-[25px] rounded-lg m-[5px] bg-slate-100 dark:bg-neutral-800 flex items-center justify-center"
           onClick={() => handleFavorite()}
         >
           {isFavouriteCard ? (
-            <Trash size={20} className="text-dark" />
+            <Trash size={20} className="text-dark dark:text-white" />
           ) : (
             <Heart
               size={20}
               variant={favorite ? "Bold" : "Outline"}
-              className="text-dark"
+              className="text-dark dark:text-white"
             />
           )}
         </button>
+        {discount && (
+          <button className="absolute top-[5px] left-[5px] w-[40px] h-[25px] rounded-lg m-[5px] bg-slate-100 dark:bg-neutral-800 flex items-center justify-center text-base font-semibold text-dark dark:text-white">
+            -{discount}
+          </button>
+        )}
       </div>
       <div className="w-[95%]">
         <p
@@ -187,7 +194,6 @@ const Card = (props: any) => {
               <p className="text-red-600 font-medium">Out of stock</p>
             </div>
           ) : (
-
             <div className="flex pl-[5px] my-[5px]">
               {product?.quantity && (
                 <button
@@ -197,7 +203,7 @@ const Card = (props: any) => {
                   <Minus size={25} className="text-white" />
                 </button>
               )}
-  
+
               {product?.quantity && (
                 <div
                   className={`flex items-center justify-center h-[25px] w-[25px] rounded-lg`}
@@ -207,7 +213,7 @@ const Card = (props: any) => {
                   </p>
                 </div>
               )}
-  
+
               <button
                 className={`flex items-center justify-center h-[25px] w-[25px] rounded-lg bg-primary`}
                 onClick={increment}

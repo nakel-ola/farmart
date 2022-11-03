@@ -106,7 +106,7 @@ const Employee = () => {
                     dispatch(
                       add({
                         open: true,
-                        product: newData,
+                        data: newData,
                         type: "employeeEdit",
                       })
                     )

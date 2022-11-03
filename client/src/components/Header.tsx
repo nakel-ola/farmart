@@ -10,7 +10,7 @@ type Props = {
 const Header = ({ subtitle, title }: Props) => {
   const router = useRouter();
   return (
-    <div className="py-[5px] mx-[20px] hidden items-center justify-between md:flex">
+    <div className="py-[5px] mx-[20px] hidden items-center justify-between lg:flex">
       <div className="flex items-center">
         <button
           className="h-[35px] w-[35px] flex items-center justify-center hover:bg-white hover:dark:bg-dark rounded-full transition-all duration-300"

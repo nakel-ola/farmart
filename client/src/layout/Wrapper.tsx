@@ -12,6 +12,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   const cookies = useSelector(selectCookies);
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
+  
 
   const [getDetails] = useLazyQuery(UserQuery);
 

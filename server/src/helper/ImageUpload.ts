@@ -5,7 +5,7 @@ import { format } from "util";
 import { nanoid } from ".";
 import { bucket } from "./gcloud";
 
-type ImageUploadType = {
+export type ImageUploadType = {
   url: string;
   name: string;
 };

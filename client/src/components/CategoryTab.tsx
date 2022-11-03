@@ -13,7 +13,7 @@ function CategoryTab(props: { items: any[] }) {
   const capitalizeFirstLetter = (string: string) =>
     string.charAt(0).toUpperCase() + string.slice(1);
   return (
-    <div className="hidden lg:inline ml-auto">
+    <div className="hidden lg:inline ">
       <div className="flex overflow-x-scroll scrollbar">
         {sortList.map((item, index) => (
           <div

@@ -60,7 +60,7 @@ const Address = () => {
             <CardTemplate
               title="Address"
               showEditButton
-              editTitle="Create new"
+              editTitle="Create"
               onEditClick={() =>
                 dispatch(
                   add({
@@ -86,7 +86,7 @@ const Address = () => {
                     size={100}
                     className="text-5xl text-neutral-700 dark:text-neutral-400"
                   />
-                  <p className="text-black dark:text-white text-lg">
+                  <p className="text-neutral-700 dark:text-neutral-400 text-lg font-bold">
                     No Inbox yet!
                   </p>
                 </div>

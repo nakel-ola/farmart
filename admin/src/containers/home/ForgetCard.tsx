@@ -6,10 +6,8 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
-import InputField from "../../components/InputField";
-import { Footer } from "../../pages";
 import { forget } from "../../redux/features/userSlice";
-import { Wrapper } from "./SignInCard";
+import { Wrapper } from "./SignUpCard";
 import TitleCard from "./TitleCard";
 
 export const ForgetMutation = gql`
@@ -40,14 +38,18 @@ const validate = (form: FormProps): boolean => {
   return true;
 };
 
-const ForgetCard = (props: { setLoading(value: boolean):void}) => {
+const ForgetCard = (props: { setLoading(value: boolean): void }) => {
   const { setLoading } = props;
 
   const dispatch = useDispatch();
 
   const router = useRouter();
 
-  const [form, setForm] = useState<FormProps>({ email: "", firstName: "",lastName: "" });
+  const [form, setForm] = useState<Required<FormProps>>({
+    email: "",
+    firstName: "",
+    lastName: "",
+  });
 
   const [forgetPassword] = useMutation(ForgetMutation);
 
@@ -59,7 +61,7 @@ const ForgetCard = (props: { setLoading(value: boolean):void}) => {
     forgetPassword({
       variables: { input: form },
       onCompleted: (data) => {
-        router.push("?type=confirm");
+        router.push("?type=code");
         dispatch(
           forget({
             validationToken: data.employeeForgetPassword.validationToken,
@@ -67,7 +69,7 @@ const ForgetCard = (props: { setLoading(value: boolean):void}) => {
           })
         );
         setLoading(false);
-        toast.success("User confirm successfully", { id: loginToast });
+        toast.success("Credential verified", { id: loginToast });
       },
       onError: (error: any) => {
         setLoading(false);

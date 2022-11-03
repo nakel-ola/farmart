@@ -266,7 +266,7 @@ const Receipt: NextPage = () => {
         <div className="h-full w-full flex items-center flex-col">
           {!loading ? (
             (data?.orders as OrdersData)?.results?.length >= 1 ? (
-              <div className="w-[95%] md:w-[95%]">
+              <div className="w-[95%]">
                 <Table>
                   <TableHeader
                     title="Order History"

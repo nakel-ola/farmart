@@ -17,8 +17,8 @@ const EmployeeTypes = gql`
     name: String!
     email: String!
     phoneNumber: String!
-    level: String!
     password: String!
+    inviteCode: String!
   }
 
   input EmployeeUserInput {

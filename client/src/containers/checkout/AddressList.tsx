@@ -1,11 +1,12 @@
 import { useQuery } from "@apollo/client";
+import { Book1 } from "iconsax-react";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/Button";
 import Divider from "../../components/Divider";
 import PopupTemplate from "../../components/PopupTemplate";
 import { AddressesQuery } from "../../pages/address";
-import { remove } from "../../redux/features/dialogSlice";
+import { add, remove } from "../../redux/features/dialogSlice";
 
 const AddressList = ({
   func,
@@ -28,20 +29,48 @@ const AddressList = ({
   });
 
   return (
-    <PopupTemplate title="Select Address" onOutsideClick={close}>
-      {data?.addresses.map((address: any, index: number) => (
-        <div key={index} className=" pl-[15px]">
-          <Card
-            {...address}
-            isSelected={defaultAddress.id === address.id}
-            handleSelect={() => {
-              func?.(address);
-              close();
-            }}
-          />
-          {index !== data?.addresses.length - 1 && <Divider />}
+    <PopupTemplate
+      title="Select Address"
+      onOutsideClick={close}
+      showEditButton
+      buttonText="Create"
+      onEditClick={() =>
+        dispatch(
+          add({
+            open: true,
+            data: null,
+            type: "address",
+          })
+        )
+      }
+    >
+      {data?.addresses.length > 0 ? (
+        data?.addresses.map((address: any, index: number) => (
+          <div key={index} className=" pl-[15px]">
+            <Card
+              {...address}
+              isSelected={defaultAddress.id === address.id}
+              handleSelect={() => {
+                func?.(address);
+                close();
+              }}
+            />
+            {index !== data?.addresses.length - 1 && <Divider />}
+          </div>
+        ))
+      ) : (
+        <div className="grid my-10 place-items-center">
+          <div className="flex items-center justify-center flex-col">
+            <Book1
+              size={100}
+              className="text-neutral-700 dark:text-neutral-400"
+            />
+            <p className="text-neutral-700 dark:text-neutral-400 text-lg font-semibold my-1">
+              No Address Found
+            </p>
+          </div>
         </div>
-      ))}
+      )}
     </PopupTemplate>
   );
 };

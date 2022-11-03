@@ -19,11 +19,11 @@ const DetailsTemplate = (props: Props) => {
   return (
     <CardTemplate title={title} className={className}>
       {list.map((item, index: number) => (
-        <div key={index} className="flex justify-between mt-3 mb-2">
+        <div key={index} className="flex flex-col md:flex-row justify-between md:mt-3 md:mb-2">
           {item.map((prop: ItemDetails, i: number) => (
             <div
               key={i}
-              className="py-[5px] pl-[25px] cursor-pointer md:flex-1 pr-2 w-[50%]"
+              className="py-[5px] pl-[25px] cursor-pointer md:flex-1 pr-2 w-full md:w-[50%]"
             >
               <strong className="text-lg font-medium text-black dark:text-white">
                 {prop.name}

@@ -8,6 +8,7 @@ import { graphqlUploadExpress } from "graphql-upload-minimal";
 import mongoose from "mongoose";
 import path from "path";
 import config from "./config";
+import generateCode from "./helper/generateCode";
 import cors from "./middleware/cors";
 import resolvers from "./resolvers";
 import typeDefs from "./type-defs";
@@ -43,9 +44,6 @@ app.use((req: ReqBody, res, next) => {
 app.use(express.static(path.resolve(__dirname, "../public")));
 
 export const schema = buildSchema(print(typeDefs));
-
-
-console.log(config)
 
 mongoose
   .connect(config.mongodb_uri)

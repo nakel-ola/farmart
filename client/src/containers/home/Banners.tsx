@@ -35,7 +35,7 @@ function Banners() {
   };
 
   return items.length > 0 ? (
-    <div className="relative flex flex-col items-center justify-center rounded-lg overflow-hidden bg-white dark:bg-dark dark:lg:bg-transparent lg:bg-transparent">
+    <div className="relative flex flex-col items-center justify-center rounded-lg overflow-hidden">
       <div className="flex w-[100%] items-center rounded-lg overflow-x-scroll pb-[20px] scrollbar relative">
         {items.map((item: BannerType, i: number) => (
           <ImageCard
@@ -116,7 +116,7 @@ const ImageCard = (props: ImageCardProps) => {
   return (
     <div
       ref={ref}
-      className="relative md:w-[70%] rounded-lg shrink-0 md:hover:scale-105 overflow-hidden m-[5px] md:m-[10px] transition-transform duration-300 ease "
+      className="relative md:w-[70%] rounded-lg shrink-0 overflow-hidden m-[5px] md:m-[10px] transition-transform duration-300 ease "
     >
       <img
         src={image}
@@ -132,7 +132,7 @@ const ImageCard = (props: ImageCardProps) => {
           </p>
         </div>
 
-        <button className="w-fit bg-white px-2 py-1 rounded-lg hover:scale-105 active:scale-95 font-medium" onClick={() => link && router.push(link)}>
+        <button className="w-fit bg-white px-2 py-1 rounded-lg hover:scale-105 active:scale-95 font-medium text-black" onClick={() => link && router.push(link)}>
           Shop Now
         </button>
       </article>

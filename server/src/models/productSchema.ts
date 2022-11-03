@@ -94,6 +94,10 @@ const productSchema = new Schema({
     type: Number,
     required: true,
   },
+  discount: {
+    type: String,
+    required: false,
+  },
   currency: {
     type: currencySchema,
     required: true,
