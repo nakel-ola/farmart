@@ -16,7 +16,7 @@ const Address = ({
 }: {
   address: any;
   deliveryMethod: any;
-  setPickup: (value: string) => void;
+  setPickup: (value: string | null) => void;
   setDeliveryMethod: (value: any) => void;
   onNext: (value: any) => void;
 }) => {

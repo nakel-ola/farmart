@@ -20,9 +20,9 @@ const index_1 = require("../helper/index");
 const authenticated_1 = __importDefault(require("../middleware/authenticated"));
 const models_1 = __importDefault(require("../models"));
 const createOrder = (0, authenticated_1.default)((args, req) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
-        const input = args.input, userId = (0, xss_1.default)(req.userId), paymentMethod = (0, xss_1.default)(input.paymentMethod), deliveryMethod = (0, xss_1.default)(input.deliveryMethod), shippingFee = input.shippingFee ? (0, xss_1.default)(input.shippingFee) : null, pickup = input.pickup ? (0, xss_1.default)(input.pickup) : null, address = input.address
+        const input = args.input, userId = (0, xss_1.default)((_a = req.userId) !== null && _a !== void 0 ? _a : req.headers["userid"].toString()), paymentMethod = (0, xss_1.default)(input.paymentMethod), deliveryMethod = (0, xss_1.default)(input.deliveryMethod), shippingFee = input.shippingFee ? (0, xss_1.default)(input.shippingFee) : null, pickup = input.pickup ? (0, xss_1.default)(input.pickup) : null, address = input.address
             ? {
                 id: (0, xss_1.default)(input.address.id),
                 name: (0, xss_1.default)(input.address.name),
@@ -62,7 +62,7 @@ const createOrder = (0, authenticated_1.default)((args, req) => __awaiter(void 0
                 checked: false,
             },
         ], orderId = (0, index_1.nanoid)(15), trackingId = (0, index_1.nanoid)(), paymentId = (0, index_1.nanoid)(), status = "pending";
-        let price = Number((_a = (0, calculateDiscount_1.default)(Number(totalPrice), coupon ? Number(coupon.discount) : 0) + Number(shippingFee)) !== null && _a !== void 0 ? _a : 0).toFixed(2);
+        let price = Number((_b = (0, calculateDiscount_1.default)(Number(totalPrice), coupon ? Number(coupon.discount) : 0) + Number(shippingFee)) !== null && _b !== void 0 ? _b : 0).toFixed(2);
         const data = {
             orderId,
             userId,
@@ -111,9 +111,9 @@ const deleteCoupon = (id) => __awaiter(void 0, void 0, void 0, function* () {
     yield models_1.default.couponSchema.findByIdAndDelete(id);
 });
 const orders = (0, authenticated_1.default)((args, req) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b, _c;
+    var _c, _d;
     try {
-        let userId = (0, xss_1.default)(req.userId), admin = req.admin, page = Number((0, xss_1.default)((_b = args.input.page.toString()) !== null && _b !== void 0 ? _b : "1")), status = (0, xss_1.default)(args.input.status), customerId = (0, xss_1.default)(args.input.customerId), limit = Number((0, xss_1.default)((_c = args.input.limit.toString()) !== null && _c !== void 0 ? _c : "10")), start = (page - 1) * limit, end = limit + start;
+        let userId = (0, xss_1.default)(req.userId), admin = req.admin, page = Number((0, xss_1.default)((_c = args.input.page.toString()) !== null && _c !== void 0 ? _c : "1")), status = (0, xss_1.default)(args.input.status), customerId = (0, xss_1.default)(args.input.customerId), limit = Number((0, xss_1.default)((_d = args.input.limit.toString()) !== null && _d !== void 0 ? _d : "10")), start = (page - 1) * limit, end = limit + start;
         if (!status) {
             const orders = yield (admin
                 ? customerId
@@ -182,9 +182,9 @@ const updateProgress = (0, authenticated_1.default)((args, req) => __awaiter(voi
     }
 }));
 const filterById = (0, authenticated_1.default)((args, req) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d, _e;
+    var _e, _f;
     try {
-        let userId = (0, xss_1.default)(req.userId), admin = req.admin, orderId = (0, xss_1.default)(args.input.orderId), page = Number((0, xss_1.default)((_d = args.input.page.toString()) !== null && _d !== void 0 ? _d : "1")), limit = Number((0, xss_1.default)((_e = args.input.limit.toString()) !== null && _e !== void 0 ? _e : "10")), start = (page - 1) * limit, end = limit + start;
+        let userId = (0, xss_1.default)(req.userId), admin = req.admin, orderId = (0, xss_1.default)(args.input.orderId), page = Number((0, xss_1.default)((_e = args.input.page.toString()) !== null && _e !== void 0 ? _e : "1")), limit = Number((0, xss_1.default)((_f = args.input.limit.toString()) !== null && _f !== void 0 ? _f : "10")), start = (page - 1) * limit, end = limit + start;
         const orders = yield (admin
             ? models_1.default.orderSchema.find({ orderId: new RegExp(orderId, "i") })
             : models_1.default.orderSchema.find({ orderId: new RegExp(orderId, "i"), userId }));
@@ -202,9 +202,9 @@ const filterById = (0, authenticated_1.default)((args, req) => __awaiter(void 0,
     }
 }));
 const filterByStatus = (0, authenticated_1.default)((args, req) => __awaiter(void 0, void 0, void 0, function* () {
-    var _f, _g;
+    var _g, _h;
     try {
-        let userId = (0, xss_1.default)(req.userId), admin = req.admin, page = Number((0, xss_1.default)((_f = args.input.page.toString()) !== null && _f !== void 0 ? _f : "1")), status = (0, xss_1.default)(args.input.status), limit = Number((0, xss_1.default)((_g = args.input.limit.toString()) !== null && _g !== void 0 ? _g : "10")), start = (page - 1) * limit, end = limit + start;
+        let userId = (0, xss_1.default)(req.userId), admin = req.admin, page = Number((0, xss_1.default)((_g = args.input.page.toString()) !== null && _g !== void 0 ? _g : "1")), status = (0, xss_1.default)(args.input.status), limit = Number((0, xss_1.default)((_h = args.input.limit.toString()) !== null && _h !== void 0 ? _h : "10")), start = (page - 1) * limit, end = limit + start;
         let isAll = status === "all";
         let orders;
         if (admin) {

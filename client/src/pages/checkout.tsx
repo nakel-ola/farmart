@@ -1,4 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { loadStripe } from "@stripe/stripe-js";
+import axios from "axios";
 import { BagTick2, Book1, Wallet2 } from "iconsax-react";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -25,6 +27,8 @@ import { selectDialog } from "../redux/features/dialogSlice";
 import { selectUser } from "../redux/features/userSlice";
 import { RootState } from "../redux/store";
 import { AddressesQuery } from "./address";
+let stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+
 
 
 
@@ -47,7 +51,7 @@ const Checkout: NextPage = () => {
     "Door Delivery" | "Pickup Station"
   >("Door Delivery");
   const [paymentMethod, setPaymentMethod] = useState<string>("");
-  const [pickup, setPickup] = useState("");
+  const [pickup, setPickup] = useState<string | null>(null);
   const [address, setAddress] = useState<AddressType | null>(null);
   const { basket, coupon, shippingFee } = useSelector(
     (store: RootState) => store.basket
@@ -55,16 +59,6 @@ const Checkout: NextPage = () => {
 
   const dialog = useSelector(selectDialog);
   const user = useSelector(selectUser);
-
-  const [createOrder] = useMutation(OrderMutation, {
-    onCompleted: (data) => {
-      console.log(data);
-      dispatch(removeAll());
-      dispatch(removeCoupon());
-      router.push(`/receipt/${data?.createOrder?.id}`);
-    },
-    onError: (err) => console.table(err),
-  });
 
   const { refetch } = useQuery(AddressesQuery, {
     onCompleted: (data) => {
@@ -75,10 +69,12 @@ const Checkout: NextPage = () => {
     },
   });
 
-  
+  const createStripeSession = async (type: string) => {
+    const stripe = await stripePromise;
 
-  const handleCheckout = () => {
     const data = {
+      userId: user?.id,
+      email: user?.email,
       totalPrice: `${Number(getBasketTotal(basket)).toFixed(2)}`,
       pickup,
       address: !pickup
@@ -94,11 +90,7 @@ const Checkout: NextPage = () => {
           }
         : null,
       shippingFee: `${shippingFee}`,
-      products: basket.map((b) => ({
-        id: b.id,
-        quantity: b.quantity,
-        price: `${b.price * b.quantity}`,
-      })),
+      products: basket,
       coupon: coupon
         ? {
             id: coupon.id,
@@ -110,15 +102,14 @@ const Checkout: NextPage = () => {
             expiresIn: coupon.expiresIn,
           }
         : null,
-      paymentMethod,
+      paymentMethod: type,
       deliveryMethod,
       phoneNumber: pickup ? user?.phoneNumber : null,
     };
+    const res = await axios.post("/api/checkout_sessions", data);
 
-    createOrder({
-      variables: {
-        input: data,
-      },
+    await stripe?.redirectToCheckout({
+      sessionId: res.data.id,
     });
   };
 
@@ -126,9 +117,9 @@ const Checkout: NextPage = () => {
     setProgress("payment");
   };
 
-  const handlePayment = (type: string) => {
+  const handlePayment = async (type: string) => {
     setPaymentMethod(type);
-    setProgress("summary");
+    await createStripeSession(type)
   };
 
   return (
@@ -158,7 +149,7 @@ const Checkout: NextPage = () => {
                 )}
                 {progress === "payment" && <Payment onNext={handlePayment} />}
 
-                {progress === "summary" && (
+                {/* {progress === "summary" && (
                   <Summary
                     paymentMethod={paymentMethod}
                     deliveryMethod={deliveryMethod}
@@ -168,7 +159,7 @@ const Checkout: NextPage = () => {
                     address={address}
                     handleCheckout={handleCheckout}
                   />
-                )}
+                )} */}
               </div>
             </>
           ) : (
@@ -244,34 +235,11 @@ const Stepper = (props: StepperProps) => {
             className="text-white text-[25px]"
           />
         </div>
-
-        <span
-          className={`w-[50px] h-[5px] ${
-            progress === "summary" ||
-            progress === "payment" ||
-            progress === "checkout"
-              ? "bg-primary cursor-pointer"
-              : "bg-neutral-300"
-          }`}
-        ></span>
-
-        <div
-          className={`shrink-0 h-[45px] w-[45px] flex items-center justify-center rounded-full ${
-            progress === "checkout" ? "bg-primary" : "bg-neutral-300"
-          }`}
-        >
-          <BagTick2
-            variant="Bold"
-            size={25}
-            className="text-white text-[25px]"
-          />
-        </div>
       </div>
 
       <div className="flex items-center justify-around w-[285px]">
         <p className="text-black dark:text-white font-medium">Address</p>
         <p className="text-black dark:text-white font-medium">Payment</p>
-        <p className="text-black dark:text-white font-medium">Checkout</p>
       </div>
     </div>
   );

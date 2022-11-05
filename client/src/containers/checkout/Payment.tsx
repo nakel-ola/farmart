@@ -21,7 +21,7 @@ import PromoCard from "../sidecart/PromoCard";
 let stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
-  const [type, setType] = useState("Paystack");
+  const [type, setType] = useState("Stripe");
   const [input, setInput] = useState("");
 
   const { basket, coupon, shippingFee } = useSelector(
@@ -62,9 +62,9 @@ const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
   const createStripeSession = async () => {
     const stripe = await stripePromise;
     const res = await axios.post("/api/checkout_sessions", {
+      email: user?.email,
       products: basket,
       discount: null,
-      email: user?.email,
     });
 
     console.log(res.data);
@@ -143,11 +143,11 @@ const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
         <div
           className="flex w-[90%] items-start my-2 ml-[25px] cursor-pointer"
           onClick={() => {
-            setType("Paystack");
+            setType("Stripe");
           }}
         >
           <div className="flex justify-center items-center mt-[3px]">
-            {type === "Paystack" ? (
+            {type === "Stripe" ? (
               <IoRadioButtonOnOutline className="text-[25px] text-primary" />
             ) : (
               <IoRadioButtonOffOutline className="text-[25px] text-primary" />
@@ -184,7 +184,7 @@ const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
       </CardTemplate>
 
       <div className="w-full grid place-items-center mb-4">
-        <Button onClick={createStripeSession}>{sessionId ? "Proceed" : "Pay Now"}</Button>
+        <Button onClick={() => onNext(type)}>{sessionId ? "Proceed" : "Pay Now"}</Button>
       </div>
     </div>
   );

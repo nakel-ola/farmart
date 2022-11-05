@@ -26,7 +26,6 @@ const authenticated =
 
       if (req.headers.cookie) {
         let parse = cookie.parse(req.headers.cookie);
-        // console.log(parse);
 
         if (req.admin && parse.grocery_admin) {
           const data = await getDb(parse.grocery_admin ?? "", req.admin);
@@ -38,8 +37,10 @@ const authenticated =
           req.userId = data.id;
           req.blocked = data.block;
           return fn(args, req, res, context, info);
-        } else {
-          return errorMsg;
+        }
+      } else if (req.headers["userid"] && req.headers["stripe-signature"]) {
+        if (mongoose.Types.ObjectId.isValid(req.headers["userid"].toString())) {
+          return fn(args, req, res, context, info);
         }
       }
 

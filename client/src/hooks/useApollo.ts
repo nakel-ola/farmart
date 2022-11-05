@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useMemo } from 'react'
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import useApolloMerge from './useApolloMerge';
@@ -73,7 +74,7 @@ const cache = new InMemoryCache({
   },
 });
 
-function createApolloClient() {
+export function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: httpLink,

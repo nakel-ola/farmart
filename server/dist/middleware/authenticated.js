@@ -28,7 +28,6 @@ const authenticated = (fn) => (args, req, res, context, info) => __awaiter(void 
         };
         if (req.headers.cookie) {
             let parse = cookie_1.default.parse(req.headers.cookie);
-            // console.log(parse);
             if (req.admin && parse.grocery_admin) {
                 const data = yield getDb((_a = parse.grocery_admin) !== null && _a !== void 0 ? _a : "", req.admin);
                 req.userId = data.id;
@@ -41,8 +40,10 @@ const authenticated = (fn) => (args, req, res, context, info) => __awaiter(void 
                 req.blocked = data.block;
                 return fn(args, req, res, context, info);
             }
-            else {
-                return errorMsg;
+        }
+        else if (req.headers["userid"] && req.headers["stripe-signature"]) {
+            if (mongoose_1.default.Types.ObjectId.isValid(req.headers["userid"].toString())) {
+                return fn(args, req, res, context, info);
             }
         }
         return errorMsg;

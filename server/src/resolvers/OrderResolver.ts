@@ -25,7 +25,7 @@ const createOrder = authenticated(
   async (args: CreateOrderArgs, req: ReqBody): Promise<CreateOrderType> => {
     try {
       const input = args.input,
-        userId = xss(req.userId),
+        userId = xss(req.userId ?? req.headers["userid"].toString()),
         paymentMethod = xss(input.paymentMethod),
         deliveryMethod = xss(input.deliveryMethod),
         shippingFee = input.shippingFee ? xss(input.shippingFee) : null,

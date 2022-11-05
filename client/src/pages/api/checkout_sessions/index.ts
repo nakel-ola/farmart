@@ -10,12 +10,25 @@ import { NextApiRequest, NextApiResponse } from "next";
  */
 
 import Stripe from "stripe";
-import { Basket } from "../../../../typing";
+import { AddressType, Basket, Coupon } from "../../../../typing";
+import clean from "../../../helper/clean";
 import { formatAmountForStripe } from "../../../helper/stripe-helpers";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   // https://github.com/stripe/stripe-node#configuration
   apiVersion: "2022-08-01",
 });
+
+interface BodyType {
+  products: Basket[];
+  pickup: string;
+  address: AddressType | null;
+  coupon: Coupon | null;
+  paymentMethod: string;
+  deliveryMethod: string;
+  phoneNumber: string | null;
+  email: string;
+  userId: string;
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -23,16 +36,24 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     try {
-      const { products, discount, email } = req.body;
-
-      console.log(email)
+      const {
+        products,
+        pickup,
+        address,
+        coupon,
+        paymentMethod,
+        deliveryMethod,
+        phoneNumber,
+        email,
+        userId
+      }: BodyType = req.body;
 
       const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] =
         products.map((product: Basket) => ({
           quantity: product.quantity,
           price_data: {
             currency: "usd",
-            unit_amount: 400,
+            unit_amount: formatAmountForStripe(product.price,"USD"),
             product_data: {
               name: product.title,
               description: product.description,
@@ -40,6 +61,24 @@ export default async function handler(
             },
           },
         }));
+
+      let metadata = clean({
+        email,
+        userId,
+        products: JSON.stringify(
+          products.map((b: Basket) => ({
+            id: b.id,
+            quantity: b.quantity,
+            price: `${b.price * b.quantity}`,
+          }))
+        ),
+        pickup,
+        address: address ? JSON.stringify(address) : null,
+        coupon: coupon ? JSON.stringify(coupon) : null,
+        paymentMethod,
+        deliveryMethod,
+        phoneNumber,
+      })
 
       const params: Stripe.Checkout.SessionCreateParams = {
         submit_type: "pay",
@@ -49,15 +88,15 @@ export default async function handler(
         success_url: `http://localhost:3000/checkout?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `http://localhost:3000/checkout`,
         mode: "payment",
-        metadata: {
-          email,
-        },
+        metadata
       };
+
+      // console.log(params);
+
 
       const checkoutSession: Stripe.Checkout.Session =
         await stripe.checkout.sessions.create(params);
 
-      console.log(checkoutSession);
 
       res.status(200).json(checkoutSession);
     } catch (err) {
