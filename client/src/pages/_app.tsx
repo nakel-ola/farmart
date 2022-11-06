@@ -98,8 +98,8 @@ MyApp.getInitialProps = wrapper.getInitialPageProps(
         });
     }
 
-    if (token?.grocery && !newStore.user.cookies) {
-      store.dispatch(setCookies({ grocery: token.grocery }));
+    if (token?.auth && !newStore.user.cookies) {
+      store.dispatch(setCookies({ auth: token.auth }));
     }
 
     if (token?.grocery && !newStore?.user?.user) {

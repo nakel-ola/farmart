@@ -88,13 +88,13 @@ MyApp.getInitialProps = wrapper.getInitialPageProps(
 
     const newStore: RootState = store.getState();
 
-    if (token?.grocery_admin && !newStore.user.cookies) {
-      store.dispatch(setCookies({ grocery_admin: token?.grocery_admin }));
+    if (token?.auth && !newStore.user.cookies) {
+      store.dispatch(setCookies({ auth: token?.auth }));
     } else {
       store.dispatch(logout());
     }
 
-    if (token?.grocery_admin && !newStore?.user?.user) {
+    if (token?.auth && !newStore?.user?.user) {
       await apolloClient
         .query({
           query: EmyployeeQuery,

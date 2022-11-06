@@ -9,7 +9,7 @@ export const win = typeof window !== "undefined" ? window : {} as Window;
 export type UserState  = {
   user: UserType | null;
   validateUser: ValidateCodeType | null;
-  cookies: { grocery: string } | null
+  cookies: { auth: string } | null
 }
 
 
