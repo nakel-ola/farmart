@@ -4,13 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.schema = exports.MemoryStore = void 0;
+const graphql_upload_minimal_1 = require("graphql-upload-minimal");
 const connect_mongo_1 = __importDefault(require("connect-mongo"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const express_1 = __importDefault(require("express"));
 const express_graphql_1 = require("express-graphql");
 const express_session_1 = __importDefault(require("express-session"));
 const graphql_1 = require("graphql");
-const graphql_upload_minimal_1 = require("graphql-upload-minimal");
 const mongoose_1 = __importDefault(require("mongoose"));
 const path_1 = __importDefault(require("path"));
 const config_1 = __importDefault(require("./config"));

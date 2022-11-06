@@ -1,14 +1,13 @@
+import { graphqlUploadExpress } from 'graphql-upload-minimal';
 import MongoStore from "connect-mongo";
 import cookieParser from "cookie-parser";
 import express from "express";
 import { graphqlHTTP } from "express-graphql";
 import session from "express-session";
 import { buildSchema, print } from "graphql";
-import { graphqlUploadExpress } from "graphql-upload-minimal";
 import mongoose from "mongoose";
 import path from "path";
 import config from "./config";
-import generateCode from "./helper/generateCode";
 import cors from "./middleware/cors";
 import resolvers from "./resolvers";
 import typeDefs from "./type-defs";
