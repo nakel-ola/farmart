@@ -14,7 +14,6 @@ const graphql_1 = require("graphql");
 const mongoose_1 = __importDefault(require("mongoose"));
 const path_1 = __importDefault(require("path"));
 const config_1 = __importDefault(require("./config"));
-require("./helper/generateCode");
 const cors_1 = __importDefault(require("./middleware/cors"));
 const resolvers_1 = __importDefault(require("./resolvers"));
 const type_defs_1 = __importDefault(require("./type-defs"));
