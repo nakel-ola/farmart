@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "build": "npm install && tsc",
+    "start": "tsc-watch --onSuccess \"node ./dist/index.js\"",
     "dev": "tsc-watch --onSuccess \"node ./dist/index.js\""
   },
   "author": "Nunu Olamilekan",
