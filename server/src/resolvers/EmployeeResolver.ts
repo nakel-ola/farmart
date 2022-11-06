@@ -79,7 +79,7 @@ const employeeRegister = async (
       { expiresIn: config.expiresIn }
     );
 
-    (req.session as any).grocery_admin = token;
+    (req.session as any).auth = token;
 
     await db.inviteSchema.updateOne(
       { _id: validate._id, email, inviteCode },
@@ -143,7 +143,7 @@ const employeeLogin = async (
       expiresIn: config.expiresIn,
     });
 
-    (req.session as any).grocery_admin = token;
+    (req.session as any).auth = token;
 
     return {
       __typename: "Employee",
@@ -191,13 +191,13 @@ const employeeForgetPassword = async (
 
     await db.validateSchema.create(obj);
 
-    // await emailer({
-    //   from: '"Grocery Team" noreply@grocery.com',
-    //   to: email,
-    //   subject: "Your Grocery app verification code",
-    //   text: null,
-    //   html: verificationMail({ code: id, name }),
-    // });
+    await emailer({
+      from: '"Grocery Team" noreply@grocery.com',
+      to: email,
+      subject: "Your Grocery app verification code",
+      text: null,
+      html: verificationMail({ code: id, name }),
+    });
 
     console.log(id)
 
@@ -253,17 +253,17 @@ const employeeChangePassword = async (
       expiresIn: config.expiresIn,
     });
 
-    (req.session as any).grocery_admin = token;
+    (req.session as any).auth = token;
 
     await db.validateSchema.deleteOne({ email, name });
 
-    // await emailer({
-    //   from: '"Grocery Team" noreply@grocery.com',
-    //   to: email,
-    //   subject: "Your password was changed",
-    //   text: null,
-    //   html: passwordChangeMail({ name, email }),
-    // });
+    await emailer({
+      from: '"Grocery Team" noreply@grocery.com',
+      to: email,
+      subject: "Your password was changed",
+      text: null,
+      html: passwordChangeMail({ name, email }),
+    });
 
     return merge({ __typename: "Employee" }, newUser) as any;
   } catch (e) {
@@ -306,7 +306,7 @@ const employeeUpdatePassword = authenticated(
         throw new Error("Something went wrong");
       }
 
-      req.res.clearCookie("grocery_admin");
+      req.res.clearCookie("auth");
 
 
       req.session.destroy((err) => {
@@ -315,13 +315,13 @@ const employeeUpdatePassword = authenticated(
         }
       });
 
-      // await emailer({
-      //   from: '"Grocery Team" noreply@grocery.com',
-      //   to: email,
-      //   subject: "	Your password was changed",
-      //   text: null,
-      //   html: passwordChangeMail({ name: user.name, email }),
-      // });
+      await emailer({
+        from: '"Grocery Team" noreply@grocery.com',
+        to: email,
+        subject: "	Your password was changed",
+        text: null,
+        html: passwordChangeMail({ name: user.name, email }),
+      });
 
       const token = jwt.sign(
         {
@@ -525,7 +525,7 @@ const createEmployeeInvite = authenticated(
         throw new Error("You don't have permission to invite an employee");
       }
 
-      let link = `http://localhost:3001/?type=sign&code=${inviteCode}`;
+      let link = `${config.admin_url}/?type=sign&code=${inviteCode}`;
 
       await db.inviteSchema.create({ email, level, status, inviteCode });
 
@@ -535,13 +535,13 @@ const createEmployeeInvite = authenticated(
 
       console.log(link);
 
-      // await emailer({
-      //   from: '"Grocery Team" noreply@grocery.com',
-      //   to: email,
-      //   subject: "Your Grocery app verification code",
-      //   text: null,
-      //   html: invitationMail({ link  }),
-      // });
+      await emailer({
+        from: '"Grocery Team" noreply@grocery.com',
+        to: email,
+        subject: "Your Grocery app verification code",
+        text: null,
+        html: invitationMail({ link  }),
+      });
 
       return { msg: "Invite sent successfully" };
     } catch (err) {
@@ -606,7 +606,7 @@ const employeeInvites = authenticated(async (_, req: ReqBody) => {
 
 const logout = authenticated(async (_, req: ReqBody) => {
   try {
-    req.res.clearCookie(req.admin ? "grocery_admin" : "grocery");
+    req.res.clearCookie(req.admin ? "auth" : "grocery");
 
     req.session.destroy((err) => {
       if (err) {

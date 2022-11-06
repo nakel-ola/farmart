@@ -569,7 +569,7 @@ export const welcomeMsg = ({
 export const verificationMail = ({
   code,
   name,
-}: { code: string; name: string }) => `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+}: { code: string | number; name: string }) => `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!-- saved from url=(0061)https://s12.aconvert.com/convert/p3r68-cdx67/a6wul-lm0nb.html -->
 <html lang="en" xml:lang="en" class="wenukn idc0_343">
   <head>

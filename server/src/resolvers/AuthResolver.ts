@@ -75,15 +75,15 @@ const register = async (
       { expiresIn: config.expiresIn }
     );
 
-    (req.session as any).grocery = token;
+    (req.session as any).auth = token;
 
-    // await emailer({
-    //   from: '"Grocery Team" noreply@grocery.com',
-    //   to: email,
-    //   subject: "Welcome to the Grocery family!",
-    //   text: "",
-    //   html: welcomeMsg({ name }),
-    // });
+    await emailer({
+      from: '"Grocery Team" noreply@grocery.com',
+      to: email,
+      subject: "Welcome to the Grocery family!",
+      text: "",
+      html: welcomeMsg({ name }),
+    });
     return merge(
       { __typename: "User" },
       {
@@ -131,7 +131,7 @@ const login = async (args: LoginArgs, req: ReqBody): Promise<UserType> => {
       { expiresIn: config.expiresIn }
     );
 
-    (req.session as any).grocery = token;
+    (req.session as any).auth = token;
 
     return merge({ __typename: "User" }, user) as any;
   } catch (e) {
@@ -165,13 +165,13 @@ const forgetPassword = async (
 
     await db.validateSchema.create(obj);
 
-    // await emailer({
-    //   from: '"Grocery Team" noreply@grocery.com',
-    //   to: email,
-    //   subject: "Your Grocery app verification code",
-    //   text: null,
-    //   html: verificationMail({ code: id, name }),
-    // });
+    await emailer({
+      from: '"Grocery Team" noreply@grocery.com',
+      to: email,
+      subject: "Your Grocery app verification code",
+      text: null,
+      html: verificationMail({ code: id, name }),
+    });
 
 
     console.log(id)
@@ -243,17 +243,17 @@ const changePassword = async (
       { expiresIn: config.expiresIn }
     );
 
-    (req.session as any).grocery = token;
+    (req.session as any).auth = token;
 
     await db.validateSchema.deleteOne({ email, name });
 
-    // await emailer({
-    //   from: '"Grocery Team" noreply@grocery.com',
-    //   to: email,
-    //   subject: "Your password was changed",
-    //   text: null,
-    //   html: passwordChangeMail({ name, email }),
-    // });
+    await emailer({
+      from: '"Grocery Team" noreply@grocery.com',
+      to: email,
+      subject: "Your password was changed",
+      text: null,
+      html: passwordChangeMail({ name, email }),
+    });
 
     return merge({ __typename: "User" }, newUser) as any;
   } catch (e) {
@@ -323,7 +323,7 @@ const updatePassword = authenticated(
         throw new Error("Something went wrong");
       }
 
-      req.res.clearCookie("grocery");
+      req.res.clearCookie("auth");
 
 
       req.session.destroy((err) => {
@@ -338,7 +338,7 @@ const updatePassword = authenticated(
         { expiresIn: config.expiresIn }
       );
 
-      (req.session as any).grocery = token;
+      (req.session as any).auth = token;
 
       // await emailer({
       //   from: '"Grocery Team" noreply@grocery.com',
