@@ -181,7 +181,7 @@ const deleteReview = (0, authenticated_1.default)((args, req) => __awaiter(void 
         throw new Error(e.message);
     }
 }));
-const reviews = (0, authenticated_1.default)((args) => __awaiter(void 0, void 0, void 0, function* () {
+const reviews = (args) => __awaiter(void 0, void 0, void 0, function* () {
     var _h;
     try {
         let productId = (0, xss_1.default)(args.productId);
@@ -195,7 +195,7 @@ const reviews = (0, authenticated_1.default)((args) => __awaiter(void 0, void 0,
         console.log(err);
         throw new Error(err.message);
     }
-}));
+});
 const createProduct = (0, authenticated_1.default)((args, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let admin = req.admin, input = args.input, title = (0, xss_1.default)(input.title), slug = (0, xss_1.default)(input.slug), category = (0, xss_1.default)(input.category), description = (0, xss_1.default)(input.description), image = input.image, price = Number((0, xss_1.default)(`${input.price}`)), stock = Number((0, xss_1.default)(`${input.stock}`)), rating = 0, currency = {

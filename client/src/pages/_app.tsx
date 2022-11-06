@@ -5,7 +5,6 @@ import { Router } from "next/router";
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { Provider } from "react-redux";
-import { persistStore } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import PageLoader from "../components/PageLoader";
 import { initializeApollo, useApollo } from "../hooks/useApollo";

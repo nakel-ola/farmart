@@ -5,7 +5,6 @@ import React from "react";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { Currency } from "../../../typing";
-import numberFormat from "../../helper/numberFormat";
 import {
   AddToFavorites,
   FavoriteQuery,

@@ -241,27 +241,25 @@ const deleteReview = authenticated(
   }
 );
 
-const reviews = authenticated(
-  async (args: { productId: string }): Promise<ReviewType[]> => {
-    try {
-      let productId = xss(args.productId);
+const reviews = async (args: { productId: string }): Promise<ReviewType[]> => {
+  try {
+    let productId = xss(args.productId);
 
-      if (!mongoose.Types.ObjectId.isValid(productId)) {
-        throw new Error("Porduct ID must be a valid");
-      }
-
-      const data = (await db.productSchema.findOne(
-        { _id: productId },
-        { reviews: 1 }
-      )) as { reviews: ReviewType[] };
-
-      return data.reviews ?? [];
-    } catch (err) {
-      console.log(err);
-      throw new Error(err.message);
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      throw new Error("Porduct ID must be a valid");
     }
+
+    const data = (await db.productSchema.findOne(
+      { _id: productId },
+      { reviews: 1 }
+    )) as { reviews: ReviewType[] };
+
+    return data.reviews ?? [];
+  } catch (err) {
+    console.log(err);
+    throw new Error(err.message);
   }
-);
+};
 
 const createProduct = authenticated(
   async (args: CreateProductArgs, req: ReqBody): Promise<Msg> => {

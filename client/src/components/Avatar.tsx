@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useMemo } from "react";
 import clsx from "clsx";
 import useImageLoader from "../hooks/useImageLoader";
@@ -62,7 +63,7 @@ function Avatar({
 
       return color;
     }
-  }, []);
+  }, [randomBg,src]);
 
   const color = getColor;
 

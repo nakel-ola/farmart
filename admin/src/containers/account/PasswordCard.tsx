@@ -12,7 +12,16 @@ import { JwtUserType } from "../home/LogInCard";
 const UpdatePassword = gql`
   mutation EmployeeUpdatePassword($input: UpdatePasswordInput!) {
     employeeUpdatePassword(input: $input) {
-      token
+      id
+      email
+      name
+      photoUrl
+      level
+      gender
+      birthday
+      phoneNumber
+      createdAt
+      updatedAt
     }
   }
 `;
@@ -65,7 +74,7 @@ const PasswordCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
       },
       onCompleted: (data) => {
         const value = decode(data.employeeUpdatePassword.token) as JwtUserType;
-        dispatch(login({ token: data.employeeUpdatePassword.token, ...value }));
+        dispatch(login(data.employeeUpdatePassword));
         setForm({ oldPassword: "", newPassword: "" });
         setLoading(false);
         toast.success("Login Successfully", { id: loginToast });

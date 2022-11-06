@@ -32,7 +32,7 @@ function Footer({ id, ...other }: Product) {
     }
   };
   return (
-    <div className="flex items-center justify-center w-full md:w-[80%] md:mt-[10px] p-[5px] pl-[8px] py-[8px] md:static fixed bottom-1 md:rounded-lg md:mb-2  bg-white dark:bg-dark md:bg-transparent md:dark:bg-transparent md:shadow-none shadow-sm dark:shadow-black/30">
+    <div className="flex items-center justify-center w-full md:w-[80%] md:mt-[10px] p-[5px] pl-[8px] py-[8px] md:static fixed bottom-0 md:rounded-lg md:mb-2  bg-white dark:bg-dark md:bg-transparent md:dark:bg-transparent md:shadow-none shadow-sm dark:shadow-black/30">
       <div
         className={`md:flex-[0.2] flex-[0.5] flex items-center ${
           product

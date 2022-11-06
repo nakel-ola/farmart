@@ -1,8 +1,7 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { MessageText1, Star1 } from "iconsax-react";
 import React, { FormEvent, useState } from "react";
-import { IoCloseCircle, IoSearch } from "react-icons/io5";
-import Rating from "react-rating";
+import { IoCloseCircle } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import Avatar from "../../components/Avatar";
 import CardTemplate from "../../components/CardTemplate";
@@ -66,17 +65,19 @@ const ReviewCard = ({ productId }: { productId: string }) => {
   };
 
   return (
-    <CardTemplate title="Rating & Reviews" className="mt-[10px] ">
+    <CardTemplate title="Rating & Reviews" className="mt-[10px] lg:mb-0 mb-[10px] ">
       <div className="flex mx-2 flex-col md:flex-row">
-        <RatingCard />
         {data?.reviews?.length > 0 ? (
-          <div className="py-[8px] pl-[15px] pr-[8px] max-h-[300px] overflow-y-scroll">
-            {(data?.reviews as any)?.map((review: any, index: number) => (
-              <Card key={index} {...review} />
-            ))}
-          </div>
+          <>
+            <RatingCard />
+            <div className="py-[8px] pl-[15px] pr-[8px] max-h-[300px] overflow-y-scroll">
+              {(data?.reviews as any)?.map((review: any, index: number) => (
+                <Card key={index} {...review} />
+              ))}
+            </div>
+          </>
         ) : (
-          <div className="flex flex-col items-center justify-center m-2 my-8">
+          <div className="flex flex-col items-center justify-center m-2 my-8 w-full">
             <MessageText1
               size={100}
               className="text-5xl text-neutral-700 dark:text-neutral-400"
@@ -179,30 +180,30 @@ const RatingCard = () => {
   return (
     <div className="flex justify-center w-[95%] md:w-[35%] flex-col m-2">
       <div className="w-full h-[180px] bg-slate-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center flex-col">
-        <h1 className="text-yellow text-3xl font-bold my-2">
-          {newRating} / 5
-        </h1>
+        <h1 className="text-yellow text-3xl font-bold my-2">{newRating} / 5</h1>
 
-        <span className="flex items-center my-2">
-          <Rating
-            initialRating={newRating!}
-            readonly
-            fullSymbol={
+        <div className="flex">
+          {Array(Math.floor(newRating))
+            .fill(0)
+            .map((_, i) => (
               <Star1
+                key={i}
                 size={25}
                 variant="Bold"
-                className="text-yellow text-[20px]"
+                className="text-[#f8b808] text-[20px]"
               />
-            }
-            emptySymbol={
+            ))}
+          {Array(Math.floor(newRating) && 5 - Math.floor(newRating))
+            .fill(0)
+            .map((_, i) => (
               <Star1
+                key={i}
                 size={25}
                 variant="Bold"
                 className="text-[#bdbdbd] text-[20px]"
               />
-            }
-          />
-        </span>
+            ))}
+        </div>
 
         <p className="my-2 text-lg text-black dark:text-white">
           {total} verified ratings
@@ -244,3 +245,5 @@ const RatingCard = () => {
 };
 
 export default ReviewCard;
+
+// mongodb+srv://Olamilekan:0cWd7OZvKSHVV5qh@cluster0.81q6hhf.mongodb.net/?retryWrites=true&w=majority

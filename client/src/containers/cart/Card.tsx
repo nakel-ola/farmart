@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { Add, Minus } from "iconsax-react";
 import React from "react";
 import { IoClose } from "react-icons/io5";

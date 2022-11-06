@@ -11,7 +11,8 @@ function useStateEffect<T>(
 
   useEffect(() => {
     if (value !== previousValue) setState(value)
-  }, dependency);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [...dependency,previousValue,value]);
   return [state, setState];
 }
 

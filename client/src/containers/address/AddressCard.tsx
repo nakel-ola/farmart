@@ -65,7 +65,7 @@ const AddressCard = ({
               add({
                 type: "address",
                 open: true,
-                product: {
+                data: {
                   id,
                   name,
                   street,

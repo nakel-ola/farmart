@@ -3,7 +3,7 @@ import { useState,useEffect } from "react";
 import usePrevious from "../hooks/usePrevious";
 
 const Checkbox = ({
-  checked,
+  checked = false,
   onClick,
 }: {
   checked?: boolean;
@@ -18,7 +18,7 @@ const Checkbox = ({
       setOpen(checked)
     }
     
-  }, [checked])
+  }, [checked,prevChecked])
   
   return (
     <div

@@ -75,7 +75,7 @@ const Theme: React.FC<ThemeProviderProps> = ({
     }
 
     enable?.()
-  }, [])
+  }, [attribute, attrs, defaultTheme, disableTransitionOnChange, enableColorScheme, enableSystem, value])
 
   const setTheme = useCallback(
     (theme: any) => {
@@ -88,7 +88,8 @@ const Theme: React.FC<ThemeProviderProps> = ({
         // Unsupported
       }
     },
-    [forcedTheme]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [forcedTheme,storageKey]
   )
 
   const handleMediaQuery = useCallback(
@@ -100,7 +101,7 @@ const Theme: React.FC<ThemeProviderProps> = ({
         applyTheme('system')
       }
     },
-    [theme, forcedTheme]
+    [theme, enableSystem, forcedTheme, applyTheme]
   )
 
   // Always listen to System preference
@@ -128,12 +129,12 @@ const Theme: React.FC<ThemeProviderProps> = ({
 
     window.addEventListener('storage', handleStorage)
     return () => window.removeEventListener('storage', handleStorage)
-  }, [setTheme])
+  }, [setTheme,defaultTheme,storageKey])
 
   // Whenever theme or forcedTheme changes, apply it
   useEffect(() => {
     applyTheme(forcedTheme ?? theme)
-  }, [forcedTheme, theme])
+  }, [forcedTheme, theme,applyTheme])
 
   return (
     <ThemeContext.Provider
@@ -262,6 +263,8 @@ const ThemeScript = memo(
   // Never re-render this component
   () => true
 )
+
+ThemeScript.displayName = "ThemeScript"
 
 // Helpers
 const getTheme = (key: string, fallback?: string) => {
