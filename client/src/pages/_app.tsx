@@ -102,7 +102,7 @@ MyApp.getInitialProps = wrapper.getInitialPageProps(
       store.dispatch(setCookies({ auth: token.auth }));
     }
 
-    if (token?.grocery && !newStore?.user?.user) {
+    if (token?.auth && !newStore?.user?.user) {
       await apolloClient
         .query({
           query: UserQuery,
