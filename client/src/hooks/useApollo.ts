@@ -9,7 +9,7 @@ let apolloClient: any;
 
 
 const httpLink = createUploadLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: process.env.SERVER_URL,
   credentials: "include",
   fetchOptions: {
     credentials: "include",
