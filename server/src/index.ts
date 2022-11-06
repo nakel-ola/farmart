@@ -13,8 +13,6 @@ import resolvers from "./resolvers";
 import typeDefs from "./type-defs";
 import type { ReqBody } from "./typing";
 
-console.log(config)
-
 export const MemoryStore = MongoStore.create({
   mongoUrl: config.mongodb_uri,
   ttl: 14 * 24 * 60 * 60,
