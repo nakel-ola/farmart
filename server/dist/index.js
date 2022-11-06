@@ -17,6 +17,7 @@ const config_1 = __importDefault(require("./config"));
 const cors_1 = __importDefault(require("./middleware/cors"));
 const resolvers_1 = __importDefault(require("./resolvers"));
 const type_defs_1 = __importDefault(require("./type-defs"));
+console.log(config_1.default);
 exports.MemoryStore = connect_mongo_1.default.create({
     mongoUrl: config_1.default.mongodb_uri,
     ttl: 14 * 24 * 60 * 60,
@@ -55,3 +56,5 @@ mongoose_1.default
     app.listen(config_1.default.port, () => console.log(`\nServer started at: http://localhost:${config_1.default.port}/graphql\n`));
 })
     .catch((err) => console.error(err));
+// mongodb+srv://Olamilekan:0cWd7OZvKSHVV5qh@cluster0.81q6hhf.mongodb.net/?retryWrites=true&w=majority
+// mongodb://localhost:27017/grocery

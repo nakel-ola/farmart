@@ -13,6 +13,8 @@ import resolvers from "./resolvers";
 import typeDefs from "./type-defs";
 import type { ReqBody } from "./typing";
 
+console.log(config)
+
 export const MemoryStore = MongoStore.create({
   mongoUrl: config.mongodb_uri,
   ttl: 14 * 24 * 60 * 60,
@@ -63,3 +65,7 @@ mongoose
     );
   })
   .catch((err) => console.error(err));
+
+
+  // mongodb+srv://Olamilekan:0cWd7OZvKSHVV5qh@cluster0.81q6hhf.mongodb.net/?retryWrites=true&w=majority
+// mongodb://localhost:27017/grocery
