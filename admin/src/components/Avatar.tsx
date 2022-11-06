@@ -1,5 +1,7 @@
-import clsx from "clsx";
+/* eslint-disable @next/next/no-img-element */
 import React, { useMemo } from "react";
+import clsx from "clsx";
+import useImageLoader from "../hooks/useImageLoader";
 
 const colors = [
   "bg-red-100",
@@ -16,28 +18,56 @@ const colors = [
   "bg-gray-100",
 ];
 
-let selectedColor: string;
+interface Color {
+  id: string;
+  color: string;
+}
+
+let selectedColors: Color[] = [];
 
 interface AvatarProps {
   [key: string]: any;
   src: string;
-  alt: string;
+  alt?: string;
   className?: string;
   bgColor?: string;
 }
 
-const num = Math.floor(Math.random() * colors.length);
+const num = () => Math.floor(Math.random() * colors.length);
 
-function Avatar({ src, alt, className, bgColor, ...other }: AvatarProps) {
+function Avatar({
+  src,
+  alt,
+  className,
+  bgColor,
+  randomBg,
+  ...other
+}: AvatarProps) {
+
   const getColor = useMemo(() => {
-    if (!selectedColor) {
-      selectedColor = colors[num];
-      return selectedColor;
+    if (randomBg) {
+      return colors[num()];
     }
-    return colors[num];
-  }, []);
+
+    const findId = selectedColors.findIndex((c) => c.id === src);
+
+    
+    if (findId !== -1) {
+      return selectedColors[findId].color;
+    } else {
+      const color = colors[num()];
+      selectedColors.push({
+        id: src,
+        color,
+      });
+
+      return color;
+    }
+  }, [randomBg,src]);
 
   const color = getColor;
+
+  const loaded = useImageLoader({ src });
 
   return (
     <div
@@ -45,13 +75,14 @@ function Avatar({ src, alt, className, bgColor, ...other }: AvatarProps) {
       className={clsx(
         `${
           bgColor ?? color
-        } shrink-0 w-[100px] h-[40px] rounded-full overflow-hidden`,
+        } shrink-0 w-[40px] h-[40px] rounded-full overflow-hidden`,
+        !src && "bg-[#999999]",
         className
       )}
     >
       <img
         alt={alt}
-        src={src ?? `http://localhost:4000/images/avatar-${1}.png`}
+        src={loaded ? src : `/default-avatar.jpeg`}
         className="w-full h-full object-cover shrink-0"
       />
     </div>

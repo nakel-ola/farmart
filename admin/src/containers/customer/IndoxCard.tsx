@@ -40,7 +40,7 @@ const IndoxCard = ({ data, refetch, canEdit }: Props) => {
             <Button
               className="text-green-600 bg-green-600/10"
               onClick={() =>
-                dispatch(add({ type: "inbox", open: true, product: null }))
+                dispatch(add({ type: "inbox", open: true, data: null }))
               }
             >
               Send inbox

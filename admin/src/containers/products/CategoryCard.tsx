@@ -183,7 +183,7 @@ const CategoryCard = () => {
           <div className="flex items-center">
             <Warning2 size={20} variant="Bold" className="text-yellow-400" />
             <p className="text-yellow-400 ml-2 font-medium">
-              This can't be undone
+              This can&apos;t be undone
             </p>
           </div>
         )}

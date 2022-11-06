@@ -21,7 +21,7 @@ const CouponCard = ({ data,canEdit }: { data: Coupon[]; canEdit: boolean }) => {
           <Button
             className="text-green-600 bg-green-600/10 "
             onClick={() =>
-              dispatch(add({ open: true, product: null, type: "coupon" }))
+              dispatch(add({ open: true, data: null, type: "coupon" }))
             }
           >
             Create coupon
@@ -88,7 +88,7 @@ const Card = (props: Coupon) => {
           dispatch(
             add({
               open: true,
-              product: {
+              data: {
                 id: props.id,
                 message: `
                     Are you sure you want to delete coupon with code:${" "}

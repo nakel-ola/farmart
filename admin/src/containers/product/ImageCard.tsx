@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
 
 const ImageCard = ({ image,name }: { image: any; name: string }) => {

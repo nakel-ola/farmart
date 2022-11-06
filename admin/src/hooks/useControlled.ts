@@ -1,4 +1,6 @@
-import * as React from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/rules-of-hooks */
+import { useEffect,useRef,useState,useCallback } from "react";
 import { useControlledProps } from "./useControlled.d";
 
 
@@ -8,12 +10,12 @@ export default function useControlled<T>({
   name,
   state = "value",
 }: useControlledProps<T>): [T, (newValue: T | ((preValue: T) => T)) => void] {
-  const { current: isControlled } = React.useRef(controlled !== undefined);
-  const [valueState, setValue] = React.useState<any>(defaultProp);
+  const { current: isControlled } = useRef(controlled !== undefined);
+  const [valueState, setValue] = useState<any>(defaultProp);
   const value = isControlled ? controlled : valueState;
 
   if (process.env.NODE_ENV !== "production") {
-    React.useEffect(() => {
+    useEffect(() => {
       if (isControlled !== (controlled !== undefined)) {
         console.error(
           [
@@ -29,18 +31,18 @@ export default function useControlled<T>({
           ].join("\n")
         );
       }
-    }, [state, name, controlled]);
+    }, [state, name, controlled,isControlled]);
 
-    const { current: defaultValue } = React.useRef(defaultProp);
+    const { current: defaultValue } = useRef(defaultProp);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if(!isControlled && defaultValue !== defaultProp) {
             console.error([`A component is changing the default ${state} state of an uncontrolled ${name} after being initialized.` + `To suppress this warning opt to use a controlled ${name}`].join('\n'))
         }
     }, [JSON.stringify(defaultProp)]);
   }
 
-  const setValueIfUncontrolled = React.useCallback((newValue: T | ((preValue: T) => T)) => {
+  const setValueIfUncontrolled = useCallback((newValue: T | ((preValue: T) => T)) => {
     if(!isControlled) setValue(newValue);
   }, []);
 

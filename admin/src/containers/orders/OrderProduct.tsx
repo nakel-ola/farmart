@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import NumberFormat from "react-number-format";

@@ -10,7 +10,7 @@ const ProductNav = () => {
     <Button
       className="text-black dark:text-white bg-slate-100 dark:bg-neutral-800 "
       onClick={() =>
-        dispatch(add({ type: "category", product: null, open: true }))
+        dispatch(add({ type: "category", data: null, open: true }))
       }
     >
       Create categories
