@@ -18,7 +18,7 @@ function PageLoader({ fill = false }: { fill?: boolean }) {
       <div className="flex items-center justify-center flex-col">
         <ReactLoading
           type="spinningBubbles"
-          color={currentTheme === "dark" ? "bg-white" : setting.dark}
+          color={fill ? currentTheme === "dark" ? "white" : setting.dark : "white"}
           className={clsx(fill ? "text-black dark:text-white" : "text-white")}
         />
         <p
