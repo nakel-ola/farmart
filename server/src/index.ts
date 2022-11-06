@@ -49,12 +49,15 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 604800000,
-      httpOnly: true,
+      // httpOnly: true,
       secure: true
     },
   })
 );
 
+if (app.get("env") === "production") {
+  app.set("trust proxy", 1); // trust first proxy
+}
 
 app.use(express.static(path.resolve(__dirname, "../public")));
 
