@@ -36,7 +36,8 @@ app.use((0, express_session_1.default)({
     saveUninitialized: false,
     cookie: {
         maxAge: 604800000,
-        httpOnly: process.env.NODE_ENV === 'development',
+        sameSite: 'none',
+        httpOnly: true,
         secure: process.env.NODE_ENV !== 'development'
     },
 }));
