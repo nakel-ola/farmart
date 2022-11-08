@@ -24,22 +24,6 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: false }));
 app.use(cors);
 app.use(cookieParser());
-// app.use((req: ReqBody, res, next) => {
-//   let options = {
-//     name: "auth",
-//     secret: config.session_key,
-//     resave: false,
-//     store: MemoryStore,
-//     saveUninitialized: false,
-//     cookie: {
-//       maxAge: 604800000,
-//       httpOnly: true,
-//     },
-//   };
-
-//   const sessionHandler = session(options);
-//   return sessionHandler(req, res, next);
-// });
 app.use(
   session({
     name: "auth",
@@ -49,8 +33,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 604800000,
-      // httpOnly: true,
-      secure: true
+      httpOnly: process.env.NODE_ENV === 'development',
+      secure: process.env.NODE_ENV !== 'development'
     },
   })
 );

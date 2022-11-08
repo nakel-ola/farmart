@@ -19,10 +19,10 @@ const mongoose_1 = __importDefault(require("mongoose"));
 require("uuid");
 const xss_1 = __importDefault(require("xss"));
 const config_1 = __importDefault(require("../config"));
-require("../data/emailData");
+const emailData_1 = require("../data/emailData");
 const helper_1 = require("../helper");
 require("../helper/clean");
-require("../helper/emailer");
+const emailer_1 = __importDefault(require("../helper/emailer"));
 const generateCode_1 = __importDefault(require("../helper/generateCode"));
 const ImageUpload_1 = __importDefault(require("../helper/ImageUpload"));
 const authenticated_1 = __importDefault(require("../middleware/authenticated"));
@@ -52,7 +52,7 @@ const employeeRegister = (args, req, res, context, info) => __awaiter(void 0, vo
         };
         const newUser = yield models_1.default.employeeSchema.create(obj);
         const token = jsonwebtoken_1.default.sign({ id: newUser._id.toString(), level: validate.level }, config_1.default.jwt_key, { expiresIn: config_1.default.expiresIn });
-        req.session.grocery_admin = token;
+        req.session.auth = token;
         yield models_1.default.inviteSchema.updateOne({ _id: validate._id, email, inviteCode }, { status: "completed" });
         // await deleteEmployeeInvite(
         //   { id: validate._id.toString() },
@@ -97,7 +97,7 @@ const employeeLogin = (args, req) => __awaiter(void 0, void 0, void 0, function*
         let token = jsonwebtoken_1.default.sign({ id: user._id, level: user.level }, config_1.default.jwt_key, {
             expiresIn: config_1.default.expiresIn,
         });
-        req.session.grocery_admin = token;
+        req.session.auth = token;
         return {
             __typename: "Employee",
             id: user._id.toString(),
@@ -132,13 +132,13 @@ const employeeForgetPassword = (args) => __awaiter(void 0, void 0, void 0, funct
             expiresIn: Date.now(),
         };
         yield models_1.default.validateSchema.create(obj);
-        // await emailer({
-        //   from: '"Grocery Team" noreply@grocery.com',
-        //   to: email,
-        //   subject: "Your Grocery app verification code",
-        //   text: null,
-        //   html: verificationMail({ code: id, name }),
-        // });
+        yield (0, emailer_1.default)({
+            from: '"Grocery Team" noreply@grocery.com',
+            to: email,
+            subject: "Your Grocery app verification code",
+            text: null,
+            html: (0, emailData_1.verificationMail)({ code: id, name }),
+        });
         console.log(id);
         return { validationToken: id.toString() };
     }
@@ -171,15 +171,15 @@ const employeeChangePassword = (args, req) => __awaiter(void 0, void 0, void 0, 
         const token = jsonwebtoken_1.default.sign(Object.assign({ id: newUser._id }, newUser), config_1.default.jwt_key, {
             expiresIn: config_1.default.expiresIn,
         });
-        req.session.grocery_admin = token;
+        req.session.auth = token;
         yield models_1.default.validateSchema.deleteOne({ email, name });
-        // await emailer({
-        //   from: '"Grocery Team" noreply@grocery.com',
-        //   to: email,
-        //   subject: "Your password was changed",
-        //   text: null,
-        //   html: passwordChangeMail({ name, email }),
-        // });
+        yield (0, emailer_1.default)({
+            from: '"Grocery Team" noreply@grocery.com',
+            to: email,
+            subject: "Your password was changed",
+            text: null,
+            html: (0, emailData_1.passwordChangeMail)({ name, email }),
+        });
         return (0, lodash_1.merge)({ __typename: "Employee" }, newUser);
     }
     catch (e) {
@@ -204,19 +204,19 @@ const employeeUpdatePassword = (0, authenticated_1.default)((args, req) => __awa
         if (!newUser) {
             throw new Error("Something went wrong");
         }
-        req.res.clearCookie("grocery_admin");
+        req.res.clearCookie("auth");
         req.session.destroy((err) => {
             if (err) {
                 throw new Error(err.message);
             }
         });
-        // await emailer({
-        //   from: '"Grocery Team" noreply@grocery.com',
-        //   to: email,
-        //   subject: "	Your password was changed",
-        //   text: null,
-        //   html: passwordChangeMail({ name: user.name, email }),
-        // });
+        yield (0, emailer_1.default)({
+            from: '"Grocery Team" noreply@grocery.com',
+            to: email,
+            subject: "	Your password was changed",
+            text: null,
+            html: (0, emailData_1.passwordChangeMail)({ name: user.name, email }),
+        });
         const token = jsonwebtoken_1.default.sign({
             id: user._id,
             name: user.name,
@@ -354,18 +354,18 @@ const createEmployeeInvite = (0, authenticated_1.default)((args, req) => __await
         if (!admin) {
             throw new Error("You don't have permission to invite an employee");
         }
-        let link = `http://localhost:3001/?type=sign&code=${inviteCode}`;
+        let link = `${config_1.default.admin_url}/?type=sign&code=${inviteCode}`;
         yield models_1.default.inviteSchema.create({ email, level, status, inviteCode });
         //  http://localhost:3001/?type=sign&code=ZSX8E
         // invitationMail
         console.log(link);
-        // await emailer({
-        //   from: '"Grocery Team" noreply@grocery.com',
-        //   to: email,
-        //   subject: "Your Grocery app verification code",
-        //   text: null,
-        //   html: invitationMail({ link  }),
-        // });
+        yield (0, emailer_1.default)({
+            from: '"Grocery Team" noreply@grocery.com',
+            to: email,
+            subject: "Your Grocery app verification code",
+            text: null,
+            html: (0, emailData_1.invitationMail)({ link }),
+        });
         return { msg: "Invite sent successfully" };
     }
     catch (err) {
@@ -416,7 +416,7 @@ const employeeInvites = (0, authenticated_1.default)((_, req) => __awaiter(void 
 }));
 const logout = (0, authenticated_1.default)((_, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        req.res.clearCookie(req.admin ? "grocery_admin" : "grocery");
+        req.res.clearCookie(req.admin ? "auth" : "grocery");
         req.session.destroy((err) => {
             if (err) {
                 throw new Error(err.message);

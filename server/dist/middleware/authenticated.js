@@ -28,13 +28,14 @@ const authenticated = (fn) => (args, req, res, context, info) => __awaiter(void 
         };
         if (req.headers.cookie) {
             let parse = cookie_1.default.parse(req.headers.cookie);
-            if (req.admin && parse.grocery_admin) {
-                const data = yield getDb((_a = parse.grocery_admin) !== null && _a !== void 0 ? _a : "", req.admin);
+            console.log(parse);
+            if (req.admin && parse.auth) {
+                const data = yield getDb((_a = parse.auth) !== null && _a !== void 0 ? _a : "", req.admin);
                 req.userId = data.id;
                 req.level = data.level;
                 return fn(args, req, res, context, info);
             }
-            else if (!req.admin && parse.grocery) {
+            else if (!req.admin && parse.auth) {
                 const data = yield getDb((_b = parse.grocery) !== null && _b !== void 0 ? _b : "", req.admin);
                 req.userId = data.id;
                 req.blocked = data.block;
@@ -59,9 +60,7 @@ const getDb = (value, admin) => new Promise((resolve, reject) => {
         var _a;
         if (err)
             reject(err === null || err === void 0 ? void 0 : err.message);
-        var decodedToken = jsonwebtoken_1.default.verify((0, xss_1.default)(admin
-            ? session === null || session === void 0 ? void 0 : session.grocery_admin
-            : (_a = session === null || session === void 0 ? void 0 : session.grocery) !== null && _a !== void 0 ? _a : ""), config_1.default.jwt_key);
+        var decodedToken = jsonwebtoken_1.default.verify((0, xss_1.default)((_a = session === null || session === void 0 ? void 0 : session.auth) !== null && _a !== void 0 ? _a : ""), config_1.default.jwt_key);
         if (!mongoose_1.default.Types.ObjectId.isValid(decodedToken === null || decodedToken === void 0 ? void 0 : decodedToken.id)) {
             reject("User ID must be a valid");
         }

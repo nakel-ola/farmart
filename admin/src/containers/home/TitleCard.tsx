@@ -7,7 +7,7 @@ function TitleCard({ title }: { title: string; }) {
       <div className="w-[50px] h-[50px] shrink-0 flex items-center justify-center">
         <ShoppingBag size={50} variant="Bold" className="text-primary" />
       </div>
-      <strong className="text-primary text-2xl">Grocery</strong>
+      <strong className="text-primary text-2xl">Farmart</strong>
       <p className="text-[1.5rem] p-[3px] font-[400] text-neutral-700 dark:text-neutral-200 text-center">
         {title}
       </p>

@@ -27,12 +27,14 @@ const authenticated =
       if (req.headers.cookie) {
         let parse = cookie.parse(req.headers.cookie);
 
-        if (req.admin && parse.grocery_admin) {
-          const data = await getDb(parse.grocery_admin ?? "", req.admin);
+        console.log(parse)
+
+        if (req.admin && parse.auth) {
+          const data = await getDb(parse.auth ?? "", req.admin);
           req.userId = data.id;
           req.level = data.level;
           return fn(args, req, res, context, info);
-        } else if (!req.admin && parse.grocery) {
+        } else if (!req.admin && parse.auth) {
           const data = await getDb(parse.grocery ?? "", req.admin);
           req.userId = data.id;
           req.blocked = data.block;
@@ -58,10 +60,7 @@ const getDb = (value: string, admin: boolean) =>
     MemoryStore.get(data as string, async (err, session) => {
       if (err) reject(err?.message);
       var decodedToken = jwt.verify(
-        xss(
-          admin
-            ? (session as any)?.grocery_admin
-            : (session as any)?.grocery ?? ""
+        xss((session as any)?.auth ?? ""
         ),
         config.jwt_key
       ) as JwtPayload;

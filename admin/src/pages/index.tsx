@@ -41,7 +41,7 @@ function Auth() {
       });
     }
 
-    if(user && cookies) {
+    if(cookies) {
       router.push("/dashboard")
     }
   }, [getEmployee, dispatch, cookies,user,router]);

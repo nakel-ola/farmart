@@ -26,11 +26,7 @@ const masterReducer = (state: any, action: AnyAction) => {
   if(action.type === HYDRATE) {
     const nextState = {
       ...state,
-      user: {
-        ...state.user,
-        user: action.payload.user.user ?? null,
-        cookies: action.payload.user.cookies ?? null
-      }
+      user: action.payload.user
     }
     return nextState
   }else {

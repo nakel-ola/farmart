@@ -84,8 +84,9 @@ export const EmyployeeQuery = gql`
 MyApp.getInitialProps = wrapper.getInitialPageProps(
   (store) => async (ctx: NextPageContext) => {
     const token = cookies((ctx as any).ctx);
-    const apolloClient = initializeApollo();
 
+    const apolloClient = initializeApollo();
+    
     const newStore: RootState = store.getState();
 
     if (token?.auth && !newStore.user.cookies) {

@@ -15,10 +15,7 @@ import Sidebar from "../components/Sidebar";
 import CategoryCard from "../containers/products/CategoryCard";
 import { EmyployeeQuery } from "../pages/_app";
 import { selectDialog } from "../redux/features/dialogSlice";
-import {
-  login,
-  logout,
-} from "../redux/features/userSlice";
+import { login, logout, selectCookies } from "../redux/features/userSlice";
 
 interface LayoutProps {
   [key: string]: any;
@@ -31,23 +28,26 @@ function Layout({ children, className }: LayoutProps, ref: any) {
   const router = useRouter();
 
   const [getEmployee] = useLazyQuery(EmyployeeQuery);
-
   const client = useApolloClient();
 
+  const cookies = useSelector(selectCookies);
+
   const getUser = useCallback(async () => {
-    await getEmployee({
-      fetchPolicy: "network-only",
-      onCompleted: async (data) => {
-        if (data.employee?.__typename === "ErrorMsg") {
-          router.push("/");
-          dispatch(logout());
-          await client.resetStore();
-        } else if(data.employee?.__typename === "Employee") {
-          dispatch(login(data.employee));
-        }
-      },
-    });
-  }, [getEmployee,client,dispatch,router]);
+    if (cookies) {
+      await getEmployee({
+        fetchPolicy: "network-only",
+        onCompleted: async (data) => {
+          if (data.employee?.__typename === "ErrorMsg") {
+            router.push("/");
+            dispatch(logout());
+            await client.resetStore();
+          } else if (data.employee?.__typename === "Employee") {
+            dispatch(login(data.employee));
+          }
+        },
+      });
+    }
+  }, [getEmployee, client, dispatch, router,cookies]);
 
   useEffect(() => {
     getUser();
