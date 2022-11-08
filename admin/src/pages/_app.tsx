@@ -89,13 +89,13 @@ MyApp.getInitialProps = wrapper.getInitialPageProps(
     
     const newStore: RootState = store.getState();
 
-    if (token?.auth && !newStore.user.cookies) {
-      store.dispatch(setCookies({ auth: token?.auth }));
+    if (token?.auth_admin && !newStore.user.cookies) {
+      store.dispatch(setCookies({ auth: token?.auth_admin }));
     } else {
       store.dispatch(logout());
     }
 
-    if (token?.auth && !newStore?.user?.user) {
+    if (token?.auth_admin && !newStore?.user?.user) {
       await apolloClient
         .query({
           query: EmyployeeQuery,

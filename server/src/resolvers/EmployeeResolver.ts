@@ -79,7 +79,7 @@ const employeeRegister = async (
       { expiresIn: config.expiresIn }
     );
 
-    (req.session as any).auth = token;
+    (req.session as any).auth_admin = token;
 
     await db.inviteSchema.updateOne(
       { _id: validate._id, email, inviteCode },
@@ -143,7 +143,8 @@ const employeeLogin = async (
       expiresIn: config.expiresIn,
     });
 
-    (req.session as any).auth = token;
+    (req.session as any).auth_admin = token;
+    console.log(req.session)
 
     return {
       __typename: "Employee",
@@ -253,7 +254,7 @@ const employeeChangePassword = async (
       expiresIn: config.expiresIn,
     });
 
-    (req.session as any).auth = token;
+    (req.session as any).auth_admin = token;
 
     await db.validateSchema.deleteOne({ email, name });
 

@@ -27,10 +27,8 @@ const authenticated =
       if (req.headers.cookie) {
         let parse = cookie.parse(req.headers.cookie);
 
-        console.log(parse)
-
-        if (req.admin && parse.auth) {
-          const data = await getDb(parse.auth ?? "", req.admin);
+        if (req.admin && parse.auth_admin) {
+          const data = await getDb(parse.auth_admin ?? "", req.admin);
           req.userId = data.id;
           req.level = data.level;
           return fn(args, req, res, context, info);
@@ -60,7 +58,8 @@ const getDb = (value: string, admin: boolean) =>
     MemoryStore.get(data as string, async (err, session) => {
       if (err) reject(err?.message);
       var decodedToken = jwt.verify(
-        xss((session as any)?.auth ?? ""
+        xss(
+          admin ? (session as any)?.auth_admin : (session as any)?.auth ?? ""
         ),
         config.jwt_key
       ) as JwtPayload;

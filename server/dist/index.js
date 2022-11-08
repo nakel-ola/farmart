@@ -17,7 +17,6 @@ const config_1 = __importDefault(require("./config"));
 const cors_1 = __importDefault(require("./middleware/cors"));
 const resolvers_1 = __importDefault(require("./resolvers"));
 const type_defs_1 = __importDefault(require("./type-defs"));
-// import type { ReqBody } from "./typing";
 exports.MemoryStore = connect_mongo_1.default.create({
     mongoUrl: config_1.default.mongodb_uri,
     ttl: 14 * 24 * 60 * 60,
@@ -28,7 +27,8 @@ app.use(express_1.default.json({ limit: "50mb" }));
 app.use(express_1.default.urlencoded({ limit: "50mb", extended: false }));
 app.use(cors_1.default);
 app.use((0, cookie_parser_1.default)());
-app.use((0, express_session_1.default)({
+let production = false;
+let sessionOptions = {
     name: "auth",
     secret: config_1.default.session_key,
     resave: false,
@@ -36,14 +36,38 @@ app.use((0, express_session_1.default)({
     saveUninitialized: false,
     cookie: {
         maxAge: 604800000,
-        sameSite: 'none',
+        sameSite: "none",
         httpOnly: true,
-        secure: process.env.NODE_ENV !== 'development'
+        secure: process.env.NODE_ENV !== "development",
     },
-}));
+};
 if (app.get("env") === "production") {
     app.set("trust proxy", 1); // trust first proxy
+    production = true;
 }
+app.use((req, res, next) => {
+    const allowports = config_1.default.allowport.split(",");
+    if (allowports.find((port) => port === req.header("Origin"))) {
+        let options = {
+            name: req.headers.origin === config_1.default.admin_url ? "auth_admin" : "auth",
+            secret: config_1.default.session_key,
+            resave: false,
+            store: exports.MemoryStore,
+            saveUninitialized: false,
+            cookie: {
+                maxAge: 604800000,
+                sameSite: production ? "none" : false,
+                httpOnly: true,
+                secure: production,
+            },
+        };
+        const sessionHandler = (0, express_session_1.default)(options);
+        return sessionHandler(req, res, next);
+    }
+    else {
+        next();
+    }
+});
 app.use(express_1.default.static(path_1.default.resolve(__dirname, "../public")));
 exports.schema = (0, graphql_1.buildSchema)((0, graphql_1.print)(type_defs_1.default));
 mongoose_1.default

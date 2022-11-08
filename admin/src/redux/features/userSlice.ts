@@ -10,7 +10,7 @@ export const win = typeof window !== "undefined" ? window : {} as Window;
 export type UserState  = {
   user: UserType | null;
   validateUser: any | null;
-  cookies: { auth: string } | null
+  cookies: { auth_admin: string } | null
 }
 
 export const userSlice = createSlice({

@@ -52,7 +52,7 @@ const employeeRegister = (args, req, res, context, info) => __awaiter(void 0, vo
         };
         const newUser = yield models_1.default.employeeSchema.create(obj);
         const token = jsonwebtoken_1.default.sign({ id: newUser._id.toString(), level: validate.level }, config_1.default.jwt_key, { expiresIn: config_1.default.expiresIn });
-        req.session.auth = token;
+        req.session.auth_admin = token;
         yield models_1.default.inviteSchema.updateOne({ _id: validate._id, email, inviteCode }, { status: "completed" });
         // await deleteEmployeeInvite(
         //   { id: validate._id.toString() },
@@ -97,7 +97,8 @@ const employeeLogin = (args, req) => __awaiter(void 0, void 0, void 0, function*
         let token = jsonwebtoken_1.default.sign({ id: user._id, level: user.level }, config_1.default.jwt_key, {
             expiresIn: config_1.default.expiresIn,
         });
-        req.session.auth = token;
+        req.session.auth_admin = token;
+        console.log(req.session);
         return {
             __typename: "Employee",
             id: user._id.toString(),
@@ -171,7 +172,7 @@ const employeeChangePassword = (args, req) => __awaiter(void 0, void 0, void 0, 
         const token = jsonwebtoken_1.default.sign(Object.assign({ id: newUser._id }, newUser), config_1.default.jwt_key, {
             expiresIn: config_1.default.expiresIn,
         });
-        req.session.auth = token;
+        req.session.auth_admin = token;
         yield models_1.default.validateSchema.deleteOne({ email, name });
         yield (0, emailer_1.default)({
             from: '"Grocery Team" noreply@grocery.com',
