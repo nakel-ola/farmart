@@ -90,7 +90,7 @@ MyApp.getInitialProps = wrapper.getInitialPageProps(
     const newStore: RootState = store.getState();
 
     if (token?.auth_admin && !newStore.user.cookies) {
-      store.dispatch(setCookies({ auth: token?.auth_admin }));
+      store.dispatch(setCookies({ auth_admin: token?.auth_admin }));
     } else {
       store.dispatch(logout());
     }
