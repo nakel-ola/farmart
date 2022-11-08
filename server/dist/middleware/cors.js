@@ -12,9 +12,10 @@ var corsOptionsDelegate = function (req, callback) {
         if (allowports.find((port) => port === req.header("Origin"))) {
             req.admin = req.headers.origin === config_1.default.admin_url ? true : req.headers.origin === config_1.default.client_url ? false : null;
             corsOptions = {
-                origin: [req.header("Origin")],
-                methods: ["GET", "POST"],
+                origin: allowports,
                 credentials: true,
+                methods: "GET, POST",
+                optionsSuccessStatus: 200,
             };
         }
         else {
