@@ -278,11 +278,11 @@ const ordersStatistics = (0, authenticated_1.default)((_, req) => __awaiter(void
             throw new Error("You don,t have permission");
         }
         const orders = yield models_1.default.orderSchema.find({}, { totalPrice: 1, progress: 1, createdAt: 1, updatedAt: 1 });
-        let totals = orders.map((order) => Number(order.totalPrice));
+        let totals = orders.length > 0 ? orders.map((order) => Number(order.totalPrice)) : [];
         const data = {
             __typename: "OrderStatistics",
             min: 0,
-            max: Math.round(Math.max(...totals)),
+            max: 136 !== null && 136 !== void 0 ? 136 : Math.round(Math.max(...totals)),
             week: [0, 86, 28, 115, 48, 210, 136],
             month: [76, 85, 101, 98, 87, 105, 91, 114, 94, 86, 115, 35]
         };
