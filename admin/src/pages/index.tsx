@@ -1,55 +1,24 @@
 /* eslint-disable @next/next/no-img-element */
-import { useApolloClient, useLazyQuery } from "@apollo/client";
 import { ArrowLeft } from "iconsax-react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import ReactLoading from "react-loading";
-import { useDispatch, useSelector } from "react-redux";
 import CodeCard from "../containers/home/CodeCard";
 import ForgetCard from "../containers/home/ForgetCard";
 import LogInCard from "../containers/home/LogInCard";
 import PasswordCard from "../containers/home/PasswordCard";
 import SignUpCard from "../containers/home/SignUpCard";
-import { login, selectCookies, selectUser } from "../redux/features/userSlice";
-import { EmyployeeQuery } from "./_app";
 
 
 
 
 function Auth() {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const user = useSelector(selectUser);
-  const cookies = useSelector(selectCookies);
 
   const toggle = router.query.type;
 
   const [loading, setLoading] = useState(false);
-
-  const [getEmployee] = useLazyQuery(EmyployeeQuery);
-
-  const getUser = useCallback(async () => {
-    if (!user && cookies) {
-      await getEmployee({
-        fetchPolicy: "network-only",
-        onCompleted: async (data) => {
-          if (data.employee?.__typename === "Employee") {
-            dispatch(login(data.employee));
-          }
-        },
-      });
-    }
-
-    if(cookies) {
-      router.push("/dashboard")
-    }
-  }, [getEmployee, dispatch, cookies,user,router]);
-
-  useEffect(() => {
-    getUser();
-  }, [getUser]);
-
 
   const renderCard = () => {
     switch (toggle) {
@@ -97,13 +66,6 @@ function Auth() {
         <div className="relative h-[calc(100%-60px)] w-full">
           {renderCard()}
         </div>
-        {/* {router.pathname === "/" && !toggle && (
-          <LogInCard setLoading={setLoading} />
-        )}
-        {toggle === "signup" && <SignUpCard setLoading={setLoading} />}
-        {toggle === "forget" && <ForgetCard setLoading={setLoading} />}
-        {toggle === "code" && <CodeCard setLoading={setLoading} />}
-        {toggle === "confirm" && <PasswordCard setLoading={setLoading} />} */}
       </div>
 
       {loading && (

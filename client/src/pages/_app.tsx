@@ -11,7 +11,7 @@ import { initializeApollo, useApollo } from "../hooks/useApollo";
 import Wrapper from "../layout/Wrapper";
 import { add } from "../redux/features/categorySlice";
 import { login, setCookies } from "../redux/features/userSlice";
-import { RootState, wrapper,persistor } from "../redux/store";
+import { persistor, RootState, wrapper } from "../redux/store";
 import "../styles/globals.css";
 import { ThemeProvider } from "../styles/theme";
 
@@ -28,25 +28,25 @@ function MyApp({ Component, ...others }: AppProps) {
   Router.events.on("routeChangeComplete", () => setLoading(false));
 
   return (
-    <Provider store={store}>
-      <PersistGate persistor={persistor(store)} loading={<PageLoader fill />}>
-        <ApolloProvider client={client}>
-          <ThemeProvider
-            enableSystem={true}
-            attribute="class"
-            storageKey="wujo-theme"
-            defaultTheme="light"
-          >
+    <ThemeProvider
+      enableSystem={true}
+      attribute="class"
+      storageKey="farmart-theme"
+      defaultTheme="light"
+    >
+      <Provider store={store}>
+        <PersistGate persistor={persistor(store)} loading={<PageLoader fill />}>
+          <ApolloProvider client={client}>
             <Wrapper>
               <Toaster />
 
               <Component {...pageProps} />
               {loading && <PageLoader />}
             </Wrapper>
-          </ThemeProvider>
-        </ApolloProvider>
-      </PersistGate>
-    </Provider>
+          </ApolloProvider>
+        </PersistGate>
+      </Provider>
+    </ThemeProvider>
   );
 }
 

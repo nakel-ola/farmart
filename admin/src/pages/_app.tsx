@@ -1,16 +1,14 @@
-import { ApolloProvider, gql } from "@apollo/client";
-import { NextPageContext } from "next";
-import cookies from "next-cookies";
+import { ApolloProvider, gql, useQuery } from "@apollo/client";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import Router from "next/router";
-import { useEffect, useState } from "react";
+import Router, { useRouter } from "next/router";
+import { ReactNode, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import PageLoader from "../components/PageLoader";
-import { initializeApollo, useApollo } from "../hooks/useApollo";
-import { login, logout, setCookies } from "../redux/features/userSlice";
-import { RootState, wrapper } from "../redux/store";
+import { useApollo } from "../hooks/useApollo";
+import { login } from "../redux/features/userSlice";
+import { wrapper } from "../redux/store";
 import "../styles/globals.css";
 import { ThemeProvider } from "../styles/theme";
 
@@ -31,9 +29,14 @@ function MyApp({ Component, ...others }: AppProps) {
   }, []);
 
   return (
-    <Provider store={store}>
-      <ApolloProvider client={client}>
-        <ThemeProvider enableSystem={true} attribute="class">
+    <ThemeProvider
+      enableSystem={true}
+      attribute="class"
+      storageKey="farmart-admin-theme"
+      defaultTheme="light"
+    >
+      <Provider store={store}>
+        <ApolloProvider client={client}>
           <Head>
             <link
               rel="preload"
@@ -48,14 +51,36 @@ function MyApp({ Component, ...others }: AppProps) {
               crossOrigin=""
             />
           </Head>
-          <Toaster />
-          {mount && <Component {...pageProps} />}
-          {loading && <PageLoader />}
-        </ThemeProvider>
-      </ApolloProvider>
-    </Provider>
+          <Wrapper>
+            <Toaster />
+            {mount && <Component {...pageProps} />}
+            {loading && <PageLoader />}
+          </Wrapper>
+        </ApolloProvider>
+      </Provider>
+    </ThemeProvider>
   );
 }
+
+const Wrapper = ({ children }: { children: ReactNode }) => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const { loading } = useQuery(EmyployeeQuery, {
+    onCompleted: (data) => {
+      console.log(data);
+      if (data.employee?.__typename === "Employee") {
+        dispatch(login(data.employee));
+        router.push("/dashboard");
+      }
+
+      if (data.employee?.__typename === "ErrorMsg") {
+        router.push("/");
+      }
+    },
+  });
+
+  return <>{loading ? <PageLoader fill /> : children}</>;
+};
 
 export const EmyployeeQuery = gql`
   query Employee {
@@ -80,39 +105,5 @@ export const EmyployeeQuery = gql`
     }
   }
 `;
-
-MyApp.getInitialProps = wrapper.getInitialPageProps(
-  (store) => async (ctx: NextPageContext) => {
-    const token = cookies((ctx as any).ctx);
-
-    const apolloClient = initializeApollo();
-    
-    const newStore: RootState = store.getState();
-
-    if (token?.auth_admin && !newStore.user.cookies) {
-      store.dispatch(setCookies({ auth_admin: token?.auth_admin }));
-    } else {
-      store.dispatch(logout());
-    }
-
-    if (token?.auth_admin && !newStore?.user?.user) {
-      await apolloClient
-        .query({
-          query: EmyployeeQuery,
-        })
-        .then((result: any) => {
-          if (result.employee?.__typename !== "ErrorMsg") {
-            store.dispatch(login(result.employee));
-          }
-        });
-    } else {
-      store.dispatch(logout());
-    }
-
-    return {
-      initialApolloState: apolloClient.cache.extract(),
-    };
-  }
-);
 
 export default MyApp;

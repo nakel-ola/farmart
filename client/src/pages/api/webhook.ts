@@ -1,8 +1,7 @@
 import { gql } from "@apollo/client";
 import { buffer } from "micro";
 import { NextApiRequest, NextApiResponse } from "next";
-import { createApolloClient, initializeApollo } from "../../hooks/useApollo";
-import { request, GraphQLClient } from 'graphql-request';
+import { request } from 'graphql-request';
 
 
 // Establish connection to Stripe
@@ -22,12 +21,7 @@ const PaymentQuery = gql`
   }
 `;
 
-let endpoint = "http://localhost:4000/graphql";
-
-
 const fulfillOrder = async (session: any, headers: any) => {
-//   const apolloClient = createApolloClient();
-
   let metadata = session.metadata;
 
   let variables = {
@@ -45,7 +39,7 @@ const fulfillOrder = async (session: any, headers: any) => {
   };
 
   await request({
-    url: endpoint,
+    url: process.env.SERVER_URL!,
     document: PaymentQuery,
     variables: variables,
     requestHeaders: {
@@ -53,27 +47,6 @@ const fulfillOrder = async (session: any, headers: any) => {
         userId: metadata.userId
     },
   }).then((data) => console.log(data))
-
-//   await apolloClient
-//     .mutate({
-//       mutation: PaymentQuery,
-//       variables: {
-//         input: {
-//           totalPrice: session.amount_total / 100,
-//           shippingFee: session.total_details.amount_shipping / 100,
-//           address: metadata?.address ? JSON.parse(metadata?.address) : null,
-//           pickup: metadata?.pickup ?? null,
-//           products: metadata?.products ? JSON.parse(metadata?.products) : null,
-//           coupon: metadata?.coupon ? JSON.parse(metadata?.coupon) : null,
-//           paymentMethod: metadata.paymentMethod,
-//           deliveryMethod: metadata.deliveryMethod,
-//           phoneNumber: metadata.phoneNumber,
-//         },
-//       },
-//     })
-//     .then((result: any) => {
-//       console.log(`SUCCESS: Order ${session.id} has been created to the DB`);
-//     });
 };
 
 export default async function handler(
