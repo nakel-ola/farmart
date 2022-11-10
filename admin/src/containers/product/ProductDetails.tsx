@@ -81,7 +81,7 @@ const ProductDetails = ({ data, canEdit }: Props) => {
 
         {canEdit && (
           <Button
-            className="text-green-600 bg-green-600/10"
+            className="text-green-600 bg-green-600/10 mr-2"
             onClick={() =>
               dispatch(add({ open: true, data, type: "edit" }))
             }

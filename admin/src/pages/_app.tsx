@@ -70,7 +70,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
       console.log(data);
       if (data.employee?.__typename === "Employee") {
         dispatch(login(data.employee));
-        router.push("/dashboard");
+        if (router.pathname === "/") {
+          router.push("/dashboard");
+        }
       }
 
       if (data.employee?.__typename === "ErrorMsg") {

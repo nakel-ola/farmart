@@ -1,24 +1,27 @@
 /* eslint-disable @next/next/no-img-element */
-import { gql, NetworkStatus, useLazyQuery, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import clsx from "clsx";
+import { Bag2 } from "iconsax-react";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
-import Lottie from "react-lottie-player";
+
 import NumberFormat from "react-number-format";
 import { useDispatch, useSelector } from "react-redux";
 import { GraphQLProductResponse, ProductType } from "../../../typing";
 import Button from "../../components/Button";
 import Pagination from "../../components/Pagination";
-import Table from "../../components/Table";
-import TableContent from "../../components/TableContent";
-import TableHeader from "../../components/TableHeader";
-import TableList from "../../components/TableList";
-import TableRow from "../../components/TableRow";
-import lottieJson from "../../data/lf30_editor_mh2nforn.json";
+import {
+  Table,
+  TableBody,
+  TableContent,
+  TableHead,
+  TableRow,
+} from "../../components/tables";
 import truncate from "../../helper/truncate";
 import { roundUp } from "../../pages/orders";
 import { selectCatagory } from "../../redux/features/categorySlice";
 import { add } from "../../redux/features/dialogSlice";
+import Header from "./Header";
 
 const ProductQuery = gql`
   query Products($input: ProductsInput) {
@@ -80,7 +83,13 @@ const SearchQuery = gql`
   }
 `;
 
-const tableList: string[] = ["Name", "Price", "Category", "Stock", "Updated"];
+const tableList: any[] = [
+  { title: "Name", className: "w-56 md:w-20" },
+  { title: "Price", className: "w-20" },
+  { title: "Category", className: "w-24" },
+  { title: "Stock", className: "w-24" },
+  { title: "Updated", className: "w-32" },
+];
 
 let limit = 10;
 
@@ -128,8 +137,6 @@ const ProductCards = ({ canEdit }: { canEdit: boolean }) => {
     },
     onError: (err) => console.table(err),
   });
-
-  // const isRefetch = networkStatus === NetworkStatus.refetch;
 
   let pageCount = roundUp(Math.abs(data?.products.totalItems! / limit));
 
@@ -181,56 +188,73 @@ const ProductCards = ({ canEdit }: { canEdit: boolean }) => {
   };
 
   return (
-    <Table>
-      <TableHeader
-        title="List of Products"
-        toggle
-        showSearch={true}
-        searchValue={input}
-        onSearchSubmit={handleSearchSubmit}
-        onSearchChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setInput(e.target.value)
+    <>
+      <Table
+        headerComponent={
+          <Header
+            width="w-[620px]"
+            title="List of Products"
+            toggle
+            showSearch={true}
+            searchValue={input}
+            onSearchSubmit={handleSearchSubmit}
+            onSearchChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setInput(e.target.value)
+            }
+            rightComponent={
+              canEdit ? (
+                <Button
+                  className="text-green-600 bg-green-600/10 mr-2"
+                  onClick={() =>
+                    dispatch(add({ open: true, data: null, type: "edit" }))
+                  }
+                >
+                  Create product
+                </Button>
+              ) : null
+            }
+            placeholder="Search by product name"
+            onSortClick={handleSortClick}
+            sortList={sortList}
+          />
         }
-        leftComponent={
-          canEdit ? (
-            <Button
-              className="text-green-600 bg-green-600/10"
-              onClick={() =>
-                dispatch(add({ open: true, data: null, type: "edit" }))
-              }
-            >
-              Create product
-            </Button>
+        footerComponent={
+          pageCount > 1 ? (
+            <Pagination
+              width="w-[620px]"
+              pageCount={pageCount}
+              forcePage={page}
+              pageRangeDisplayed={10}
+              breakLabel="•••"
+              onPageChange={handlePageChange}
+            />
           ) : null
         }
-        placeholder="Search by product name"
-        tableList={tableList}
-        onSortClick={handleSortClick}
-        sortList={sortList}
-      />
+      >
+        <TableHead
+          disableDivider={data?.products.results.length! > 0 ? false : true}
+          tableList={tableList}
+        />
 
-      {data?.products.results.length! > 0 ? (
-        <>
-          <TableList>
+        {data?.products.results.length! > 0 ? (
+          <TableBody disableDivider={pageCount > 1 ? false : true}>
             {data?.products.results.map(
               (product: ProductType, index: number) => (
                 <TableRow
                   key={index}
+                  className="cursor-pointer"
                   onClick={() => router.push(`/product/${product.slug}`)}
                 >
-                  <TableContent>
-                    <div className="flex items-center">
-                      <img
-                        src={product.image.url}
-                        alt=""
-                        className="h-[40px] w-[40px] rounded-lg object-cover"
-                      />
-                      <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap ml-2">
-                        {truncate(product.title, 8)}
-                      </p>
-                    </div>
+                  <TableContent className="flex items-center w-56 md:w-fit">
+                    <img
+                      src={product.image.url}
+                      alt=""
+                      className="h-[40px] w-[40px] rounded-lg object-cover shrink-0"
+                    />
+                    <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap ml-2">
+                      {truncate(product.title, 15)}
+                    </p>
                   </TableContent>
-
                   <TableContent>
                     <NumberFormat
                       thousandSeparator
@@ -238,21 +262,21 @@ const ProductCards = ({ canEdit }: { canEdit: boolean }) => {
                       value={product.price.toFixed(2)}
                       prefix={product.currency.symbol}
                       renderText={(value) => (
-                        <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap ml-2">
+                        <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
                           {value}
                         </p>
                       )}
                     />
                   </TableContent>
                   <TableContent>
-                    <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap ml-2">
+                    <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
                       {product.category}
                     </p>
                   </TableContent>
                   <TableContent>
                     <p
                       className={clsx(
-                        "text-[0.9rem] font-medium whitespace-nowrap ml-2",
+                        "text-sm font-medium whitespace-nowrap",
                         product.stock > 0
                           ? "text-neutral-800 dark:text-neutral-300 "
                           : "text-red-600"
@@ -262,43 +286,31 @@ const ProductCards = ({ canEdit }: { canEdit: boolean }) => {
                     </p>
                   </TableContent>
                   <TableContent>
-                    <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap ml-2">
+                    <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
                       {new Date(product.updatedAt).toDateString()}
                     </p>
                   </TableContent>
                 </TableRow>
               )
             )}
-          </TableList>
+          </TableBody>
+        ) : null}
+      </Table>
 
-          <div className="grid place-items-center w-full">
-            {pageCount > 1 && (
-              <Pagination
-                pageCount={pageCount}
-                forcePage={page}
-                pageRangeDisplayed={10}
-                breakLabel="•••"
-                onPageChange={handlePageChange}
-              />
-            )}
-          </div>
-        </>
-      ) : (
-        <div className="flex-[0.35] ml-[5px] h-[80%] grid place-items-center my-5">
-          <div className="flex items-center justify-center flex-col ">
-            <Lottie
-              loop={false}
-              animationData={lottieJson}
-              play
-              style={{ width: 250, height: 250 }}
+      {data?.products.results.length! === 0 && (
+        <div className="grid my-10 place-items-center">
+          <div className="flex items-center justify-center flex-col">
+            <Bag2
+              size={100}
+              className="text-neutral-700 dark:text-neutral-400"
             />
-            <p className="text-[1.2rem] text-slate-900 dark:text-white">
-              No Users Yet!
+            <p className="text-neutral-700 dark:text-neutral-400 text-lg font-semibold my-1">
+              No Products Yet!
             </p>
           </div>
         </div>
       )}
-    </Table>
+    </>
   );
 };
 

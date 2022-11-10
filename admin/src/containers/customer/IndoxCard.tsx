@@ -4,6 +4,7 @@ import React, { ChangeEvent } from "react";
 import { useDispatch } from "react-redux";
 import { InboxData, InboxType } from "../../../typing";
 import Button from "../../components/Button";
+import CardTemplate from "../../components/CardTemplate";
 import { Divider } from "../../components/Divider";
 import Pagination from "../../components/Pagination";
 import { roundUp } from "../../pages/orders";
@@ -30,24 +31,15 @@ const IndoxCard = ({ data, refetch, canEdit }: Props) => {
 
   return (
     <>
-      <div className="w-[95%] md:w-[80%] rounded-lg dark:bg-dark dark:shadow-black/30 bg-white shadow-sm overflow-hidden pb-2 mb-2">
-        <div className="w-full border-b-[1px] border-b-slate-100 dark:border-b-neutral-800 flex items-center justify-between">
-          <p className="py-[8px] pl-[15px] text-[1.2rem] text-black font-[600] dark:text-white">
-            Customer Inbox
-          </p>
-
-          {canEdit && (
-            <Button
-              className="text-green-600 bg-green-600/10"
-              onClick={() =>
-                dispatch(add({ type: "inbox", open: true, data: null }))
-              }
-            >
-              Send inbox
-            </Button>
-          )}
-        </div>
-
+      <CardTemplate
+        title="Customer Inbox"
+        showEditButton
+        editTitle="Send inbox"
+        className="mb-8"
+        onEditClick={() =>
+          dispatch(add({ type: "inbox", open: true, data: null }))
+        }
+      >
         {data.results.length > 0 ? (
           <div className="">
             {data.results.map((result: InboxType, index: number) => (
@@ -56,6 +48,18 @@ const IndoxCard = ({ data, refetch, canEdit }: Props) => {
                 {index !== data.results.length - 1 && <Divider />}
               </div>
             ))}
+            <div className="grid place-items-center w-[95%] md:w-[95%]">
+              {pageCount > 1 && (
+                <Pagination
+                  width=" border-t-[1px] border-slate-100 dark:border-neutral-800 w-full"
+                  pageCount={pageCount}
+                  forcePage={data?.page ?? 1}
+                  pageRangeDisplayed={10}
+                  breakLabel="•••"
+                  onPageChange={handlePageChange}
+                />
+              )}
+            </div>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center m-2 my-8">
@@ -66,18 +70,7 @@ const IndoxCard = ({ data, refetch, canEdit }: Props) => {
             <p className="text-black dark:text-white text-lg">No Inbox yet!</p>
           </div>
         )}
-      </div>
-      <div className="grid place-items-center w-[95%] md:w-[80%] mb-8">
-        {pageCount > 1 && (
-          <Pagination
-            pageCount={pageCount}
-            forcePage={data?.page ?? 1}
-            pageRangeDisplayed={10}
-            breakLabel="•••"
-            onPageChange={handlePageChange}
-          />
-        )}
-      </div>
+      </CardTemplate>
     </>
   );
 };

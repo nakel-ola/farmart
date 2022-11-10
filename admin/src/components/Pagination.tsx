@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { ArrowLeft2, ArrowRight2 } from "iconsax-react";
 import React from "react";
 import usePagination, { UsePaginationItem } from "../hooks/usePagination";
@@ -6,6 +7,7 @@ import useStateEffect from "../hooks/useStateEffect";
 type Props = {
   pageCount: number;
   forcePage: number;
+  width?: string;
   pageRangeDisplayed: number;
   breakLabel: string;
   onPageChange?(event: React.ChangeEvent<unknown>, page: number): void;
@@ -23,6 +25,7 @@ const Pagination = ({
   forcePage,
   breakLabel,
   onPageChange,
+  width,
 }: Props) => {
   const [page, setPage] = useStateEffect<number>(forcePage ?? 1, [forcePage]);
 
@@ -63,7 +66,12 @@ const Pagination = ({
   };
 
   return (
-    <div className="bg-white dark:bg-dark w-full mb-[2px] rounded-lg shadow-sm flex">
+    <div
+      className={clsx(
+        "bg-white dark:bg-dark flex shrink-0 overflow-hidden md:w-full",
+        width
+      )}
+    >
       <div className="ml-auto flex items-center my-2 mx-2">
         <div
           className="bg-slate-100 dark:bg-neutral-800 p-[3px] rounded-full flex items-center justify-center"

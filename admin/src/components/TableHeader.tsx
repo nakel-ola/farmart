@@ -1,15 +1,11 @@
-import {
-  ArrowDown2,
-  CloseCircle,
-  SearchNormal1
-} from "iconsax-react";
+import { ArrowDown2, CloseCircle, SearchNormal1 } from "iconsax-react";
 import React, {
   ChangeEvent,
   FormEvent,
   MouseEvent,
   ReactNode,
   useRef,
-  useState
+  useState,
 } from "react";
 import { Popover } from "react-tiny-popover";
 
@@ -41,7 +37,7 @@ const TableHeader = ({
   searchValue,
   onSearchChange,
   onSearchSubmit,
-  activeSort
+  activeSort,
 }: Props) => {
   const [active, setActive] = useState<string>(activeSort ?? sortList[0]);
   const [open, setOpen] = useState<boolean>(false);
@@ -53,14 +49,6 @@ const TableHeader = ({
     onSortClick?.(e, selected);
     setOpen(false);
   };
-
-  const getOffset = (e: HTMLDivElement) => {
-    const rect = e?.getBoundingClientRect();
-    return {
-      left: rect?.left + window?.scrollX - 20,
-      top: rect?.top + window?.scrollY + 35,
-    }
-  }
   return (
     <div className="w-full shrink-0 md:grid md:place-items-center bg-white dark:bg-dark rounded-lg shadow-sm">
       {!disableHead && (
@@ -81,14 +69,17 @@ const TableHeader = ({
             )}
 
             {sortList.length > 0 && (
-              <div ref={ref} className="relative flex items-center my-auto bg-slate-100 dark:bg-neutral-800 rounded-full overflow-hidden mr-[10px]">
+              <div
+                ref={ref}
+                className="relative flex items-center my-auto bg-slate-100 dark:bg-neutral-800 rounded-full overflow-hidden mr-[10px]"
+              >
                 <Popover
                   isOpen={open}
                   positions={["bottom", "left"]}
                   padding={10}
                   parentElement={ref.current!}
                   boundaryElement={ref.current!}
-                  align='center'
+                  align="center"
                   reposition={true}
                   onClickOutside={() => setOpen(false)}
                   content={
@@ -96,7 +87,6 @@ const TableHeader = ({
                   }
                 >
                   <div
-                    
                     className={`flex items-center p-[3px] transitions-all ease duration-300cursor-pointer relative cursor-pointer`}
                     onClick={() => setOpen(!open)}
                   >

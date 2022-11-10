@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { BannerType } from "../../../typing";
+import useImageLoader from "../../hooks/useImageLoader";
 import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 import { add } from "../../redux/features/dialogSlice";
 
@@ -14,9 +15,7 @@ const Banners = ({
   data: BannerType[];
   canEdit: boolean;
 }) => {
-  const dispatch = useDispatch();
   const [active, setActive] = useState<number>(0);
-  // const [items, setItems] = useState<BannerType[]>(data);
 
   const handleBack = () => {
     setActive(active === 0 ? data.length - 1 : active - 1);
@@ -26,8 +25,8 @@ const Banners = ({
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center rounded-lg overflow-hidden mt-4">
-      <div className="shrink-0 flex w-[100%] items-center rounded-lg overflow-x-scroll pb-[20px] scrollbar-hide relative pl-14 md:pl-0">
+    <div className="relative flex flex-col items-center justify-center rounded-lg overflow-hidden mt-4 w-full">
+      <div className="shrink-0 flex w-[100%] items-center rounded-lg overflow-x-scroll pb-[20px] scrollbar-hide relative  md:pl-0">
         {data.map((item: BannerType, i: number) => (
           <ImageCard
             key={i}
@@ -57,19 +56,21 @@ const Banners = ({
         </div>
       )}
 
-      <div className="flex items-center justify-evenly">
-        {data.map((_, index) => (
-          <div
-            className={`m-[5px] transition-transform duration-1000 ease rounded-full w-[5px] h-[5px] ${
-              active === index
-                ? "scale-150 bg-black dark:bg-white"
-                : " bg-black/50 dark:bg-white/50"
-            }`}
-            key={index}
-            onClick={() => setActive(index)}
-          />
-        ))}
-      </div>
+      {data.length > 1 && (
+        <div className="flex items-center justify-evenly">
+          {data.map((_, index) => (
+            <div
+              className={`m-[5px] transition-transform duration-1000 ease rounded-full w-[5px] h-[5px] ${
+                active === index
+                  ? "scale-150 bg-black dark:bg-white"
+                  : " bg-black/50 dark:bg-white/50"
+              }`}
+              key={index}
+              onClick={() => setActive(index)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -79,14 +80,14 @@ const AddCard = () => {
 
   return (
     <div
-      className="relative w-[40%] md:w-[20%] rounded-lg shrink-0 overflow-hidden m-[5px] mr-10 md:m-[10px] transition-transform duration-300 ease"
+      className="relative w-[50%] md:w-[20%] rounded-lg shrink-0 overflow-hidden m-[5px] mr-10 md:m-[10px] transition-transform duration-300 ease"
       onClick={() => dispatch(add({ type: "banner", data: null, open: true }))}
     >
       <div className="flex items-center flex-col justify-center">
         <div className="h-[50px] w-[50px] rounded-full flex items-center justify-center shadow-sm bg-slate-200 dark:bg-neutral-700 mt-2">
           <Add size={50} variant="Outline" />
         </div>
-        <p className="font-medium">Create banners</p>
+        <p className="font-medium whitespace-nowrap">Create banners</p>
       </div>
     </div>
   );
@@ -108,6 +109,7 @@ const ImageCard = (props: ImageCardProps) => {
   const dispatch = useDispatch();
 
   const entry = useIntersectionObserver(ref, { threshold: 1 });
+
 
   const isVisible = !!entry?.isIntersecting;
 

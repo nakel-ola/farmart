@@ -1,20 +1,28 @@
 import { gql, useQuery } from "@apollo/client";
+import { Profile2User } from "iconsax-react";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, useState } from "react";
-import Lottie from "react-lottie-player";
 import { GraphQLUserResponse, UserData, UserType } from "../../typing";
 import Pagination from "../components/Pagination";
-import Table from "../components/Table";
-import TableContent from "../components/TableContent";
-import TableHeader from "../components/TableHeader";
-import TableList from "../components/TableList";
-import TableRow from "../components/TableRow";
-import lottieJson from "../data/lf30_editor_mh2nforn.json";
+import {
+  Table,
+  TableBody,
+  TableContent,
+  TableHead,
+  TableRow,
+} from "../components/tables";
+import Header from "../containers/products/Header";
 import truncate from "../helper/truncate";
 import Layout from "../layout/Layout";
 import { roundUp } from "./orders";
 
-const tableList: string[] = ["Name", "Phone", "Email", "Gender", "Created"];
+const tableList: any[] = [
+  { title: "Name" },
+  { title: "Phone" },
+  { title: "Email" },
+  { title: "Gender" },
+  { title: "Created" },
+];
 
 const UsersQuery = gql`
   query users($input: UsersInput!) {
@@ -65,85 +73,84 @@ const Customers = () => {
     <Layout className="flex items-center flex-col">
       <div className="w-[95%] md:w-[90%]">
         {data?.users?.__typename !== "ErrorMsg" && (
-          <Table>
-            <TableHeader
-              title="List of Customers"
-              showSearch={false}
-              tableList={tableList}
-            />
-            {(data?.users as UserData)?.results?.length! > 0 ? (
-              <>
-                <TableList>
-                  {(data?.users as UserData)?.results.map(
-                    (user: UserType, index: number) => (
-                      <TableRow
-                        key={index}
-                        onClick={() => router.push(`/customer/${user.id}`)}
-                      >
-                        <TableContent>
-                          <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                            {user.name}
-                          </p>
-                        </TableContent>
-                        <TableContent>
-                          <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                            {user.phoneNumber}
-                          </p>
-                        </TableContent>
-                        <TableContent>
-                          <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                            {user.email}
-                          </p>
-                        </TableContent>
-                        <TableContent>
-                          <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                            {user.gender}
-                          </p>
-                        </TableContent>
-                        <TableContent>
-                          <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                            {truncate(
-                              new Date(user.createdAt).toDateString(),
-                              15,
-                              "middle"
-                            )}
-                          </p>
-                        </TableContent>
-                      </TableRow>
-                    )
-                  )}
-                </TableList>
+          <Table
+            headerComponent={
+              <Header title="List of Customers" showSearch={false} />
+            }
+            footerComponent={
+              pageCount > 1 ? (
+                <Pagination
+                  pageCount={pageCount}
+                  forcePage={(data?.users as UserData).page ?? 1}
+                  pageRangeDisplayed={10}
+                  breakLabel="•••"
+                  onPageChange={handlePageChange}
+                />
+              ) : null
+            }
+          >
+            <TableHead tableList={tableList} />
 
-                <div className="grid place-items-center w-full">
-                  {pageCount > 1 && (
-                    <Pagination
-                      pageCount={pageCount}
-                      forcePage={(data?.users as UserData).page ?? 1}
-                      pageRangeDisplayed={10}
-                      breakLabel="•••"
-                      onPageChange={handlePageChange}
-                    />
-                  )}
-                </div>
-              </>
-            ) : (
-              <div className="flex-[0.35] ml-[5px] h-[80%] grid place-items-center my-5">
-                <div className="flex items-center justify-center flex-col ">
-                  <Lottie
-                    loop={false}
-                    animationData={lottieJson}
-                    play
-                    style={{ width: 250, height: 250 }}
-                  />
-                  <p className="text-[1.2rem] text-slate-900 dark:text-white">
-                    No Users Yet!
-                  </p>
-                </div>
-              </div>
-            )}
+            {(data?.users as UserData)?.results?.length! > 0 ? (
+              <TableBody disableDivider={pageCount > 1 ? false : true}>
+                {(data?.users as UserData)?.results.map(
+                  (user: UserType, index: number) => (
+                    <TableRow
+                      key={index}
+                      className="cursor-pointer"
+                      onClick={() => router.push(`/customer/${user.id}`)}
+                    >
+                      <TableContent>
+                        <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          {user.name}
+                        </p>
+                      </TableContent>
+                      <TableContent>
+                        <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          {user.phoneNumber}
+                        </p>
+                      </TableContent>
+                      <TableContent>
+                        <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          {user.email}
+                        </p>
+                      </TableContent>
+                      <TableContent>
+                        <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          {user.gender}
+                        </p>
+                      </TableContent>
+                      <TableContent>
+                        <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          {truncate(
+                            new Date(user.createdAt).toDateString(),
+                            15,
+                            "middle"
+                          )}
+                        </p>
+                      </TableContent>
+                    </TableRow>
+                  )
+                )}
+              </TableBody>
+            ) : null}
           </Table>
         )}
       </div>
+
+      {(data?.users as UserData)?.results?.length! === 0 && (
+        <div className="grid my-10 place-items-center">
+          <div className="flex items-center justify-center flex-col">
+            <Profile2User
+              size={100}
+              className="text-neutral-700 dark:text-neutral-400"
+            />
+            <p className="text-neutral-700 dark:text-neutral-400 text-lg font-semibold my-1">
+              No Customers Yet!
+            </p>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };

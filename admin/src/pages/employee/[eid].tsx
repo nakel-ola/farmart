@@ -58,7 +58,7 @@ const Employee = () => {
       name: "Email Address",
       value: newData?.email,
     },
-    {
+    newData?.gender && {
       name: "Gender",
       value: newData?.gender,
     },
@@ -112,7 +112,7 @@ const Employee = () => {
                     )
                   }
                 />
-                {user?.level === "Silver" && (
+                {user?.level === "Gold" && (
                   <div className="w-[95%] md:w-[80%] grid place-items-center my-8">
                     <Button className="text-red-600 bg-red-600/10 hover:scale-105 active:scale-95">
                       Delete

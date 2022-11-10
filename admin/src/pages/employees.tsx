@@ -1,22 +1,32 @@
 import { gql, useQuery } from "@apollo/client";
+import { UserOctagon } from "iconsax-react";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, useState } from "react";
 import Lottie from "react-lottie-player";
 import { useSelector } from "react-redux";
 import { GraphQLEmployeesResponse, UserType } from "../../typing";
 import Pagination from "../components/Pagination";
-import Table from "../components/Table";
-import TableContent from "../components/TableContent";
-import TableHeader from "../components/TableHeader";
-import TableList from "../components/TableList";
-import TableRow from "../components/TableRow";
+import {
+  Table,
+  TableBody,
+  TableContent,
+  TableHead,
+  TableRow,
+} from "../components/tables";
+import Header from "../containers/products/Header";
 import lottieJson from "../data/lf30_editor_mh2nforn.json";
 import truncate from "../helper/truncate";
 import Layout from "../layout/Layout";
 import { selectUser } from "../redux/features/userSlice";
 import { roundUp } from "./orders";
 
-const tableList: string[] = ["Name", "Phone", "Email", "Gender", "Created"];
+const tableList: any[] = [
+  { title: "Name" },
+  { title: "Phone" },
+  { title: "Email" },
+  { title: "Gender" },
+  { title: "Created" },
+];
 
 const UsersQuery = gql`
   query Employees($input: UsersInput!) {
@@ -66,7 +76,84 @@ const Employees = () => {
   return (
     <Layout className="flex items-center flex-col">
       <div className="w-[95%] md:w-[90%]">
-        <Table>
+        <Table
+          headerComponent={
+            <Header title="List of Employees" showSearch={false} />
+          }
+          footerComponent={
+            pageCount > 1 ? (
+              <Pagination
+                pageCount={pageCount}
+                forcePage={data?.employees.page ?? 1}
+                pageRangeDisplayed={10}
+                breakLabel="•••"
+                onPageChange={handlePageChange}
+              />
+            ) : null
+          }
+        >
+          <TableHead tableList={tableList} />
+
+          {data?.employees?.results?.length! > 0 ? (
+            <TableBody disableDivider={pageCount > 1 ? false : true}>
+              {data?.employees?.results.map(
+                (employee: UserType, index: number) =>
+                  user?.id !== employee.id && (
+                    <TableRow
+                      className="cursor-pointer"
+                      onClick={() => router.push(`/employee/${employee.id}`)}
+                      key={index}
+                    >
+                      <TableContent>
+                        <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          {employee.name}
+                        </p>
+                      </TableContent>
+                      <TableContent>
+                        <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          {employee.phoneNumber}
+                        </p>
+                      </TableContent>
+                      <TableContent>
+                        <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          {employee.email}
+                        </p>
+                      </TableContent>
+                      <TableContent>
+                        <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          {employee.gender}
+                        </p>
+                      </TableContent>
+                      <TableContent>
+                        <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          {truncate(
+                            new Date(employee.createdAt).toDateString(),
+                            15,
+                            "middle"
+                          )}
+                        </p>
+                      </TableContent>
+                    </TableRow>
+                  )
+              )}
+            </TableBody>
+          ) : null}
+        </Table>
+
+        {data?.employees?.results?.length! === 0 && (
+          <div className="grid my-10 place-items-center">
+            <div className="flex items-center justify-center flex-col">
+              <UserOctagon
+                size={100}
+                className="text-neutral-700 dark:text-neutral-400"
+              />
+              <p className="text-neutral-700 dark:text-neutral-400 text-lg font-semibold my-1">
+                No Employee Yet!
+              </p>
+            </div>
+          </div>
+        )}
+        {/* <Table>
           <TableHeader
             title="List of Employees"
             showSearch={false}
@@ -142,7 +229,7 @@ const Employees = () => {
               </div>
             </div>
           )}
-        </Table>
+        </Table> */}
       </div>
     </Layout>
   );
