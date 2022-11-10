@@ -29,7 +29,7 @@ const OrderSummary = ({ data }: { data: OrderStatisticsType }) => {
 
         <div ref={ref} className="relative">
           <Button
-            className={`text-green-600 bg-green-600/10 relative flex items-center`}
+            className={`text-green-600 bg-green-600/10 mr-2 relative flex items-center`}
             onClick={() => setToggle(!toggle)}
           >
             {capitalizeFirstLetter(slot)}

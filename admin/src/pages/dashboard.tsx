@@ -83,6 +83,14 @@ const Dashboard = () => {
     onError: (data) => console.table(data),
   });
 
+  const validate = (data: OrderSummaryType) => {
+    const { canceled,delivered,pending } = data;
+    if(canceled > 0 || pending > 0 || delivered > 0) {
+      return true
+    }
+    return false;
+  }
+
   return (
     <Layout>
       <Head>
@@ -112,13 +120,15 @@ const Dashboard = () => {
             )}
 
             <div className="flex w-full md:w-[90%] flex-col md:flex-row justify-center items-center md:items-start md:justify-between mb-0 md:mb-8">
-              {data.ordersSummary.__typename !== "ErrorMsg" && (
-                <OrderOverview
-                  data={
-                    (data as { ordersSummary: OrderSummaryType }).ordersSummary
-                  }
-                />
-              )}
+              {data.ordersSummary.__typename !== "ErrorMsg" &&
+                validate((data as { ordersSummary: OrderSummaryType }).ordersSummary) && (
+                  <OrderOverview
+                    data={
+                      (data as { ordersSummary: OrderSummaryType })
+                        .ordersSummary
+                    }
+                  />
+                )}
               {data.orders.__typename !== "ErrorMsg" &&
                 (data?.orders as { results: OrderType[] }).results.length >
                   0 && (

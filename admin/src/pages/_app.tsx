@@ -67,7 +67,6 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const { loading } = useQuery(EmyployeeQuery, {
     onCompleted: (data) => {
-      console.log(data);
       if (data.employee?.__typename === "Employee") {
         dispatch(login(data.employee));
         if (router.pathname === "/") {

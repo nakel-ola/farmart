@@ -39,11 +39,7 @@ const Products = () => {
     onError: (err) => console.table(err),
   });
 
-  console.log(user)
-
   let canEdit = user?.level === "Gold" || user?.level === "Silver";
-
-  console.log(canEdit)
 
 
   return (
