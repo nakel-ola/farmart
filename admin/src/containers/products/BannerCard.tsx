@@ -39,8 +39,17 @@ type FormType = {
   link: string;
 };
 
-const BannerCard = ({ func }: { func: any }) => {
+const validate = (form: FormType) => {
+  const { image,description,link,title } = form;
 
+  if(image && description.length > 0 && title.length > 0) {
+    return false
+  }
+
+  return true
+}
+
+const BannerCard = ({ func }: { func: any }) => {
   const dispatch = useDispatch();
   const dialog = useSelector(selectDialog);
 
@@ -81,7 +90,7 @@ const BannerCard = ({ func }: { func: any }) => {
           },
         },
         onCompleted,
-        onError: (e) => console.table(e)
+        onError: (e) => console.table(e),
       });
     } else {
       await createBanner({
@@ -94,7 +103,7 @@ const BannerCard = ({ func }: { func: any }) => {
           },
         },
         onCompleted,
-        onError: (e) => console.table(e)
+        onError: (e) => console.table(e),
       });
     }
   };
@@ -143,12 +152,12 @@ const BannerCard = ({ func }: { func: any }) => {
         <div className="flex items-center justify-center mt-5">
           <Button
             type="button"
-            className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white"
+            className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white mx-2"
             onClick={close}
           >
             Cancel
           </Button>
-          <Button type="submit" className="bg-primary text-white">
+          <Button disabled={validate(form)} type="submit" className="bg-primary text-white mx-2">
             {data ? "Save Change" : "Create"}
           </Button>
         </div>

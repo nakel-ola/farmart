@@ -80,7 +80,7 @@ const AddCard = () => {
 
   return (
     <div
-      className="relative w-[50%] md:w-[20%] rounded-lg shrink-0 overflow-hidden m-[5px] mr-10 md:m-[10px] transition-transform duration-300 ease"
+      className="relative w-[50%] md:w-[20%] rounded-lg shrink-0 overflow-hidden m-[5px] mr-10 md:m-[10px] transition-transform duration-300 ease cursor-pointer"
       onClick={() => dispatch(add({ type: "banner", data: null, open: true }))}
     >
       <div className="flex items-center flex-col justify-center">
