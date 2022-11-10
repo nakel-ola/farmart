@@ -40,6 +40,7 @@ const Products = () => {
   });
 
   let canEdit = user?.level === "Gold" || user?.level === "Silver";
+  
 
 
   return (

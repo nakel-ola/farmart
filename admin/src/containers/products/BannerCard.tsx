@@ -65,14 +65,10 @@ const BannerCard = ({ func }: { func: any }) => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const onCompleted = (data: any) => {
-      console.log(data);
       func?.();
       dispatch(remove({ type: "banner" }));
     };
 
-    const onError = (err: any) => {
-      console.table(err)
-    }
     if (data) {
       await editBanner({
         variables: {
@@ -85,7 +81,7 @@ const BannerCard = ({ func }: { func: any }) => {
           },
         },
         onCompleted,
-        onError
+        onError: (e) => console.table(e)
       });
     } else {
       await createBanner({
@@ -98,7 +94,7 @@ const BannerCard = ({ func }: { func: any }) => {
           },
         },
         onCompleted,
-        onError
+        onError: (e) => console.table(e)
       });
     }
   };
