@@ -63,6 +63,6 @@
   },
   "resolutions": {
     "fs-capacitor": "^6.2.0",
-    "graphql-upload-minimal": "^6.1.26"
+    "graphql-upload-minimal": "1.5.4"
   }
 }
