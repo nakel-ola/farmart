@@ -8,12 +8,19 @@ interface CardProps extends InputFieldProps {
   image?: File | null
 }
 
+// Oranges  
+// fresh oranges avaliable  
+
+// Vegetables
+// get your vegetables
+
+
 const ImageCard = ({ title, image, onChange, ...others }: CardProps) => {
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const fileList = e.target.files;
-      onChange(fileList[0]);
+    let files = e.target.files;
+    if (e.target.validity.valid && files && files.length > 0) {
+      onChange(files[0]);
     }
   };
   return (
@@ -27,6 +34,7 @@ const ImageCard = ({ title, image, onChange, ...others }: CardProps) => {
             value={image?.name}
             readOnly
             placeholder="No file chosen"
+            required 
             className="border-0 outline-0 h-full bg-transparent mx-1"
           />
         </div>
