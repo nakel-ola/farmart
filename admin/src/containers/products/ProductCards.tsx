@@ -11,17 +11,17 @@ import { GraphQLProductResponse, ProductType } from "../../../typing";
 import Button from "../../components/Button";
 import Pagination from "../../components/Pagination";
 import {
-  Table,
-  TableBody,
-  TableContent,
-  TableHead,
-  TableRow,
+    Table,
+    TableBody,
+    TableContent,
+    TableHead,
+    TableRow
 } from "../../components/tables";
+import Header from "../../components/tables/Header";
 import truncate from "../../helper/truncate";
 import { roundUp } from "../../pages/orders";
 import { selectCatagory } from "../../redux/features/categorySlice";
 import { add } from "../../redux/features/dialogSlice";
-import Header from "./Header";
 
 const ProductQuery = gql`
   query Products($input: ProductsInput) {

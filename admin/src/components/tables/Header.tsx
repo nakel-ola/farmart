@@ -1,5 +1,11 @@
 import clsx from "clsx";
-import { ArrowDown2, CloseCircle, SearchNormal1 } from "iconsax-react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowDown2,
+  ArrowUp2,
+  CloseCircle,
+  SearchNormal1,
+} from "iconsax-react";
 import {
   ChangeEvent,
   FormEvent,
@@ -8,7 +14,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { Popover } from "react-tiny-popover";
+import useOnClickOutside from "../../hooks/useOnClickOutside";
+import Button from "../Button";
 
 type Props = {
   sortList?: string[];
@@ -74,43 +81,51 @@ const Header = (props: Props) => {
         )}
 
         {sortList.length > 0 && (
-          <div
-            ref={ref}
-            className="relative flex items-center my-auto bg-slate-100 dark:bg-neutral-800 rounded-full overflow-hidden mr-[10px] ml-auto md:ml-0"
-          >
-            <Popover
-              isOpen={open}
-              positions={["bottom", "left"]}
-              padding={10}
-              parentElement={ref.current!}
-              boundaryElement={ref.current!}
-              align="center"
-              reposition={true}
-              onClickOutside={() => setOpen(false)}
-              content={<MenuCard sortList={sortList} onClick={handleClick} />}
-            >
-              <div
-                className={`flex items-center p-[3px] transitions-all ease duration-300cursor-pointer relative cursor-pointer`}
-                onClick={() => setOpen(!open)}
-              >
-                <p
-                  className={`text-neutral-600 dark:text-neutral-300 m-[3px] mx-[8px] text-sm font-semibold ml-[10px]`}
-                >
-                  {active}
-                </p>
-                <div className="mx-2">
-                  <ArrowDown2
-                    size={20}
-                    className="text-black dark:text-white"
-                  />
-                </div>
-              </div>
-            </Popover>
-          </div>
+          <SortCard
+            active={active}
+            sortList={sortList}
+            handleClick={handleClick}
+          />
         )}
 
         {rightComponent}
       </div>
+    </div>
+  );
+};
+
+interface SortProps {
+  sortList: string[];
+  active: string;
+  handleClick(e: MouseEvent<HTMLDivElement>, selected: string): void;
+}
+
+const SortCard = (props: SortProps) => {
+  const { sortList, handleClick, active } = props;
+
+  const [open, setOpen] = useState<boolean>(false);
+
+  const ref = useRef<HTMLDivElement>(null);
+
+  useOnClickOutside(ref, () => setOpen(false));
+
+  return (
+    <div ref={ref} className="relative">
+      <Button
+        className="relative text-neutral-600 dark:text-neutral-300 flex items-center my-auto bg-slate-100 dark:bg-neutral-800 rounded-full mr-[10px] ml-auto md:ml-0 p-[3px]"
+        onClick={() => setOpen(!open)}
+      >
+        {active}
+        {open ? (
+          <ArrowUp2 size={20} className="text-black dark:text-white mx-2" />
+        ) : (
+          <ArrowDown2 size={20} className="text-black dark:text-white mx-2" />
+        )}
+      </Button>
+
+      <AnimatePresence>
+        {open && <MenuCard sortList={sortList} onClick={handleClick} />}
+      </AnimatePresence>
     </div>
   );
 };
@@ -122,7 +137,15 @@ const MenuCard = ({
   sortList: string[];
   onClick(e: any, value: string): void;
 }) => (
-  <div className="w-[120px] max-h-[200px] overflow-scroll bg-white dark:bg-dark shadow-md shadow-slate-300 dark:shadow-black/10 rounded-lg scrollbar-hide">
+  <motion.div
+    initial={{ height: 0 }}
+    animate={{ height: "fit-content" }}
+    exit={{ height: 0 }}
+    transition={{
+      duration: 0.3
+    }}
+    className="absolute top-10 right-2 z-[10] w-[120px] max-h-[200px] overflow-scroll bg-white dark:bg-dark shadow-md shadow-slate-300 dark:shadow-black/10 rounded-lg scrollbar-hide"
+  >
     {sortList.map((item: string, index: number) => (
       <div
         key={index}
@@ -132,7 +155,7 @@ const MenuCard = ({
         <p className="pl-1 text-black dark:text-white font-medium">{item}</p>
       </div>
     ))}
-  </div>
+  </motion.div>
 );
 
 const InputForm = ({

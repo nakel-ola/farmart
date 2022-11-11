@@ -98,7 +98,6 @@ const employeeLogin = (args, req) => __awaiter(void 0, void 0, void 0, function*
             expiresIn: config_1.default.expiresIn,
         });
         req.session.auth_admin = token;
-        console.log(req.session);
         return {
             __typename: "Employee",
             id: user._id.toString(),
@@ -417,7 +416,7 @@ const employeeInvites = (0, authenticated_1.default)((_, req) => __awaiter(void 
 }));
 const logout = (0, authenticated_1.default)((_, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        req.res.clearCookie(req.admin ? "auth" : "grocery");
+        req.res.clearCookie(req.admin ? "auth_admin" : "auth");
         req.session.destroy((err) => {
             if (err) {
                 throw new Error(err.message);

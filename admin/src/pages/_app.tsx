@@ -7,7 +7,7 @@ import { Toaster } from "react-hot-toast";
 import { Provider, useDispatch } from "react-redux";
 import PageLoader from "../components/PageLoader";
 import { useApollo } from "../hooks/useApollo";
-import { login } from "../redux/features/userSlice";
+import { login, logout } from "../redux/features/userSlice";
 import { wrapper } from "../redux/store";
 import "../styles/globals.css";
 import { ThemeProvider } from "../styles/theme";
@@ -76,6 +76,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
 
       if (data.employee?.__typename === "ErrorMsg") {
         router.push("/");
+        dispatch(logout());
       }
     },
   });

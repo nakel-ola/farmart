@@ -9,19 +9,19 @@ import { useDispatch } from "react-redux";
 import { GraphQLOrdersResponse, OrdersData, OrderType } from "../../../typing";
 import Pagination from "../../components/Pagination";
 import {
-  Table,
-  TableBody,
-  TableContent,
-  TableHead,
-  TableRow,
+    Table,
+    TableBody,
+    TableContent,
+    TableHead,
+    TableRow
 } from "../../components/tables";
+import Header from "../../components/tables/Header";
 import lottieJson from "../../data/lf30_editor_mh2nforn.json";
 import capitalizeFirstLetter from "../../helper/capitalizeFirstLetter";
 import { statusColor } from "../../helper/statusColor";
 import truncate from "../../helper/truncate";
 import { roundUp } from "../../pages/orders";
 import { add } from "../../redux/features/orderSlice";
-import Header from "../products/Header";
 
 export const OrdersQuery = gql`
   query Orders($input: OrdersInput!) {

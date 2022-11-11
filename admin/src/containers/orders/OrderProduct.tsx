@@ -2,9 +2,9 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import NumberFormat from "react-number-format";
-import { Table, TableBody, TableHead,TableRow,TableContent } from "../../components/tables";
+import { Table, TableBody, TableContent, TableHead, TableRow } from "../../components/tables";
+import Header from "../../components/tables/Header";
 import truncate from "../../helper/truncate";
-import Header from "../products/Header";
 
 export const ProductQuery = gql`
   query Product($slug: String!) {

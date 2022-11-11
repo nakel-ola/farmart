@@ -5,16 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { InviteType } from "../../../typing";
 import Button from "../../components/Button";
 import {
-  Table,
-  TableBody,
-  TableContent,
-  TableHead,
-  TableRow,
+    Table,
+    TableBody,
+    TableContent,
+    TableHead,
+    TableRow
 } from "../../components/tables";
+import Header from "../../components/tables/Header";
 import { statusColor } from "../../helper/statusColor";
 import { add } from "../../redux/features/dialogSlice";
 import { selectUser } from "../../redux/features/userSlice";
-import Header from "../products/Header";
 
 const InviteCard = ({ data, func }: { data: InviteType[]; func: any }) => {
   const dispatch = useDispatch();

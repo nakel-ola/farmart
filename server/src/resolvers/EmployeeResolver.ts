@@ -144,7 +144,6 @@ const employeeLogin = async (
     });
 
     (req.session as any).auth_admin = token;
-    console.log(req.session)
 
     return {
       __typename: "Employee",
@@ -607,7 +606,7 @@ const employeeInvites = authenticated(async (_, req: ReqBody) => {
 
 const logout = authenticated(async (_, req: ReqBody) => {
   try {
-    req.res.clearCookie(req.admin ? "auth" : "grocery");
+    req.res.clearCookie(req.admin ? "auth_admin" : "auth");
 
     req.session.destroy((err) => {
       if (err) {

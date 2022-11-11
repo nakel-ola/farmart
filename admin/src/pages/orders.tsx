@@ -9,12 +9,11 @@ import {
   MouseEvent,
   useCallback,
   useEffect,
-  useState,
+  useState
 } from "react";
 import toast from "react-hot-toast";
-import Lottie from "react-lottie-player";
 import NumberFormat from "react-number-format";
-import { GraphQLOrdersResponse, OrdersData, OrderType } from "../../typing";
+import { GraphQLOrdersResponse, OrdersData } from "../../typing";
 import Pagination from "../components/Pagination";
 import {
   Table,
@@ -22,14 +21,8 @@ import {
   TableContent,
   TableHead,
   TableRow,
+  Header
 } from "../components/tables";
-import Header from "../containers/products/Header";
-// import Table from "../components/Table";
-// import TableContent from "../components/TableContent";
-// import TableHeader from "../components/TableHeader";
-// import TableList from "../components/TableList";
-// import TableRow from "../components/TableRow";
-import lottieJson from "../data/lf30_editor_mh2nforn.json";
 import capitalizeFirstLetter from "../helper/capitalizeFirstLetter";
 import { statusColor } from "../helper/statusColor";
 import truncate from "../helper/truncate";
@@ -44,14 +37,6 @@ export const tableList: any[] = [
   { title: "Payment" },
   { title: "Delivery" },
 ];
-// export const tableList: string[] = [
-//   "Order Id",
-//   "Status",
-//   "Price",
-//   "Date",
-//   "Payment",
-//   "Delivery",
-// ];
 
 let limit = 10;
 
@@ -177,7 +162,6 @@ export const FilterByStatus = gql`
 
 const Orders = () => {
   const [active, setActive] = useState(sortList[0]);
-  const [page, setPage] = useState(1);
   const [input, setInput] = useState("");
   const router = useRouter();
 
@@ -210,7 +194,6 @@ const Orders = () => {
   );
 
   const handlePageChange = (e: ChangeEvent, page: number): void => {
-    setPage(page);
     refetch({
       input: { page, limit, status: active === "All" ? null : active },
     });
@@ -338,6 +321,7 @@ const Orders = () => {
                       onClick={() => {
                         router.push(`/order/${props.id}`);
                       }}
+                      className="cursor-pointer"
                     >
                       <TableContent>
                         <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">

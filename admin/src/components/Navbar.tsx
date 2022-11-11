@@ -1,4 +1,6 @@
+import axios from "axios";
 import clsx from "clsx";
+// import fs from "fs";
 import {
   ArrowLeft,
   HambergerMenu,
@@ -7,13 +9,14 @@ import {
   Sun1,
 } from "iconsax-react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { ChangeEvent, useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import ProductNav from "../containers/products/ProductNav";
 import useWindowResizeListener from "../hooks/useWindowResizeListener";
 import { selectUser } from "../redux/features/userSlice";
 import { useTheme } from "../styles/theme";
+import Button from "./Button";
 
 interface NavbarProps {
   toggle: boolean;
@@ -28,14 +31,34 @@ let mainPath = [
   "/employees",
 ];
 
+const config = {
+  headers: { "content-type": "multipart/form-data" },
+  onUploadProgress: (event: any) => {
+    console.log(
+      `Current progress:`,
+      Math.round((event.loaded * 100) / event.total)
+    );
+  },
+};
+
 const Navbar = ({ toggle, setToggle }: NavbarProps) => {
   const router = useRouter();
   const user = useSelector(selectUser);
+
+  const formRef = useRef<HTMLFormElement>(null);
 
   const capitalizeFirstLetter = (string: string) =>
     string.charAt(0).toUpperCase() + string.slice(1);
 
   let canEdit = user?.level === "Gold" || user?.level === "Silver";
+
+  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    let files = e.target.files;
+    if (e.target.validity.valid && files && files.length > 0) {
+      let formData = new FormData(formRef.current!) as any;
+      await axios.post("/api/upload-url", formData,config).then(data => console.log(data));
+    }
+  };
 
   return (
     <div className="w-full h-[60px] bg-white dark:bg-dark flex items-center justify-between">
@@ -84,6 +107,22 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
 
         <div className="flex flex-1 justify-between items-center">
           <div className="ml-auto" />
+          {/* <label htmlFor="theFiles">
+            <p className="">Click me</p>
+          </label> */}
+
+          <form ref={formRef} className="">
+            <input
+              type="file"
+              id="theFiles"
+              name="theFiles"
+              accept="image/*"
+              multiple={false}
+              className=""
+              onChange={handleChange}
+            />
+          </form>
+
           {router.pathname === "/products" && canEdit && <ProductNav />}
           <ThemeToggle />
         </div>
@@ -120,7 +159,10 @@ const ThemeToggle = () => {
         </button>
       </div>
 
-      <button className="lg:hidden flex items-center justify-center" onClick={handleClick}>
+      <button
+        className="lg:hidden flex items-center justify-center"
+        onClick={handleClick}
+      >
         {currentTheme === "dark" ? (
           <Sun1 size={20} className="text-xl text-black dark:text-white" />
         ) : (

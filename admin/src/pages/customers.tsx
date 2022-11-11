@@ -5,13 +5,13 @@ import React, { ChangeEvent, useState } from "react";
 import { GraphQLUserResponse, UserData, UserType } from "../../typing";
 import Pagination from "../components/Pagination";
 import {
-  Table,
-  TableBody,
-  TableContent,
-  TableHead,
-  TableRow,
+    Table,
+    TableBody,
+    TableContent,
+    TableHead,
+    TableRow
 } from "../components/tables";
-import Header from "../containers/products/Header";
+import Header from "../components/tables/Header";
 import truncate from "../helper/truncate";
 import Layout from "../layout/Layout";
 import { roundUp } from "./orders";

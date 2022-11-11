@@ -7,13 +7,13 @@ import { useSelector } from "react-redux";
 import { GraphQLEmployeesResponse, UserType } from "../../typing";
 import Pagination from "../components/Pagination";
 import {
-  Table,
-  TableBody,
-  TableContent,
-  TableHead,
-  TableRow,
+    Table,
+    TableBody,
+    TableContent,
+    TableHead,
+    TableRow
 } from "../components/tables";
-import Header from "../containers/products/Header";
+import Header from "../components/tables/Header";
 import lottieJson from "../data/lf30_editor_mh2nforn.json";
 import truncate from "../helper/truncate";
 import Layout from "../layout/Layout";

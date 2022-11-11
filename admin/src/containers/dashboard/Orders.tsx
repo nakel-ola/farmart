@@ -5,16 +5,16 @@ import React from "react";
 import NumberFormat from "react-number-format";
 import { OrderType } from "../../../typing";
 import {
-  Table,
-  TableBody,
-  TableContent,
-  TableHead,
-  TableRow,
+    Table,
+    TableBody,
+    TableContent,
+    TableHead,
+    TableRow
 } from "../../components/tables";
+import Header from "../../components/tables/Header";
 import capitalizeFirstLetter from "../../helper/capitalizeFirstLetter";
 import { statusColor } from "../../helper/statusColor";
 import truncate from "../../helper/truncate";
-import Header from "../products/Header";
 
 const Orders = ({ items }: { items: OrderType[] }) => {
   const router = useRouter();

@@ -65,6 +65,8 @@ const Pagination = ({
     });
   };
 
+  console.log(next.page)
+
   return (
     <div
       className={clsx(
@@ -73,29 +75,31 @@ const Pagination = ({
       )}
     >
       <div className="ml-auto flex items-center my-2 mx-2">
-        <div
-          className="bg-slate-100 dark:bg-neutral-800 p-[3px] rounded-full flex items-center justify-center"
+        <button
+          disabled={previous.page === 0}
+          className="bg-slate-100 dark:bg-neutral-800 h-[35px] w-[35px] rounded-full flex items-center justify-center disabled:scale-100 hover:scale-105 active:scale-95"
           onClick={previous.onClick}
         >
           <ArrowLeft2
             size={25}
             className="text-neutral-700 dark:text-neutral-400"
           />
-        </div>
+        </button>
 
         <div className="flex items-center w-fit bg-slate-100 dark:bg-neutral-800 rounded-full overflow-hidden mx-[5px]">
           {renderPages()}
         </div>
 
-        <div
-          className="bg-slate-100 dark:bg-neutral-800 p-[3px] rounded-full flex items-center justify-center"
+        <button
+          disabled={next.page === pages.length + 1}
+          className="bg-slate-100 dark:bg-neutral-800 h-[35px] w-[35px] rounded-full flex items-center justify-center disabled:scale-100 hover:scale-105 active:scale-95"
           onClick={next.onClick}
         >
           <ArrowRight2
             size={25}
             className="text-neutral-700 dark:text-neutral-400"
           />
-        </div>
+        </button>
       </div>
     </div>
   );
@@ -109,22 +113,17 @@ const NumberCard = ({
 }: NumberCardProps) => {
   return (
     <div className="flex">
-      <div
-        className={`flex items-center p-[3px] transitions-all ease duration-300 ${
-          selected && "bg-slate-200 dark:bg-slate-100/20"
-        } cursor-pointer `}
+      <button
+        className={clsx(
+          "text-center transitions-all ease duration-300 h-[35px] w-[35px] text-base font-semibold",
+          selected
+            ? "bg-slate-200 dark:bg-slate-100/20 text-black dark:text-white"
+            : "text-neutral-700 dark:text-neutral-400"
+        )}
         onClick={onClick}
       >
-        <p
-          className={`${
-            selected
-              ? "text-black dark:text-white"
-              : "text-neutral-700 dark:text-neutral-400"
-          } m-[3px] mx-[8px] text-sm font-semibold`}
-        >
-          {page}
-        </p>
-      </div>
+        {page}
+      </button>
       {!lastIndex && (
         <hr className="bg-slate-200 border-0 dark:bg-neutral-800 h-8 w-[.3px]" />
       )}

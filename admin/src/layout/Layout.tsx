@@ -1,21 +1,15 @@
-import { useApolloClient, useLazyQuery } from "@apollo/client";
 import clsx from "clsx";
-import { useRouter } from "next/router";
 import React, {
   forwardRef,
   ReactNode,
-  useCallback,
-  useEffect,
   useState,
 } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import MenuCard from "../components/MenuCard";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import CategoryCard from "../containers/products/CategoryCard";
-import { EmyployeeQuery } from "../pages/_app";
 import { selectDialog } from "../redux/features/dialogSlice";
-import { login, logout, selectCookies } from "../redux/features/userSlice";
 
 interface LayoutProps {
   [key: string]: any;
@@ -24,34 +18,6 @@ interface LayoutProps {
 
 function Layout({ children, className }: LayoutProps, ref: any) {
   const [toggle, setToggle] = useState(false);
-  const dispatch = useDispatch();
-  const router = useRouter();
-
-  const [getEmployee] = useLazyQuery(EmyployeeQuery);
-  const client = useApolloClient();
-
-  const cookies = useSelector(selectCookies);
-
-  const getUser = useCallback(async () => {
-    if (cookies) {
-      await getEmployee({
-        fetchPolicy: "network-only",
-        onCompleted: async (data) => {
-          if (data.employee?.__typename === "ErrorMsg") {
-            router.push("/");
-            dispatch(logout());
-            await client.resetStore();
-          } else if (data.employee?.__typename === "Employee") {
-            dispatch(login(data.employee));
-          }
-        },
-      });
-    }
-  }, [getEmployee, client, dispatch, router,cookies]);
-
-  useEffect(() => {
-    getUser();
-  }, [getUser]);
 
   const dialog = useSelector(selectDialog);
 
