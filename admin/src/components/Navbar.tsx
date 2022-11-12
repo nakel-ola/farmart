@@ -111,7 +111,7 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
             <p className="">Click me</p>
           </label> */}
 
-          <form ref={formRef} className="">
+          {/* <form ref={formRef} className="">
             <input
               type="file"
               id="theFiles"
@@ -121,7 +121,7 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
               className=""
               onChange={handleChange}
             />
-          </form>
+          </form> */}
 
           {router.pathname === "/products" && canEdit && <ProductNav />}
           <ThemeToggle />

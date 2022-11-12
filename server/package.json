@@ -62,7 +62,7 @@
     "typescript": "^4.8.4"
   },
   "resolutions": {
-    "fs-capacitor": "^6.2.0",
-    "graphql-upload-minimal": "1.5.4"
+    "**/**fs-capacitor": "^6.2.0",
+    "**/graphql-upload-minimal": "1.5.4"
   }
 }
