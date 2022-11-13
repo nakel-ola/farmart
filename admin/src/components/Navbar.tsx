@@ -46,7 +46,7 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
 
   return (
     <div className="w-full h-[60px] bg-white dark:bg-dark flex items-center justify-between">
-      <div className="lg:flex items-center flex-[0.2] hidden">
+      <div className="lg:flex items-center w-[260px] hidden">
         <div className=" flex items-center w-fit m-2 rounded-md">
           <div className={`h-[50px] shrink-0 flex items-center justify-center`}>
             <ShoppingBag size={35} variant="Bold" className="text-primary" />

@@ -9,6 +9,7 @@ import NumberFormat from "react-number-format";
 import { useDispatch, useSelector } from "react-redux";
 import { GraphQLProductResponse, ProductType } from "../../../typing";
 import Button from "../../components/Button";
+import LoadingCard from "../../components/LoadingCard";
 import Pagination from "../../components/Pagination";
 import {
   Table,
@@ -113,36 +114,42 @@ const ProductCards = ({ canEdit, reload, setReload }: Props) => {
   const [input, setInput] = useState("");
   const [data, setData] = useState<GraphQLProductResponse>();
 
-  const { refetch } = useQuery<GraphQLProductResponse>(ProductQuery, {
-    variables: {
-      input: {
-        genre: active === "All" ? null : active.toLowerCase(),
-        offset: 0,
-        limit,
-        outOfStock: router.query?.type === "outofstock" ? true : false,
-      },
-    },
-    notifyOnNetworkStatusChange: true,
-    fetchPolicy: "network-only",
-    onCompleted: (data: GraphQLProductResponse) => {
-      setData(data);
-    },
-    onError: (data) => console.table(data),
-  });
-
-  const [productSearch] = useLazyQuery(SearchQuery, {
-    fetchPolicy: "network-only",
-    onCompleted: ({ productSearch }) => {
-      setData({
-        products: {
-          results: productSearch.results,
-          genre: productSearch.search,
-          totalItems: productSearch.totalItems,
+  const { refetch, loading: productLoading } = useQuery<GraphQLProductResponse>(
+    ProductQuery,
+    {
+      variables: {
+        input: {
+          genre: active === "All" ? null : active.toLowerCase(),
+          offset: 0,
+          limit,
+          outOfStock: router.query?.type === "outofstock" ? true : false,
         },
-      });
-    },
-    onError: (err) => console.table(err),
-  });
+      },
+      notifyOnNetworkStatusChange: true,
+      fetchPolicy: "network-only",
+      onCompleted: (data: GraphQLProductResponse) => {
+        setData(data);
+      },
+      onError: (data) => console.table(data),
+    }
+  );
+
+  const [productSearch, { loading: searchLoading }] = useLazyQuery(
+    SearchQuery,
+    {
+      fetchPolicy: "network-only",
+      onCompleted: ({ productSearch }) => {
+        setData({
+          products: {
+            results: productSearch.results,
+            genre: productSearch.search,
+            totalItems: productSearch.totalItems,
+          },
+        });
+      },
+      onError: (err) => console.table(err),
+    }
+  );
 
   let pageCount = roundUp(Math.abs(data?.products.totalItems! / limit));
 
@@ -206,6 +213,8 @@ const ProductCards = ({ canEdit, reload, setReload }: Props) => {
     }
   }, [reload, refetch, setReload, active, page]);
 
+  let loading = productLoading || searchLoading;
+
   return (
     <>
       <Table
@@ -255,7 +264,7 @@ const ProductCards = ({ canEdit, reload, setReload }: Props) => {
           tableList={tableList}
         />
 
-        {data?.products.results.length! > 0 ? (
+        {!loading || data?.products.results.length! > 0 ? (
           <TableBody disableDivider={pageCount > 1 ? false : true}>
             {data?.products.results.map(
               (product: ProductType, index: number) => (
@@ -315,6 +324,10 @@ const ProductCards = ({ canEdit, reload, setReload }: Props) => {
           </TableBody>
         ) : null}
       </Table>
+
+      {loading && (
+        <LoadingCard title={searchLoading ? "Searching..." : "Loading..."} />
+      )}
 
       {data?.products.results.length! === 0 && (
         <div className="grid my-10 place-items-center">

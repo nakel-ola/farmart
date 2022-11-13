@@ -5,7 +5,7 @@ type PopupTemplateProps = {
   title: string;
   children: ReactNode;
   showEditButton?: boolean;
-  buttonText?: string;
+  buttonText?: ReactNode;
   onOutsideClick?: () => void;
   onEditClick?: (value?: any) => void;
 };
@@ -27,18 +27,24 @@ const PopupTemplate = (props: PopupTemplateProps) => {
         ref={ref}
         className="w-[350px] bg-white dark:bg-dark rounded-lg pb-2 shadow transition-all duration-300"
       >
-        <div className="w-full flex items-center justify-between px-[15px] py-[10px] border-b-[1px] border-b-slate-100 dark:border-b-neutral-800">
-          <p className="text-[1rem] text-black dark:text-white font-[500]">
+        <div className="w-full h-[45px] flex items-center justify-between px-[15px] py-[10px] border-b-[1px] border-b-slate-100 dark:border-b-neutral-800">
+          <p className="text-lg text-black dark:text-white font-[500]">
             {title}
           </p>
 
           {showEditButton && (
-            <button
-              className={`px-3 mx-2 font-medium rounded-full py-[4px] text-green-600 bg-green-600/10 transition-all hover:scale-105 active:scale-95`}
-              onClick={() => onEditClick?.()}
-            >
-              {buttonText}
-            </button>
+            <>
+              {buttonText === "string" ? (
+                <button
+                  className={`px-3 font-medium rounded-full py-[4px] text-green-600 bg-green-600/10 transition-all hover:scale-105 active:scale-95`}
+                  onClick={() => onEditClick?.()}
+                >
+                  {buttonText}
+                </button>
+              ) : (
+                buttonText
+              )}
+            </>
           )}
         </div>
 

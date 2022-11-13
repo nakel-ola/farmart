@@ -81,7 +81,11 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
     },
   });
 
-  return <>{loading ? <PageLoader fill /> : children}</>;
+  return (
+    <div className="flex-1 flex flex-col justify-center items-center bg-white dark:bg-dark">
+      {loading ? <PageLoader fill /> : children}
+    </div>
+  );
 };
 
 export const EmyployeeQuery = gql`

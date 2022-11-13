@@ -138,13 +138,11 @@ const MenuCard = ({
   onClick(e: any, value: string): void;
 }) => (
   <motion.div
-    initial={{ height: 0 }}
-    animate={{ height: "fit-content" }}
-    exit={{ height: 0 }}
-    transition={{
-      duration: 0.3
-    }}
-    className="absolute top-10 right-2 z-[10] w-[120px] max-h-[200px] overflow-scroll bg-white dark:bg-dark shadow-md shadow-slate-300 dark:shadow-black/10 rounded-lg scrollbar-hide"
+    initial={{ maxHeight: "0px" }}
+    animate={{ maxHeight: "200px" }}
+    exit={{ maxHeight: "0px" }}
+    transition={{ duration: 0.3 }}
+    className="absolute top-10 right-2 z-[10] w-[120px] max-h-[200px] overflow-y-scroll bg-white dark:bg-dark shadow-md shadow-slate-300 dark:shadow-black/10 rounded-lg "
   >
     {sortList.map((item: string, index: number) => (
       <div
