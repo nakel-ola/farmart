@@ -117,6 +117,7 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
       toast.success(msg, { id: loginToast });
       close();
       setLoading(false);
+      func?.()
     };
 
     const onError = (data: any, msg: string) => {
