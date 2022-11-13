@@ -62,8 +62,8 @@ const createFile = async (file: any, filepath: string) =>
     const buffer = await dataUrlToFile(file);
     const stream = createWriteStream(filepath);
     stream.write(buffer);
-    stream.on("finish", () => resolve("successfully"))
-    stream.on("error", (err) => reject(err))
+    stream.on("finish", () => resolve("successfully"));
+    stream.on("error", (err) => reject(err));
     stream.end();
   });
 
@@ -120,7 +120,7 @@ export default async function handler(
 
     if (!existsSync(filepath)) {
       const data = await createFile(file, filepath);
-      console.log(data)
+      console.log(data);
     }
 
     const data = await uploadFile(filepath, file.fileName);
@@ -130,8 +130,10 @@ export default async function handler(
     }
 
     res.status(200).json(data);
-  } catch (e) {
+  } catch (e: any) {
     console.error(e);
-    res.status(500).json({ error: "Internal Server Error" });
+    res
+      .status(500)
+      .json({ error: e.message, path: process.env.ROOT_DIR || process.cwd() });
   }
 }
