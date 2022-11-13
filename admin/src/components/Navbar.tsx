@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import axios from "axios";
 import clsx from "clsx";
 // import fs from "fs";
@@ -42,6 +43,15 @@ const config = {
   },
 };
 
+const UploadMutation = gql`
+  mutation UploadFile($input: UploadFileInput!) {
+    uploadFile(input: $input) {
+      url
+      name
+    }
+  }
+`;
+
 const Navbar = ({ toggle, setToggle }: NavbarProps) => {
   const router = useRouter();
   const user = useSelector(selectUser);
@@ -52,6 +62,7 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
     string.charAt(0).toUpperCase() + string.slice(1);
 
   let canEdit = user?.level === "Gold" || user?.level === "Silver";
+  const [uploadFile] = useMutation(UploadMutation);
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
     let files = e.target.files;
@@ -65,14 +76,29 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
         mimeType: files[0].type,
       };
 
-      await axios
-        .post("/api/upload-url", {
-          file,
-        })
-        .then((data) => {
-          console.log(data);
-          alert(data.data.url)
-        }).catch((err) => console.log(err));
+      await uploadFile({
+        variables: {
+          input: file,
+        },
+        onCompleted: (data) => {
+          console.log(data.uploadFile);
+          alert(data.uploadFile.url);
+        },
+        onError: (err) => {
+          console.log(UploadMutation)
+          console.table(err);
+        },
+      });
+
+      // await axios
+      //   .post("/api/upload-url", {
+      //     file,
+      //   })
+      //   .then((data) => {
+      //     console.log(data);
+      //     alert(data.data.url);
+      //   })
+      //   .catch((err) => console.log(err));
     }
   };
 
