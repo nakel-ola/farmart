@@ -14,17 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteFile = exports.ImageUplaod = exports.getListFiles = exports.bucket = void 0;
 const storage_1 = require("@google-cloud/storage");
+const path_1 = __importDefault(require("path"));
 const util_1 = require("util");
 const config_1 = __importDefault(require("../config"));
+const serviceKey = path_1.default.join(__dirname, "../data/farmart-8bdb8-firebase-adminsdk-dy37a-08706b1478.json");
 const storage = new storage_1.Storage({
-    projectId: config_1.default.firebase_project_id,
-    token: config_1.default.firebase_token,
-    credentials: {
-        private_key: `${config_1.default.firebase_private_key}`,
-        client_email: config_1.default.firebase_client_email,
-        client_id: config_1.default.firebase_client_id,
-        token_url: config_1.default.firebase_token_url,
-    },
+    keyFilename: serviceKey,
+    projectId: config_1.default.firebase_project_id
 });
 exports.bucket = storage.bucket(config_1.default.firebase_bucket_name);
 const getListFiles = () => __awaiter(void 0, void 0, void 0, function* () {

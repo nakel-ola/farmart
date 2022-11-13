@@ -1,18 +1,24 @@
 import { Storage } from "@google-cloud/storage";
 import type { FileUpload } from "graphql-upload-minimal";
+import path from "path";
 import { format } from "util";
 import config from "../config";
+const serviceKey = path.join(__dirname, "../data/farmart-8bdb8-firebase-adminsdk-dy37a-08706b1478.json")
 
 const storage = new Storage({
-  projectId: config.firebase_project_id,
-  token: config.firebase_token,
-  credentials: {
-    private_key: `${config.firebase_private_key}`,
-    client_email: config.firebase_client_email,
-    client_id: config.firebase_client_id,
-    token_url: config.firebase_token_url,
-  },
+  keyFilename: serviceKey,
+  projectId: config.firebase_project_id
 });
+// const storage = new Storage({
+//   projectId: config.firebase_project_id,
+//   token: config.firebase_token,
+//   credentials: {
+//     private_key: `${config.firebase_private_key}`,
+//     client_email: config.firebase_client_email,
+//     client_id: config.firebase_client_id,
+//     token_url: config.firebase_token_url,
+//   },
+// });
 
 type ImageUploadType = {
   url: string;
@@ -73,4 +79,5 @@ export const ImageUplaod = ({
         resolve({ url: publicUrl, name: filename });
       });
   });
-export const deleteFile = async ({ fileName }: { fileName: string }) => await bucket.file(fileName).delete();
+export const deleteFile = async ({ fileName }: { fileName: string }) =>
+  await bucket.file(fileName).delete();
