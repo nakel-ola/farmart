@@ -3,6 +3,7 @@ import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
+import LoadingCard from "../../components/LoadingCard";
 import PopupTemplate from "../../components/PopupTemplate";
 import { remove, selectDialog } from "../../redux/features/dialogSlice";
 import ImageCard from "./ImageCard";
@@ -40,18 +41,19 @@ type FormType = {
 };
 
 const validate = (form: FormType) => {
-  const { image,description,link,title } = form;
+  const { image, description, link, title } = form;
 
-  if(image && description.length > 0 && title.length > 0) {
-    return false
+  if (image && description.length > 0 && title.length > 0) {
+    return false;
   }
 
-  return true
-}
+  return true;
+};
 
 const BannerCard = ({ func }: { func: any }) => {
   const dispatch = useDispatch();
   const dialog = useSelector(selectDialog);
+  const [loading, setLoading] = useState(false);
 
   let data = dialog.banner?.data;
 
@@ -73,9 +75,17 @@ const BannerCard = ({ func }: { func: any }) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
     const onCompleted = (data: any) => {
       func?.();
       dispatch(remove({ type: "banner" }));
+      setLoading(false);
+    };
+
+    const onError = (err: any) => {
+      console.error(err);
+      setLoading(false);
     };
 
     if (data) {
@@ -90,7 +100,7 @@ const BannerCard = ({ func }: { func: any }) => {
           },
         },
         onCompleted,
-        onError: (e) => console.table(e),
+        onError,
       });
     } else {
       await createBanner({
@@ -103,7 +113,7 @@ const BannerCard = ({ func }: { func: any }) => {
           },
         },
         onCompleted,
-        onError: (e) => console.table(e),
+        onError,
       });
     }
   };
@@ -118,50 +128,58 @@ const BannerCard = ({ func }: { func: any }) => {
       onOutsideClick={close}
       showEditButton={false}
     >
-      <form onSubmit={handleSubmit} className="w-full pb-[10px]">
-        <InputCard
-          title="Title"
-          name="title"
-          id="title"
-          value={form.title}
-          onChange={handleChange}
-        />
-        <InputCard
-          title="Description"
-          name="description"
-          id="description"
-          value={form.description}
-          onChange={handleChange}
-        />
+      {!loading ? (
+        <form onSubmit={handleSubmit} className="w-full pb-[10px]">
+          <InputCard
+            title="Title"
+            name="title"
+            id="title"
+            value={form.title}
+            onChange={handleChange}
+          />
+          <InputCard
+            title="Description"
+            name="description"
+            id="description"
+            value={form.description}
+            onChange={handleChange}
+          />
 
-        <ImageCard
-          title="Image"
-          image={data ? ({ name: data.image } as any) : form.image}
-          onChange={(file: File) => setForm({ ...form, image: file })}
-        />
+          <ImageCard
+            title="Image"
+            image={data ? ({ name: data.image } as any) : form.image}
+            onChange={(file: File) => setForm({ ...form, image: file })}
+          />
 
-        <InputCard
-          title="Link"
-          name="link"
-          id="link"
-          value={form.link}
-          onChange={handleChange}
-          placeholder="shop link button"
-        />
+          <InputCard
+            title="Link"
+            name="link"
+            id="link"
+            value={form.link}
+            onChange={handleChange}
+            placeholder="shop link button"
+          />
 
-        <div className="flex items-center justify-center mt-5">
-          <Button
-            type="button"
-            className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white mx-2"
-            onClick={close}
-          >
-            Cancel
-          </Button>
-          <Button disabled={validate(form)} type="submit" className="bg-primary text-white mx-2">
-            {data ? "Save Change" : "Create"}
-          </Button>
-        </div>
-      </form>
+          <div className="flex items-center justify-center mt-5">
+            <Button
+              type="button"
+              className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white mx-2"
+              onClick={close}
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={validate(form)}
+              type="submit"
+              className="bg-primary text-white mx-2"
+            >
+              {data ? "Save Change" : "Create"}
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <LoadingCard title={data ? "Saving banner" : "Creating banner"} />
+      )}
     </PopupTemplate>
   );
 };

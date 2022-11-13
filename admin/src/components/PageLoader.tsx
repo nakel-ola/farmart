@@ -1,8 +1,12 @@
 import clsx from "clsx";
 import React from "react";
 import ReactLoading from "react-loading";
+import { useTheme } from "../styles/theme";
 
 function PageLoader({ fill = false }: { fill?: boolean }) {
+  const { systemTheme, theme } = useTheme();
+
+  const currentTheme = theme === "system" ? systemTheme : theme;
   return (
     <div
       className={clsx(
@@ -13,6 +17,7 @@ function PageLoader({ fill = false }: { fill?: boolean }) {
       <div className="flex items-center justify-center flex-col">
         <ReactLoading
           type="spinningBubbles"
+          color={fill ? currentTheme === "dark" ? "white" : "black": "white"}
           className={clsx(fill ? "dark:text-white text-black" : "text-white")}
         />
 

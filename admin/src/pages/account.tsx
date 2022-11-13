@@ -84,7 +84,7 @@ const Account = () => {
     onError: (error) => console.table(error),
   });
 
-  const [deleteEmployeeInvite] = useMutation(DeleteInvite);
+  const [deleteEmployeeInvite, { loading: deleteLoading }] = useMutation(DeleteInvite);
 
   const newData = data && data.employee;
 
@@ -209,7 +209,7 @@ const Account = () => {
       {dialog.invite.open && (
         <CreateInviteCard func={() => refetch({ employeeId: user?.id })} />
       )}
-      {dialog.delete.open && <DeleteCard func={handleDelete} />}
+      {dialog.delete.open && <DeleteCard func={handleDelete} loading={deleteLoading} />}
 
       {image.url && (
         <ImageCard

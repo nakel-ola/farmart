@@ -80,10 +80,10 @@ const AddCard = () => {
 
   return (
     <div
-      className="relative w-[50%] md:w-[20%] rounded-lg shrink-0 overflow-hidden m-[5px] mr-10 md:m-[10px] transition-transform duration-300 ease cursor-pointer"
+      className="group relative w-[50%] md:w-[20%] rounded-lg shrink-0 overflow-hidden m-[5px] mr-10 md:m-[10px] transition-transform duration-300 ease cursor-pointer"
       onClick={() => dispatch(add({ type: "banner", data: null, open: true }))}
     >
-      <div className="flex items-center flex-col justify-center">
+      <div className="flex items-center flex-col justify-center group-hover:scale-105 group-active:scale-95">
         <div className="h-[50px] w-[50px] rounded-full flex items-center justify-center shadow-sm bg-slate-200 dark:bg-neutral-700 mt-2">
           <Add size={50} variant="Outline" />
         </div>
@@ -109,7 +109,6 @@ const ImageCard = (props: ImageCardProps) => {
   const dispatch = useDispatch();
 
   const entry = useIntersectionObserver(ref, { threshold: 1 });
-
 
   const isVisible = !!entry?.isIntersecting;
 

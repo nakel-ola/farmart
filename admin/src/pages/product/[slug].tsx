@@ -80,7 +80,7 @@ const Product = () => {
     }
   }, [loading, data, router]);
 
-  const [deleteProduct] = useMutation(ProductDeleteMutation, {
+  const [deleteProduct, { loading: deleteLoading }] = useMutation(ProductDeleteMutation, {
     onCompleted: (data) => console.log(data),
     onError: (data) => console.table(data),
   });
@@ -145,7 +145,7 @@ const Product = () => {
         <Popup func={() => refetch({ slug: router.query.slug })} />
       )}
 
-      {dialog.delete.open && <DeleteCard func={handleDelete} />}
+      {dialog.delete.open && <DeleteCard func={handleDelete} loading={deleteLoading} />}
     </>
   );
 };

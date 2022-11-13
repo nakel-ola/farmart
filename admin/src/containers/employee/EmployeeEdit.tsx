@@ -1,11 +1,12 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EmployeeType } from "../../../typing";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import InputDropdown from "../../components/InputDropdown";
-import useOnClickOutside from "../../hooks/useOnClickOutside";
+import LoadingCard from "../../components/LoadingCard";
+import PopupTemplate from "../../components/PopupTemplate";
 import { remove, selectDialog } from "../../redux/features/dialogSlice";
 import { Wrapper } from "../products/Popup";
 
@@ -58,13 +59,14 @@ interface FormType {
 }
 
 const EmployeeEdit = ({ func }: { func: any }) => {
-  const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const { employeeEdit } = useSelector(selectDialog);
 
   const [form, setForm] = useState<FormType>(splitData(employeeEdit.data));
 
-  const [employeeModifyUser] = useMutation(ModifyMutation);
+  const [employeeModifyUser, { loading }] = useMutation(ModifyMutation);
+
+  const close = () => dispatch(remove({ type: "employeeEdit" }))
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
@@ -94,20 +96,9 @@ const EmployeeEdit = ({ func }: { func: any }) => {
     });
   };
 
-  useOnClickOutside(ref, () => dispatch(remove({ type: "employeeEdit" })));
-
   return (
-    <div className="fixed top-0 w-full h-full bg-black/70 grid place-items-center z-[99999999]">
-      <div
-        ref={ref}
-        className="w-[350px] bg-white dark:bg-dark rounded-xl shadow"
-      >
-        <div className="w-full flex items-center justify-between px-[15px] py-[15px]">
-          <p className="text-[1rem] text-black dark:text-white font-[500]">
-            Edit information
-          </p>
-        </div>
-
+    <PopupTemplate title="Edit information" onOutsideClick={close}>
+      {!loading ? (
         <form
           onSubmit={handleSubmit}
           className="pb-[10px] grid place-items-center"
@@ -176,25 +167,28 @@ const EmployeeEdit = ({ func }: { func: any }) => {
             value={form.phoneNumber}
             onChange={handleChange}
           />
-          <div className="flex items-center justify-center mb-2 mt-5">
+          <div className="flex items-center justify-center mt-5">
             <Button
               type="button"
-              className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white"
-              onClick={() => dispatch(remove({ type: "employeeEdit" }))}
+              className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white mx-2"
+              onClick={close}
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={validate(form, employeeEdit.data)}
-              className="bg-primary text-white disabled:opacity-40"
+              className="bg-primary text-white disabled:opacity-40 mx-2"
             >
               Save Change
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+
+      ) : (
+        <LoadingCard title="Saving..." />
+      )}
+    </PopupTemplate>
   );
 };
 

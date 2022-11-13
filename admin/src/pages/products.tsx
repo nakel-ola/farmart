@@ -32,7 +32,7 @@ const Products = () => {
     onCompleted: (data) => dispatch(add(data.categories)),
   });
 
-  const [deleteBanner] = useMutation(DeleteBanner, {
+  const [deleteBanner, { loading }] = useMutation(DeleteBanner, {
     onCompleted: () => {
       refetch();
     },
@@ -63,9 +63,8 @@ const Products = () => {
       {dialog.edit.open && <Popup />}
       {dialog.delete.open && (
         <DeleteCard
-          func={() =>
-            deleteBanner({ variables: { id: dialog.delete.data.id } })
-          }
+          func={() => deleteBanner({ variables: { id: dialog.delete.data.id } }) }
+          loading={loading}
         />
       )}
       {dialog.banner.open && <BannerCard func={() => refetch()} />}

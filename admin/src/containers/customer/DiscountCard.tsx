@@ -25,15 +25,15 @@ const DiscountCard = ({
   useOnClickOutside(ref, () => toggle && setToggle(false));
 
   return (
-    <div className="flex flex-col items-center justify-center mt-2 flex-[1] relative">
+    <div className="flex flex-col items-center justify-center mt-2 w-full flex-[1] relative">
       <label
         id="currency-list"
-        className="text-[1rem] text-black dark:text-white font-[500] ml-2 w-full"
+        className="text-[1rem] text-black dark:text-white font-[500] ml-2 w-[80%]"
       >
         {title}
       </label>
 
-      <div ref={ref} className={`w-full`}>
+      <div ref={ref} className={`w-[80%]`}>
         <InputField
           IconLeft="disabled"
           className="relative cursor-pointer"

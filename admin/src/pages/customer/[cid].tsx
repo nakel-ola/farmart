@@ -132,7 +132,7 @@ const Customer = () => {
     },
   ].filter(Boolean);
 
-  const [deleteCoupon] = useMutation(DeleteMutation, {
+  const [deleteCoupon, { loading: deleteLoading }] = useMutation(DeleteMutation, {
     onCompleted: (data) => console.log(data),
     onError: (data) => console.table(data),
   });
@@ -202,7 +202,7 @@ const Customer = () => {
       {dialog.coupon.open && (
         <CreateCouponCard func={() => refetch(args)} data={newData} />
       )}
-      {dialog.delete.open && <DeleteCard func={handleDelete} />}
+      {dialog.delete.open && <DeleteCard func={handleDelete} loading={deleteLoading} />}
       {dialog.inbox.open && (
         <CreateInboxCard
           func={() => refetch(args)}

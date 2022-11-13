@@ -7,14 +7,10 @@ import {
   Sun1,
 } from "iconsax-react";
 import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useRef } from "react";
-import { IoClose } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import ProductNav from "../containers/products/ProductNav";
-import useWindowResizeListener from "../hooks/useWindowResizeListener";
 import { selectUser } from "../redux/features/userSlice";
 import { useTheme } from "../styles/theme";
-import Button from "./Button";
 
 interface NavbarProps {
   toggle: boolean;
@@ -42,8 +38,6 @@ const config = {
 const Navbar = ({ toggle, setToggle }: NavbarProps) => {
   const router = useRouter();
   const user = useSelector(selectUser);
-
-  const formRef = useRef<HTMLFormElement>(null);
 
   const capitalizeFirstLetter = (string: string) =>
     string.charAt(0).toUpperCase() + string.slice(1);

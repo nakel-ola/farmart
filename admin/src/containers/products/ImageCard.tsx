@@ -40,7 +40,7 @@ const ImageCard = ({ title, image, onChange, ...others }: CardProps) => {
         </div>
         <label
           htmlFor="image"
-          className="bg-primary rounded-lg px-2 h-[34px] mx-1 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center text-white"
+          className="bg-primary rounded-lg px-2 h-[34px] mx-1 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center text-white cursor-pointer"
         >
           Choose File
         </label>

@@ -1,9 +1,10 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useDispatch } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
-import useOnClickOutside from "../../hooks/useOnClickOutside";
+import LoadingCard from "../../components/LoadingCard";
+import PopupTemplate from "../../components/PopupTemplate";
 import { remove } from "../../redux/features/dialogSlice";
 import Textarea from "../products/Textarea";
 
@@ -35,7 +36,6 @@ const CreateInboxCard = ({
   func: any;
   customerId: string;
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
 
   const [form, setForm] = useState<FormType>({
@@ -43,14 +43,14 @@ const CreateInboxCard = ({
     description: "",
   });
 
-  const [createInbox] = useMutation(CreateQuery);
+  const [createInbox, { loading }] = useMutation(CreateQuery);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
     setForm({ ...form, [target.name]: target.value });
   };
 
-  useOnClickOutside(ref, () => dispatch(remove({ type: "inbox" })));
+  const close = () => dispatch(remove({ type: "inbox" }));
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -71,15 +71,8 @@ const CreateInboxCard = ({
   };
 
   return (
-    <div className="fixed top-0 w-full h-full bg-black/70 grid place-items-center z-[99999999]">
-      <div
-        ref={ref}
-        className="w-[350px] bg-white dark:bg-dark rounded-xl shadow "
-      >
-        <div className="w-full flex items-center justify-between px-[15px] pt-[8px] pb-[15px]">
-          <p className="text-lg text-dark dark:text-white"> Create inbox</p>
-        </div>
-
+    <PopupTemplate title="Create inbox" onOutsideClick={close}>
+      {!loading ? (
         <form
           onSubmit={handleSubmit}
           className="pb-[10px] grid place-items-center"
@@ -101,25 +94,27 @@ const CreateInboxCard = ({
             onChange={handleChange}
           />
 
-          <div className="flex items-center justify-center my-2">
+          <div className="flex items-center justify-center mt-5">
             <Button
               type="button"
-              className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white"
-              onClick={() => dispatch(remove({ type: "inbox" }))}
+              className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white mx-2"
+              onClick={close}
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={validate(form)}
-              className="text-white disabled:opacity-40 bg-primary"
+              className="text-white disabled:opacity-40 bg-primary mx-2"
             >
               Create
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+      ) : (
+        <LoadingCard title="Sending inbox" />
+      )}
+    </PopupTemplate>
   );
 };
 

@@ -11,11 +11,11 @@ import { GraphQLProductResponse, ProductType } from "../../../typing";
 import Button from "../../components/Button";
 import Pagination from "../../components/Pagination";
 import {
-    Table,
-    TableBody,
-    TableContent,
-    TableHead,
-    TableRow
+  Table,
+  TableBody,
+  TableContent,
+  TableHead,
+  TableRow,
 } from "../../components/tables";
 import Header from "../../components/tables/Header";
 import truncate from "../../helper/truncate";

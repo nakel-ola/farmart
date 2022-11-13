@@ -1,10 +1,10 @@
 import { gql, useMutation } from "@apollo/client";
 import React, {
-    ChangeEvent,
-    FormEvent,
-    ReactNode,
-    useEffect,
-    useState
+  ChangeEvent,
+  FormEvent,
+  ReactNode,
+  useEffect,
+  useState,
 } from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +12,7 @@ import { CreateProductForm, Currency, Image } from "../../../typing";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import InputDropdown from "../../components/InputDropdown";
+import LoadingCard from "../../components/LoadingCard";
 import PopupTemplate from "../../components/PopupTemplate";
 import { selectCatagory } from "../../redux/features/categorySlice";
 import { remove, selectDialog } from "../../redux/features/dialogSlice";
@@ -81,6 +82,7 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
   const { edit } = useSelector(selectDialog);
   const category = useSelector(selectCatagory);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState<boolean>(false);
   const [form, setForm] = useState<CreateProductForm>({
     title: "",
     category: "",
@@ -108,7 +110,22 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     let loginToast = toast.loading("Loading......");
+
+    const onCompleted = (msg: string) => {
+      toast.success(msg, { id: loginToast });
+      close();
+      setLoading(false);
+    };
+
+    const onError = (data: any, msg: string) => {
+      toast.error(msg, {
+        id: loginToast,
+      });
+      console.table(data);
+      setLoading(false);
+    };
 
     if (!edit?.data) {
       createProduct({
@@ -124,16 +141,8 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
             image: form.image,
           },
         },
-        onCompleted: (data) => {
-          toast.success("Created Successfully", { id: loginToast });
-          close();
-        },
-        onError: (data) => {
-          toast.error("There was an error creating product", {
-            id: loginToast,
-          });
-          console.table(data);
-        },
+        onCompleted: () => onCompleted("Created Successfully"),
+        onError: (data) => onError(data, "There was an error creating product"),
       });
     } else {
       let isFile = form?.image?.url ? false : true;
@@ -165,116 +174,111 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
             title: form.title,
           },
         },
-        onCompleted: () => {
-          toast.success("Edited Successfully", { id: loginToast });
-          close();
-          func?.();
-        },
-        onError: (data) => {
-          toast.error("There was an error editing product", {
-            id: loginToast,
-          });
-          console.table(data);
-        },
+        onCompleted: () => onCompleted("Edited Successfully"),
+        onError: (data) => onError(data, "There was an error editing product"),
       });
     }
   };
 
   return (
     <PopupTemplate title="Edit your product" onOutsideClick={close}>
-      <form
-        onSubmit={handleSubmit}
-        className="pb-[10px] grid place-items-center"
-      >
-        <InputCard
-          title="Name"
-          id="title"
-          name="title"
-          type="text"
-          value={form.title}
-          onChange={handleChange}
-        />
-        <Wrapper>
+      {!loading ? (
+        <form
+          onSubmit={handleSubmit}
+          className="pb-[10px] grid place-items-center"
+        >
           <InputCard
-            title="Price"
-            toggle
-            margin
-            id="price"
-            name="price"
-            prefix={form.currency?.symbol}
-            isPrice
-            type="number"
-            value={form.price!}
+            title="Name"
+            id="title"
+            name="title"
+            type="text"
+            value={form.title}
             onChange={handleChange}
           />
-          <CurrencyFormCard
-            title="Currency"
-            id="currency"
-            name="currency"
-            type="text"
-            currency={form.currency}
-            onChange={(result: Currency) =>
-              setForm({
-                ...form,
-                currency: result,
-              })
-            }
+          <Wrapper>
+            <InputCard
+              title="Price"
+              toggle
+              margin
+              id="price"
+              name="price"
+              prefix={form.currency?.symbol}
+              isPrice
+              type="number"
+              value={form.price!}
+              onChange={handleChange}
+            />
+            <CurrencyFormCard
+              title="Currency"
+              id="currency"
+              name="currency"
+              type="text"
+              currency={form.currency}
+              onChange={(result: Currency) =>
+                setForm({
+                  ...form,
+                  currency: result,
+                })
+              }
+            />
+          </Wrapper>
+          <Wrapper>
+            <InputDropdown
+              list={[...category.map((item: { name: string }) => item.name)]}
+              title="Category"
+              show
+              margin
+              id="category"
+              name="category"
+              type="text"
+              value={form.category}
+              onChange={(text: string) => setForm({ ...form, category: text })}
+            />
+            <InputCard
+              title="Stock"
+              type="number"
+              id="stock"
+              name="stock"
+              toggle
+              value={form.stock!}
+              onChange={handleChange}
+            />
+          </Wrapper>
+          <ImageCard
+            title="Image"
+            image={form.image}
+            onChange={(result: Image) => {
+              setForm({ ...form, image: result });
+            }}
           />
-        </Wrapper>
-        <Wrapper>
-          <InputDropdown
-            list={[...category.map((item: { name: string }) => item.name)]}
-            title="Category"
-            show
-            margin
-            id="category"
-            name="category"
-            type="text"
-            value={form.category}
-            onChange={(text: string) => setForm({ ...form, category: text })}
-          />
-          <InputCard
-            title="Stock"
-            type="number"
-            id="stock"
-            name="stock"
-            toggle
-            value={form.stock!}
+          <Textarea
+            title="Description"
+            id="description"
+            name="description"
+            value={form.description}
             onChange={handleChange}
           />
-        </Wrapper>
-        <ImageCard
-          title="Image"
-          image={form.image}
-          onChange={(result: Image) => {
-            setForm({ ...form, image: result });
-          }}
-        />
-        <Textarea
-          title="Description"
-          id="description"
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-        />
 
-        <div className="flex items-center justify-center mt-5">
-          <Button
-            type="button"
-            className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white"
-            onClick={close}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            disabled={edit?.data ? modifyVerify(form, edit) : verify(form)}
-            className="bg-primary text-white"
-          >
-            {edit?.data ? "Save Change" : "Create"}
-          </Button>
-        </div>
-      </form>
+          <div className="flex items-center justify-center mt-5">
+            <Button
+              type="button"
+              className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white mx-2"
+              onClick={close}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={edit?.data ? modifyVerify(form, edit) : verify(form)}
+              className="bg-primary text-white mx-2"
+            >
+              {edit?.data ? "Save Change" : "Create"}
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <LoadingCard title={edit?.data ? "Saving product" : "Creating product"} />
+      )}
     </PopupTemplate>
   );
 };
