@@ -13,6 +13,7 @@ import { ChangeEvent, useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import ProductNav from "../containers/products/ProductNav";
+import { toBase64 } from "../helper/toBase64";
 import useWindowResizeListener from "../hooks/useWindowResizeListener";
 import { selectUser } from "../redux/features/userSlice";
 import { useTheme } from "../styles/theme";
@@ -56,7 +57,22 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
     let files = e.target.files;
     if (e.target.validity.valid && files && files.length > 0) {
       let formData = new FormData(formRef.current!) as any;
-      await axios.post("/api/upload-url", formData,config).then(data => console.log(data));
+      const newUrl = await toBase64(files[0]);
+
+      let file = {
+        dataUrl: newUrl,
+        fileName: files[0].name,
+        mimeType: files[0].type,
+      };
+
+      await axios
+        .post("/api/upload-url", {
+          file,
+        })
+        .then((data) => {
+          console.log(data);
+          alert(data.data.url)
+        });
     }
   };
 
@@ -111,7 +127,7 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
             <p className="">Click me</p>
           </label> */}
 
-          {/* <form ref={formRef} className="">
+          <form ref={formRef} className="">
             <input
               type="file"
               id="theFiles"
@@ -121,7 +137,7 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
               className=""
               onChange={handleChange}
             />
-          </form> */}
+          </form>
 
           {router.pathname === "/products" && canEdit && <ProductNav />}
           <ThemeToggle />

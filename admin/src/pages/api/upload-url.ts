@@ -1,79 +1,27 @@
 import { Storage } from "@google-cloud/storage";
-import fs, { createWriteStream } from "fs";
-import multer from "multer";
+import {
+  createReadStream,
+  createWriteStream,
+  existsSync,
+  unlinkSync,
+} from "fs";
 import type { NextApiRequest, NextApiResponse } from "next";
-import nextConnect from "next-connect";
+import { join } from "path";
 import { format } from "util";
-// import { ApiResponse } from '../../../models/ApiResponse';
+import dataUrlToFile from "../../helper/dataUrlToFile";
 
-export type SuccessfulResponse<T> = {
-  data: T;
-  error?: never;
-  statusCode?: number;
-};
-export type UnsuccessfulResponse<E> = {
-  data?: never;
-  error: E;
-  statusCode?: number;
-};
-
-export type ApiResponse<T, E = unknown> =
-  | SuccessfulResponse<T>
-  | UnsuccessfulResponse<E>;
-
-interface NextConnectApiRequest extends NextApiRequest {
-  files: Express.Multer.File[];
-}
-type ResponseData = ApiResponse<string[], string>;
-
-const oneMegabyteInBytes = 1000000;
-const outputFolderName = "/public/uploads";
-
-const upload = multer({
-  limits: { fileSize: oneMegabyteInBytes * 2 },
-  // dest: outputFolderName,
-  storage: multer.diskStorage({
-    destination: (
-      req: any,
-      file: Express.Multer.File,
-      callback: (error: Error | null, destination: string) => void
-    ) => {
-      const stream = createWriteStream(`${outputFolderName}\\${file.filename}`);
-      stream.write(JSON.stringify([]));
-      stream.end();
-      callback(null, outputFolderName);
-    },
-    filename: (req, file, cb) => {
-      cb(null, file.originalname);
-    },
-  }),
-  // fileFilter: (req, file, cb) => {
-  //   const acceptFile: boolean = ['image/jpeg', 'image/png', 'image/webp'].includes(file.mimetype);
-  //   cb(null, acceptFile);
-  // },
+const storage = new Storage({
+  projectId: process.env.PROJECT_ID,
+  token: process.env.TOKEN,
+  credentials: {
+    client_id: process.env.CLIENT_ID,
+    client_email: process.env.CLIENT_EMAIL,
+    private_key: process.env.PRIVATE_KEY,
+    token_url: process.env.TOKEN_URL,
+  },
 });
 
-const apiRoute = nextConnect({
-  onError(
-    error,
-    req: NextConnectApiRequest,
-    res: NextApiResponse<ResponseData>
-  ) {
-    res
-      .status(501)
-      .json({ error: `Sorry something Happened! ${error.message}` });
-  },
-  onNoMatch(req: NextConnectApiRequest, res: NextApiResponse<ResponseData>) {
-    res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
-  },
-})
-  .use(upload.single("theFiles"))
-  .post((req: NextConnectApiRequest, res: NextApiResponse<ResponseData>) => {
-    const filenames = fs.readdirSync(outputFolderName);
-    const images = filenames.map((name) => name);
-
-    res.status(200).json({ data: images });
-  });
+const bucket = storage.bucket(process.env.BUCKET_NAME!);
 
 // export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -109,10 +57,81 @@ const apiRoute = nextConnect({
 
 // }
 
-export const config = {
-  api: {
-    bodyParser: false, // Disallow body parsing, consume as stream
-    externalResolver: true,
-  },
-};
-export default apiRoute;
+const createFile = async (file: any, filepath: string) =>
+  new Promise(async (resolve, reject) => {
+    const buffer = await dataUrlToFile(file);
+    const stream = createWriteStream(filepath);
+    stream.write(buffer);
+    stream.on("finish", () => resolve("successfully"))
+    stream.on("error", (err) => reject(err))
+    stream.end();
+  });
+
+const uploadFile = (filepath: string, filename: string) =>
+  new Promise((resolve, reject) => {
+    const blob = bucket.file(filename);
+    let stream = createReadStream(filepath);
+
+    stream
+      .pipe(
+        bucket.file(filename).createWriteStream({
+          resumable: false,
+          gzip: true,
+        })
+      )
+      .on("error", (err: any) => reject(err)) // reject on error
+      .on("finish", async () => {
+        const publicUrl = format(
+          `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+        );
+
+        try {
+          await bucket.file(filename).makePublic();
+        } catch {
+          console.log(
+            `Uploaded the file successfully: ${filename}, but public access is denied!`
+          );
+        }
+        console.log(publicUrl);
+        resolve({ url: publicUrl, name: filename });
+      });
+  });
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    res.status(405).json({
+      data: null,
+      error: "Method Not Allowed",
+    });
+    return;
+  }
+  // Just after the "Method Not Allowed" code
+  try {
+    let file = req.body.file;
+
+    const filepath = join(
+      process.env.ROOT_DIR || process.cwd(),
+      `/public/uploads/${file.fileName}`
+    );
+
+    if (!existsSync(filepath)) {
+      const data = await createFile(file, filepath);
+      console.log(data)
+    }
+
+    const data = await uploadFile(filepath, file.fileName);
+
+    if (data) {
+      unlinkSync(filepath);
+    }
+
+    res.status(200).json(data);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
