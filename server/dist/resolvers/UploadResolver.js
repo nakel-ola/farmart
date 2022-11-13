@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const stream_1 = __importDefault(require("stream"));
 const util_1 = require("util");
-const config_1 = __importDefault(require("../config"));
+require("../config");
 const dataUrlToFile_1 = __importDefault(require("../helper/dataUrlToFile"));
 const gcloud_1 = require("../helper/gcloud");
 const createFileStream = (file) => new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
@@ -52,7 +52,6 @@ const createFileStream = (file) => new Promise((resolve, reject) => __awaiter(vo
 const uploadFile = (args, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let file = args.input;
-        console.log(`${config_1.default.firebase_private_key.toString()}`);
         const data = yield createFileStream(file);
         return data;
     }

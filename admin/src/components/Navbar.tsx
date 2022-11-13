@@ -1,7 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
-import axios from "axios";
 import clsx from "clsx";
-// import fs from "fs";
 import {
   ArrowLeft,
   HambergerMenu,
@@ -14,7 +11,6 @@ import { ChangeEvent, useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import ProductNav from "../containers/products/ProductNav";
-import { toBase64 } from "../helper/toBase64";
 import useWindowResizeListener from "../hooks/useWindowResizeListener";
 import { selectUser } from "../redux/features/userSlice";
 import { useTheme } from "../styles/theme";
@@ -43,15 +39,6 @@ const config = {
   },
 };
 
-const UploadMutation = gql`
-  mutation UploadFile($input: UploadFileInput!) {
-    uploadFile(input: $input) {
-      url
-      name
-    }
-  }
-`;
-
 const Navbar = ({ toggle, setToggle }: NavbarProps) => {
   const router = useRouter();
   const user = useSelector(selectUser);
@@ -62,45 +49,6 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
     string.charAt(0).toUpperCase() + string.slice(1);
 
   let canEdit = user?.level === "Gold" || user?.level === "Silver";
-  const [uploadFile] = useMutation(UploadMutation);
-
-  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    let files = e.target.files;
-    if (e.target.validity.valid && files && files.length > 0) {
-      let formData = new FormData(formRef.current!) as any;
-      const newUrl = await toBase64(files[0]);
-
-      let file = {
-        dataUrl: newUrl,
-        fileName: files[0].name,
-        mimeType: files[0].type,
-      };
-
-      await uploadFile({
-        variables: {
-          input: file,
-        },
-        onCompleted: (data) => {
-          console.log(data.uploadFile);
-          alert(data.uploadFile.url);
-        },
-        onError: (err) => {
-          console.log(UploadMutation)
-          console.table(err);
-        },
-      });
-
-      // await axios
-      //   .post("/api/upload-url", {
-      //     file,
-      //   })
-      //   .then((data) => {
-      //     console.log(data);
-      //     alert(data.data.url);
-      //   })
-      //   .catch((err) => console.log(err));
-    }
-  };
 
   return (
     <div className="w-full h-[60px] bg-white dark:bg-dark flex items-center justify-between">
@@ -149,21 +97,6 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
 
         <div className="flex flex-1 justify-between items-center">
           <div className="ml-auto" />
-          {/* <label htmlFor="theFiles">
-            <p className="">Click me</p>
-          </label> */}
-
-          <form ref={formRef} className="">
-            <input
-              type="file"
-              id="theFiles"
-              name="theFiles"
-              accept="image/*"
-              multiple={false}
-              className=""
-              onChange={handleChange}
-            />
-          </form>
 
           {router.pathname === "/products" && canEdit && <ProductNav />}
           <ThemeToggle />

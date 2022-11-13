@@ -2,7 +2,6 @@ import { gql, useQuery } from "@apollo/client";
 import { UserOctagon } from "iconsax-react";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, useState } from "react";
-import Lottie from "react-lottie-player";
 import { useSelector } from "react-redux";
 import { GraphQLEmployeesResponse, UserType } from "../../typing";
 import Pagination from "../components/Pagination";
@@ -14,7 +13,6 @@ import {
     TableRow
 } from "../components/tables";
 import Header from "../components/tables/Header";
-import lottieJson from "../data/lf30_editor_mh2nforn.json";
 import truncate from "../helper/truncate";
 import Layout from "../layout/Layout";
 import { selectUser } from "../redux/features/userSlice";

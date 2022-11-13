@@ -48,8 +48,6 @@ const createFileStream = (file: any) =>
 const uploadFile = async (args, req) => {
   try {
     let file = args.input;
-
-    console.log(`${config.firebase_private_key.toString()}`);
     const data = await createFileStream(file);
     return data;
   } catch (err) {

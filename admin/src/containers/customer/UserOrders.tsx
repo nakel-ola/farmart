@@ -3,7 +3,6 @@ import clsx from "clsx";
 import { ShoppingCart } from "iconsax-react";
 import { useRouter } from "next/router";
 import { ChangeEvent, useState } from "react";
-import Lottie from "react-lottie-player";
 import NumberFormat from "react-number-format";
 import { useDispatch } from "react-redux";
 import { GraphQLOrdersResponse, OrdersData, OrderType } from "../../../typing";
@@ -16,7 +15,6 @@ import {
     TableRow
 } from "../../components/tables";
 import Header from "../../components/tables/Header";
-import lottieJson from "../../data/lf30_editor_mh2nforn.json";
 import capitalizeFirstLetter from "../../helper/capitalizeFirstLetter";
 import { statusColor } from "../../helper/statusColor";
 import truncate from "../../helper/truncate";
