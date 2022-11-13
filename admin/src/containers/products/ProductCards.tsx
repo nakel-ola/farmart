@@ -3,7 +3,7 @@ import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import clsx from "clsx";
 import { Bag2 } from "iconsax-react";
 import { useRouter } from "next/router";
-import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
+import { ChangeEvent, FormEvent, MouseEvent, useEffect, useState } from "react";
 
 import NumberFormat from "react-number-format";
 import { useDispatch, useSelector } from "react-redux";
@@ -93,7 +93,13 @@ const tableList: any[] = [
 
 let limit = 10;
 
-const ProductCards = ({ canEdit }: { canEdit: boolean }) => {
+interface Props {
+  canEdit: boolean;
+  setReload: React.Dispatch<React.SetStateAction<boolean>>;
+  reload: boolean;
+}
+
+const ProductCards = ({ canEdit, reload, setReload }: Props) => {
   const category = useSelector(selectCatagory);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -186,6 +192,19 @@ const ProductCards = ({ canEdit }: { canEdit: boolean }) => {
       },
     });
   };
+
+  useEffect(() => {
+    if (reload) {
+      refetch({
+        input: {
+          genre: active,
+          limit,
+          offset: page === 0 ? 0 : limit * (page - 1),
+        },
+      });
+      setReload(false);
+    }
+  }, [reload, refetch, setReload, active, page]);
 
   return (
     <>

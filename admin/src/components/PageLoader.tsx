@@ -18,7 +18,6 @@ function PageLoader({ fill = false }: { fill?: boolean }) {
         <ReactLoading
           type="spinningBubbles"
           color={fill ? currentTheme === "dark" ? "white" : "black": "white"}
-          className={clsx(fill ? "dark:text-white text-black" : "text-white")}
         />
 
         <p

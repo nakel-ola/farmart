@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { gql, useMutation, useQuery } from "@apollo/client";
 import Head from "next/head";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import DeleteCard from "../components/DeleteCard";
 import BannerCard from "../containers/products/BannerCard";
@@ -26,6 +26,8 @@ const Products = () => {
 
   const dialog = useSelector(selectDialog);
   const user = useSelector(selectUser);
+
+  const [reload,setReload] = useState(false)
 
 
   const { data, refetch } = useQuery(CategoriesQuery, {
@@ -55,12 +57,12 @@ const Products = () => {
             <Banners data={data.banners} canEdit={canEdit} />
 
             <div className="w-[95%] md:w-[90%]">
-              <ProductCards canEdit={canEdit}/>
+              <ProductCards canEdit={canEdit} reload={reload} setReload={setReload} />
             </div>
           </div>
         )}
       </Layout>
-      {dialog.edit.open && <Popup />}
+      {dialog.edit.open && <Popup func={() => setReload(true)} />}
       {dialog.delete.open && (
         <DeleteCard
           func={() => deleteBanner({ variables: { id: dialog.delete.data.id } }) }
