@@ -197,7 +197,7 @@ const ProductCards = ({ canEdit, reload, setReload }: Props) => {
     if (reload) {
       refetch({
         input: {
-          genre: active,
+          genre: active === "All" ? null : active.toLowerCase(),
           limit,
           offset: page === 0 ? 0 : limit * (page - 1),
         },
