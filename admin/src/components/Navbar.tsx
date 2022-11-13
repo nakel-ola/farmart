@@ -72,7 +72,7 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
         .then((data) => {
           console.log(data);
           alert(data.data.url)
-        });
+        }).catch((err) => console.log(err));
     }
   };
 
