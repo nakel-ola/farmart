@@ -7,7 +7,7 @@ const storage = new Storage({
   projectId: config.firebase_project_id,
   token: config.firebase_token,
   credentials: {
-    private_key: config.firebase_private_key,
+    private_key: `${config.firebase_private_key}`,
     client_email: config.firebase_client_email,
     client_id: config.firebase_client_id,
     token_url: config.firebase_token_url,

@@ -20,7 +20,7 @@ const storage = new storage_1.Storage({
     projectId: config_1.default.firebase_project_id,
     token: config_1.default.firebase_token,
     credentials: {
-        private_key: config_1.default.firebase_private_key,
+        private_key: `${config_1.default.firebase_private_key}`,
         client_email: config_1.default.firebase_client_email,
         client_id: config_1.default.firebase_client_id,
         token_url: config_1.default.firebase_token_url,
