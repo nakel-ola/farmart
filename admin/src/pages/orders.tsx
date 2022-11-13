@@ -266,7 +266,6 @@ const Orders = () => {
     <Layout className="flex items-center flex-col">
       <Head>
         <title>Orders</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div className="w-[95%] md:w-[90%]">

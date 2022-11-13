@@ -3,13 +3,12 @@ import { ArrowLeft } from "iconsax-react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import ReactLoading from "react-loading";
 import CodeCard from "../containers/auth/CodeCard";
 import ForgetCard from "../containers/auth/ForgetCard";
 import LogInCard from "../containers/auth/LogInCard";
 import PasswordCard from "../containers/auth/PasswordCard";
 import SignUpCard from "../containers/auth/SignUpCard";
-import ReactLoading from "react-loading";
-
 
 function Auth() {
   const router = useRouter();
@@ -34,14 +33,13 @@ function Auth() {
     }
   };
   return (
-    <div className="flex items-center justify-center h-screen relative">
+    <div className="flex items-center justify-center h-screen 2xl:h-fit relative 2xl:w-fit w-[100vw]">
       <Head>
         <title>{toggle}</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div
-        className="bg-primary/50 w-[60%] h-full hidden md:block relative"
+        className="bg-primary/50 w-[60%] h-full hidden md:block 2xl:hidden  relative"
         onContextMenu={(e) => e.preventDefault()}
       >
         <img
@@ -51,7 +49,7 @@ function Auth() {
         />
       </div>
 
-      <div className="bg-white dark:bg-dark w-full md:w-[40%] h-full relative overflow-y-scroll">
+      <div className="bg-white dark:bg-dark w-full md:w-[40%] h-full relative overflow-y-scroll 2xl:w-fit">
         <button
           className="sticky top-0 z-[10] m-2 h-[35px] w-[35px] flex items-center justify-center hover:bg-slate-100 hover:dark:bg-neutral-800 rounded-full"
           onClick={() => router.back()}
@@ -83,13 +81,15 @@ export const Footer = ({ title, buttonText, onClick }: any) => {
   return (
     <div className="w-[80%] flex items-center justify-center flex-col pt-0 pb-[15px] md:mt-0 mt-auto">
       <div className="flex items-center justify-center mx-5">
-        <p className="pr-2">{title}</p>{" "}
-        <strong
-          onClick={onClick}
-          className="text-blue-600 font-medium hover:underline cursor-pointer"
-        >
-          {buttonText}
-        </strong>
+        <p className="pr-2 whitespace-nowrap">
+          {title}
+          <strong
+            onClick={onClick}
+            className="text-blue-600 font-medium hover:underline cursor-pointer pl-2"
+          >
+            {buttonText}
+          </strong>
+        </p>{" "}
       </div>
     </div>
   );

@@ -94,8 +94,7 @@ const Dashboard = () => {
   return (
     <Layout>
       <Head>
-        <title>Home</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>Dashboard</title>
       </Head>
 
       <div className="grid place-items-center">

@@ -96,8 +96,7 @@ const Search: NextPage = () => {
   return (
     <Layouts ref={ref}>
       <Head>
-        <title>Search {router.query.id}</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>Search | {router.query.id}</title>
       </Head>
 
       {loading ? (

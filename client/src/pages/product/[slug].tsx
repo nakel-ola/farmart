@@ -60,7 +60,6 @@ function Details() {
     <Layouts>
       <Head>
         <title>{data?.title}</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Header />

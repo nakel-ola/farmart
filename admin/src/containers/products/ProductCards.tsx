@@ -216,7 +216,7 @@ const ProductCards = ({ canEdit, reload, setReload }: Props) => {
   let loading = productLoading || searchLoading;
 
   return (
-    <>
+    <div className="w-[95%] md:w-[90%]">
       <Table
         headerComponent={
           <Header
@@ -342,7 +342,7 @@ const ProductCards = ({ canEdit, reload, setReload }: Props) => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

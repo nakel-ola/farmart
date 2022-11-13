@@ -74,7 +74,6 @@ const Favorite: NextPage = () => {
     <Layouts ref={containerRef}>
       <Head>
         <title>Favorite</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Header

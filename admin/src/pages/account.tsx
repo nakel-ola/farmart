@@ -146,7 +146,6 @@ const Account = () => {
       <Layout>
         <Head>
           <title>Profile</title>
-          <link rel="icon" href="/favicon.ico" />
         </Head>
 
         {userLoading ? (

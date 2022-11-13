@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import React from "react";
 
 const MenuCard = ({
@@ -8,7 +9,13 @@ const MenuCard = ({
   onClick(e: any, value: string): void;
 }) => {
   return (
-    <div className="w-[120px] max-h-[200px] overflow-scroll bg-white dark:bg-dark shadow-md shadow-slate-300 dark:shadow-black/10 rounded-lg scrollbar-hide">
+    <motion.div
+      initial={{ maxHeight: "0px" }}
+      animate={{ maxHeight: "200px" }}
+      exit={{ maxHeight: "0px" }}
+      transition={{ duration: 0.3 }}
+      className="absolute top-10 right-2 z-[10] w-[120px] max-h-[200px] overflow-y-scroll bg-white dark:bg-dark shadow-md shadow-slate-300 dark:shadow-black/10 rounded-lg"
+    >
       {sortList.map((item: string, index: number) => (
         <div
           key={index}
@@ -18,7 +25,7 @@ const MenuCard = ({
           <p className="pl-1 text-black dark:text-white font-medium">{item}</p>
         </div>
       ))}
-    </div>
+    </motion.div>
   );
 };
 

@@ -26,7 +26,7 @@ function Navbar({
     <div className="px-[5px] h-[55px] bg-white dark:bg-dark sticky top-0 z-10 flex items-center justify-between">
       {/* logo */}
 
-      <div className="flex items-center mt-2 ml-1 mr-2 mb-2 w-fit lg:flex-[0.2] lg:min-w-[15vw] max-w-[260px]">
+      <div className="flex items-center mt-2 ml-1 mb-2 w-[260px] max-w-[260px]">
         <button
           className="m-2 lg:hidden"
           onClick={(e: any) =>
@@ -50,7 +50,7 @@ function Navbar({
         </div>
       </div>
 
-      <div className="flex items-center lg:justify-start justify-center flex-1 ml-2">
+      <div className="flex items-center lg:justify-start justify-center flex-1">
         <SearchCard />
       </div>
 

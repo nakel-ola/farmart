@@ -1,38 +1,66 @@
-import { useLazyQuery } from "@apollo/client";
-import { ReactNode, useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { UserQuery } from "../pages/_app";
-import {
-  login,
-  selectCookies,
-  selectUser,
-} from "../redux/features/userSlice";
+import { gql, useQuery } from "@apollo/client";
+import { ReactNode } from "react";
+import { useDispatch } from "react-redux";
+import { add } from "../redux/features/categorySlice";
+import { login } from "../redux/features/userSlice";
+
+export const UserQuery = gql`
+  query User {
+    user {
+      ... on User {
+        id
+        email
+        name
+        photoUrl
+        blocked
+        gender
+        birthday
+        phoneNumber
+        createdAt
+        updatedAt
+      }
+
+      ... on ErrorMsg {
+        error
+      }
+    }
+  }
+`;
+
+export const CategoriesQuery = gql`
+  query Categories {
+    categories {
+      name
+    }
+  }
+`;
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
-  const cookies = useSelector(selectCookies);
   const dispatch = useDispatch();
-  const user = useSelector(selectUser);
-  
 
-  const [getDetails] = useLazyQuery(UserQuery);
+  useQuery(UserQuery, {
+    onCompleted: (data) => {
+      if (data.user?.__typename !== "ErrorMsg") {
+        dispatch(login(data.user));
+      }
+    },
+    onError: (err) => {
+      console.table(err);
+    },
+  });
 
-  const getUser = useCallback(async () => {
-    if (!user && cookies) {
-      await getDetails({
-        fetchPolicy: "network-only",
-        onCompleted: async (data) => {
-          if (data.user?.__typename !== "ErrorMsg") {
-            dispatch(login(data.user));
-          }
-        },
-      });
-    }
-  }, [cookies, user,getDetails,dispatch]);
-
-  useEffect(() => {
-    getUser();
-  }, [cookies, user,getUser]);
-  return <>{children}</>;
+  useQuery(CategoriesQuery, {
+    onCompleted: (data) => {
+      if (data.user?.__typename !== "ErrorMsg") {
+        dispatch(add([{ name: "All" }, ...data.categories]));
+      }
+    },
+  });
+  return (
+    <div className="flex-1 flex flex-col justify-center items-center bg-white dark:bg-dark">
+      {children}
+    </div>
+  );
 };
 
 export default Wrapper;

@@ -3,11 +3,8 @@
 @tailwind utilities;
 
 @layer components {
-  MuiDrawer-paper {
-    @apply flex items-center justify-center w-full bg-transparent rounded-t-[20px];
-  }
-  MuiDrawer-paperAnchorBottom {
-    @apply flex items-center justify-center w-full bg-transparent rounded-t-[20px];
+  body {
+    @apply text-black dark:text-white;
   }
 
   * {

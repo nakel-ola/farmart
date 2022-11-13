@@ -1,27 +1,24 @@
+import { AnimatePresence } from "framer-motion";
 import { ArrowDown2, ArrowUp2 } from "iconsax-react";
 import { useRouter } from "next/router";
 import React, { useRef, useState } from "react";
-import { Popover } from "react-tiny-popover";
+import Button from "../../components/Button";
 import capitalizeFirstLetter from "../../helper/capitalizeFirstLetter";
+import useOnClickOutside from "../../hooks/useOnClickOutside";
 import MenuCard from "./MenuCard";
 
 const Header = ({ categories }: { categories: string[] }) => {
   const router = useRouter();
-  const ref = useRef<HTMLDivElement>(null);
 
   let genre = router.query.genre?.toString();
 
-  const [open, setOpen] = useState<boolean>(false);
-
-  const handleClick = (e: Event, item: string) => {
+  const handleClick = (e: any, item: string) => {
     let genre = item.toLowerCase();
     if (genre === "all") {
       router.push(`/`);
     } else {
       router.push(`/?genre=${genre}`);
     }
-
-    setOpen(false);
   };
   return (
     <div className="w-full flex items-center justify-between px-[15px] py-[10px] h-[45px] mb-2">
@@ -29,40 +26,53 @@ const Header = ({ categories }: { categories: string[] }) => {
         {genre ? capitalizeFirstLetter(genre) : "All"}
       </p>
 
-      <div
-        ref={ref}
-        className="relative flex items-center bg-white dark:bg-dark rounded-full overflow-hidden z-[10]"
+      <SortCard sortList={categories} />
+    </div>
+  );
+};
+
+interface SortProps {
+  sortList: string[];
+}
+
+const SortCard = (props: SortProps) => {
+  const { sortList } = props;
+
+  const router = useRouter();
+
+  const [open, setOpen] = useState<boolean>(false);
+
+  const ref = useRef<HTMLDivElement>(null);
+
+  useOnClickOutside(ref, () => setOpen(false));
+
+  const handleClick = (e: any, item: string) => {
+    setOpen(false)
+    let genre = item.toLowerCase();
+    if (genre === "all") {
+      router.push(`/`);
+    } else {
+      router.push(`/?genre=${genre}`);
+    }
+  };
+
+  return (
+    <div ref={ref} className="relative">
+      <Button
+        className="relative text-neutral-600 dark:text-neutral-300 flex items-center my-auto bg-white dark:bg-dark rounded-full mr-[10px] ml-auto md:ml-0 p-[3px]"
+        onClick={() => setOpen(!open)}
       >
-        <Popover
-          isOpen={open}
-          positions={["bottom", "left"]}
-          padding={10}
-          parentElement={ref.current!}
-          boundaryElement={ref.current!}
-          align="center"
-          reposition={true}
-          onClickOutside={() => setOpen(false)}
-          content={<MenuCard sortList={categories} onClick={handleClick} />}
-        >
-          <div
-            className={`flex items-center p-[3px] transitions-all ease duration-300 relative cursor-pointer `}
-            onClick={() => setOpen(!open)}
-          >
-            <p
-              className={`text-neutral-600 dark:text-neutral-300 m-[3px] mx-[8px] text-sm font-semibold ml-[10px]`}
-            >
-              Category
-            </p>
-            <div className="mx-2">
-              {open ? (
-                <ArrowUp2 size={20} className="text-black dark:text-white" />
-              ) : (
-                <ArrowDown2 size={20} className="text-black dark:text-white" />
-              )}
-            </div>
-          </div>
-        </Popover>
-      </div>
+        Category
+        {open ? (
+          <ArrowUp2 size={20} className="text-black dark:text-white mx-2" />
+        ) : (
+          <ArrowDown2 size={20} className="text-black dark:text-white mx-2" />
+        )}
+      </Button>
+
+      <AnimatePresence>
+        {open && <MenuCard sortList={sortList} onClick={handleClick} />}
+      </AnimatePresence>
     </div>
   );
 };

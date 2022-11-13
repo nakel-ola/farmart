@@ -37,7 +37,6 @@ const Coupons = () => {
     <Layouts>
       <Head>
         <title>Coupons</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div className="h-full">

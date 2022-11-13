@@ -50,6 +50,7 @@ function MyApp({ Component, ...others }: AppProps) {
               as="font"
               crossOrigin=""
             />
+            <link rel="icon" href="/color-logo.png" />
           </Head>
           <Wrapper>
             <Toaster />

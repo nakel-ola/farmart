@@ -10,9 +10,6 @@ import LogInCard from "../containers/home/LogInCard";
 import PasswordCard from "../containers/home/PasswordCard";
 import SignUpCard from "../containers/home/SignUpCard";
 
-
-
-
 function Auth() {
   const router = useRouter();
 
@@ -37,14 +34,13 @@ function Auth() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen relative">
+    <div className="flex items-center justify-center h-screen 2xl:h-fit relative w-[100vw] 2xl:w-fit">
       <Head>
         <title>{toggle}</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div
-        className="bg-primary/50 w-[60%] h-full hidden md:block relative"
+        className="bg-primary/50 w-[60%] h-full hidden md:block 2xl:hidden relative"
         onContextMenu={(e) => e.preventDefault()}
       >
         <img
@@ -53,7 +49,7 @@ function Auth() {
           className="h-full w-full object-contain relative"
         />
       </div>
-      <div className="bg-white dark:bg-dark w-full md:w-[40%] h-full relative overflow-y-scroll">
+      <div className="bg-white dark:bg-dark w-full md:w-[40%] 2xl:w-fit h-full relative overflow-y-scroll">
         {toggle && (
           <button
             className="sticky top-0 z-[10] m-2 h-[35px] w-[35px] flex items-center justify-center hover:bg-slate-100 hover:dark:bg-neutral-800 rounded-full"

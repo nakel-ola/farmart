@@ -1,4 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import React from "react";
 import ReactLoading from "react-loading";
@@ -86,6 +87,9 @@ const Employee = () => {
 
   return (
     <>
+      <Head>
+        <title>Employee | {user?.name}</title>
+      </Head>
       <Layout>
         {loading ? (
           <div className="w-full h-full pt-[20px] flex items-center justify-center">

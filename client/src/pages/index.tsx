@@ -29,7 +29,6 @@ const Home: NextPage = () => {
     <Layouts ref={ref}>
       <Head>
         <title>Home</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <form

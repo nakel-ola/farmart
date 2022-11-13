@@ -23,10 +23,11 @@ const Banners = ({
   const handleForward = () => {
     setActive(active === data.length - 1 ? 0 : active + 1);
   };
+  // shrink-0 flex w-full items-center rounded-lg overflow-x-scroll pb-[20px] scrollbar-hide relative md:pl-0
 
   return (
     <div className="relative flex flex-col items-center justify-center rounded-lg overflow-hidden mt-4 w-full">
-      <div className="shrink-0 flex w-[100%] items-center rounded-lg overflow-x-scroll pb-[20px] scrollbar-hide relative  md:pl-0">
+      <div className="shrink-0 flex w-full items-center rounded-lg overflow-x-scroll pb-[20px] scrollbar-hide relative md:pl-0">
         {data.map((item: BannerType, i: number) => (
           <ImageCard
             key={i}

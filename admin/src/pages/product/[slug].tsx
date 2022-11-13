@@ -97,7 +97,6 @@ const Product = () => {
       <Layout>
         <Head>
           <title>{data?.title ?? router.query.slug}</title>
-          <link rel="icon" href="/favicon.ico" />
         </Head>
         {loading ? (
           <div className="w-full h-full pt-[20px] flex items-center justify-center">

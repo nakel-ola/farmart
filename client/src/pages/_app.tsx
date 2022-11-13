@@ -1,6 +1,7 @@
 import { ApolloProvider, gql } from "@apollo/client";
 import cookies from "next-cookies";
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import { Router } from "next/router";
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
@@ -28,95 +29,64 @@ function MyApp({ Component, ...others }: AppProps) {
   Router.events.on("routeChangeComplete", () => setLoading(false));
 
   return (
-    <ThemeProvider
-      enableSystem={true}
-      attribute="class"
-      storageKey="farmart-theme"
-      defaultTheme="light"
-    >
-      <Provider store={store}>
-        <PersistGate persistor={persistor(store)} loading={<PageLoader fill />}>
-          <ApolloProvider client={client}>
-            <Wrapper>
-              <Toaster />
+    <>
+      <Head>
+        <link rel="icon" href="/color-logo.png" />
+      </Head>
+      <ThemeProvider
+        enableSystem={true}
+        attribute="class"
+        storageKey="farmart-theme"
+        defaultTheme="light"
+      >
+        <Provider store={store}>
+          <PersistGate
+            persistor={persistor(store)}
+            loading={<PageLoader fill />}
+          >
+            <ApolloProvider client={client}>
+              <Wrapper>
+                <Toaster />
 
-              <Component {...pageProps} />
-              {loading && <PageLoader />}
-            </Wrapper>
-          </ApolloProvider>
-        </PersistGate>
-      </Provider>
-    </ThemeProvider>
+                <Component {...pageProps} />
+                {loading && <PageLoader />}
+              </Wrapper>
+            </ApolloProvider>
+          </PersistGate>
+        </Provider>
+      </ThemeProvider>
+    </>
   );
 }
 
-export const UserQuery = gql`
-  query User {
-    user {
-      ... on User {
-        id
-        email
-        name
-        photoUrl
-        blocked
-        gender
-        birthday
-        phoneNumber
-        createdAt
-        updatedAt
-      }
+// export const UserQuery = gql`
+//   query User {
+//     user {
+//       ... on User {
+//         id
+//         email
+//         name
+//         photoUrl
+//         blocked
+//         gender
+//         birthday
+//         phoneNumber
+//         createdAt
+//         updatedAt
+//       }
 
-      ... on ErrorMsg {
-        error
-      }
-    }
-  }
-`;
+//       ... on ErrorMsg {
+//         error
+//       }
+//     }
+//   }
+// `;
 
-export const CategoriesQuery = gql`
-  query Categories {
-    categories {
-      name
-    }
-  }
-`;
-
-MyApp.getInitialProps = wrapper.getInitialPageProps(
-  (store) => async (ctx: any) => {
-    const token = cookies(ctx.ctx);
-    const apolloClient = initializeApollo();
-
-    const newStore: RootState = store.getState();
-
-    if (newStore.category.category.length === 0) {
-      await apolloClient
-        .query({
-          query: CategoriesQuery,
-        })
-        .then((result: any) => {
-          store.dispatch(add([{ name: "All" }, ...result.data.categories]));
-        });
-    }
-
-    if (token?.auth && !newStore.user.cookies) {
-      store.dispatch(setCookies({ auth: token.auth }));
-    }
-
-    if (token?.auth && !newStore?.user?.user) {
-      await apolloClient
-        .query({
-          query: UserQuery,
-        })
-        .then((result: any) => {
-          if (result.user?.__typename !== "ErrorMsg") {
-            store.dispatch(login(result.user));
-          }
-        });
-    }
-
-    return {
-      initialApolloState: apolloClient.cache.extract(),
-    };
-  }
-);
+// export const CategoriesQuery = gql`
+//   query Categories {
+//     categories {
+//       name
+//     }
+//   }
+// `;
 export default MyApp;

@@ -127,7 +127,6 @@ const Checkout: NextPage = () => {
       <Layouts disabled={basket.length === 0}>
         <Head>
           <title>Checkout</title>
-          <link rel="icon" href="/favicon.ico" />
         </Head>
 
         <Header title="Checkout" />

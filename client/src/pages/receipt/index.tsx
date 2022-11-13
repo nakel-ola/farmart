@@ -259,7 +259,6 @@ const Receipt: NextPage = () => {
     <Layouts>
       <Head>
         <title>Receipt</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header title="History" />
       {user ? (

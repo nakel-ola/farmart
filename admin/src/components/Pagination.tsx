@@ -65,8 +65,6 @@ const Pagination = ({
     });
   };
 
-  console.log(next.page)
-
   return (
     <div
       className={clsx(

@@ -51,7 +51,6 @@ const Inbox = () => {
     <Layouts>
       <Head>
         <title>Indox</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Header />

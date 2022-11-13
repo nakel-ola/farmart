@@ -11,7 +11,7 @@ export const LogoutMutation = gql`
 
 function Sidebar() {
   return (
-    <div className="hidden lg:flex px-[5px] py-[20px] flex-col justify-between 2xl:justify-start  bg-white dark:bg-dark h-[calc(100vh-55px)] transition-all duration-300 ease-in-out w-[260px] lg:flex-[0.2] lg:min-w-[15vw] max-w-[260px]">
+    <div className="hidden lg:flex px-[5px] py-[20px] flex-col justify-between 2xl:justify-start bg-white dark:bg-dark h-[calc(100vh-55px)] transition-all duration-300 ease-in-out w-[260px] max-w-[260px]">
       <SidebarContent />
     </div>
   );

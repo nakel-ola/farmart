@@ -194,7 +194,6 @@ const Order = () => {
     <Layout>
       <Head>
         <title>Order: {orderId}</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div className="grid place-items-center">

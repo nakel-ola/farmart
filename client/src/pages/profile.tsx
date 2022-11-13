@@ -16,9 +16,10 @@ import PasswordCard from "../containers/profile/PasswordCard";
 import UserEdit from "../containers/profile/UserEdit";
 import { toBase64 } from "../helper/toBase64";
 import Layouts from "../layout/Layouts";
+import { UserQuery } from "../layout/Wrapper";
 import { add, selectDialog } from "../redux/features/dialogSlice";
 import { login, logout, selectUser } from "../redux/features/userSlice";
-import { UserQuery } from "./_app";
+// import { UserQuery } from "./_app";
 
 export type ImageType = {
   file: File | null;
@@ -33,10 +34,7 @@ const Profile: NextPage = () => {
   const [logOut] = useMutation(LogoutMutation);
   const client = useApolloClient();
 
-  const {
-    data,
-    refetch,
-  } = useQuery(UserQuery, {
+  const { data, refetch } = useQuery(UserQuery, {
     fetchPolicy: "network-only",
     onCompleted: (results) => {
       if (results.user?.__typename !== "ErrorMsg") {
@@ -44,7 +42,6 @@ const Profile: NextPage = () => {
       }
     },
     onError: (error) => console.table(error),
-
   });
 
   const newData = data && data.user;
@@ -113,7 +110,6 @@ const Profile: NextPage = () => {
       <Layouts>
         <Head>
           <title>Profile | {user?.name}</title>
-          <link rel="icon" href="/favicon.ico" />
         </Head>
         <Header />
 
@@ -140,7 +136,10 @@ const Profile: NextPage = () => {
 
             <PasswordCard setLoading={setLoading} />
 
-            <Button onClick={handleLogOut} className="mb-2 text-primary bg-transparent">
+            <Button
+              onClick={handleLogOut}
+              className="mb-2 text-primary bg-transparent"
+            >
               Log Out
             </Button>
           </div>

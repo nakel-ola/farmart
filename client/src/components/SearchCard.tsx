@@ -14,7 +14,7 @@ const SearchCard = () => {
 
   return (
     <div
-      className={`md:flex items-center mx-2 hidden ${
+      className={`md:flex items-center hidden ${
         text ? "flex-[0.5]" : "flex-[0.5]"
       }`}
     >

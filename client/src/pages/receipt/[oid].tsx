@@ -199,8 +199,7 @@ const Order = () => {
   return (
     <Layouts>
       <Head>
-        <title>Order: {orderId}</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>Order | {orderId}</title>
       </Head>
       <Header />
       {data && (

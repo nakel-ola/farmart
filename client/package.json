@@ -20,6 +20,7 @@
     "clsx": "^1.2.1",
     "eslint": "^8.25.0",
     "eslint-config-next": "^12.3.1",
+    "framer-motion": "^7.6.6",
     "global": "^4.4.0",
     "graphql": "^16.5.0",
     "graphql-request": "^5.0.0",
