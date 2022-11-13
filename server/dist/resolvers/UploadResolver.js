@@ -52,7 +52,7 @@ const createFileStream = (file) => new Promise((resolve, reject) => __awaiter(vo
 const uploadFile = (args, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let file = args.input;
-        console.log(`${config_1.default.firebase_private_key}`);
+        console.log(`${config_1.default.firebase_private_key.toString()}`);
         const data = yield createFileStream(file);
         return data;
     }
