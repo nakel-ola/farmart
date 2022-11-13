@@ -1,5 +1,6 @@
 import stream from "stream";
 import { format } from "util";
+import config from "../config";
 import dataUrlToFile from "../helper/dataUrlToFile";
 import { bucket } from "../helper/gcloud";
 
@@ -47,6 +48,8 @@ const createFileStream = (file: any) =>
 const uploadFile = async (args, req) => {
   try {
     let file = args.input;
+
+    console.log(`${config.firebase_private_key}`);
     const data = await createFileStream(file);
     return data;
   } catch (err) {
