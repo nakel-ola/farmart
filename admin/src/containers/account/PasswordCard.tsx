@@ -5,6 +5,7 @@ import React, { ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/Button";
+import CardTemplate from "../../components/CardTemplate";
 import InputField from "../../components/InputField";
 import { login } from "../../redux/features/userSlice";
 import { JwtUserType } from "../home/LogInCard";
@@ -87,13 +88,7 @@ const PasswordCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
   };
 
   return (
-    <div className="w-[95%] md:w-[80%] rounded-lg dark:bg-dark dark:shadow-black/30 bg-white shadow-sm overflow-hidden pb-2 mb-8">
-      <div className="w-full border-b-[1px] border-b-slate-100 dark:border-b-neutral-800 flex items-center justify-between">
-        <p className="py-[8px] pl-[15px] text-[1.2rem] text-black font-[600] dark:text-white">
-          Change Password
-        </p>
-      </div>
-
+    <CardTemplate title="Change Password" className="pb-2 mb-8">
       <div className="pl-[25px]">
         <div className="md:w-[60%] w-[80%] my-2">
           <p className="font-medium pl-1 text-black dark:text-white">
@@ -176,7 +171,7 @@ const PasswordCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
           </Button>
         </div>
       </div>
-    </div>
+    </CardTemplate>
   );
 };
 

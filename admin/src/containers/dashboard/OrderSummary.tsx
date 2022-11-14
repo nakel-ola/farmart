@@ -23,7 +23,7 @@ const OrderSummary = ({ data }: { data: OrderStatisticsType }) => {
   return (
     <div className="w-[95%] md:w-[90%] rounded-lg dark:bg-dark dark:shadow-black/30 bg-white shadow-sm overflow-hidden pb-2 mt-8">
       <div className="w-full flex items-center justify-between py-2 border-b-[1px] border-slate-100 dark:border-neutral-800">
-        <p className="pl-[15px] text-[1.2rem] text-black font-[600] dark:text-white">
+        <p className="pl-[15px] text-[1.2rem] text-black font-medium dark:text-white">
           Orders Statistics
         </p>
 

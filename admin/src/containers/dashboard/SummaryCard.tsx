@@ -60,7 +60,7 @@ const SummaryCard = ({data} : {data: ProductSummaryType}) => {
             </div>
 
             <div className="ml-2">
-              <p className="text-[1.1rem] text-black dark:text-white whitespace-nowrap font-semibold">
+              <p className="text-[1.1rem] text-black dark:text-white whitespace-nowrap font-medium">
                 {title}
               </p>
               <p className="text-[0.8rem] text-neutral-700 dark:text-neutral-400 font-medium">

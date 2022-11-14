@@ -26,7 +26,7 @@ const CardTemplate = (props: Props) => {
       )}
     >
       <div className="w-full border-b-[1px] border-b-slate-100 dark:border-b-neutral-800 flex items-center justify-between">
-        <p className="py-[8px] pl-[15px] text-[1.2rem] text-black font-[600] dark:text-white">
+        <p className="py-[8px] pl-[15px] text-[1.2rem] text-black font-medium dark:text-white">
           {title}
         </p>
 

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import CardTemplate from "../../components/CardTemplate";
 
 export type ItemDetails = {
   name: string;
@@ -15,13 +16,8 @@ const DetailsTemplate = (props: Props) => {
   const { title, list } = props;
 
   return (
-    <div className="mt-8 w-[95%] md:w-[80%] rounded-lg dark:bg-dark dark:shadow-black/30 bg-white shadow-sm overflow-hidden pb-2">
+    <CardTemplate title={title} className="mt-8 pb-2">
       <>
-        <div className="w-full border-b-[1px] border-b-neutral-100 dark:border-b-neutral-800">
-          <p className="py-[8px] pl-[15px] text-[1.2rem] text-black font-[600] dark:text-white">
-            {title}
-          </p>
-        </div>
 
         {list.map((item, index: number) => (
           <div key={index} className="flex justify-between mt-3 mb-2">
@@ -32,7 +28,7 @@ const DetailsTemplate = (props: Props) => {
                 </strong>
                 {(typeof prop.value !== "object") ? (
                   <p
-                    className={` break-all ${
+                    className={` break-all pr-2 ${
                       prop.color ?? "text-neutral-700 dark:text-neutral-400"
                     } ${prop.bold && "font-medium"}`}
                   >
@@ -50,7 +46,7 @@ const DetailsTemplate = (props: Props) => {
           </div>
         ))}
       </>
-    </div>
+    </CardTemplate>
   );
 };
 

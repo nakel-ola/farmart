@@ -1,10 +1,9 @@
-import { ApolloQueryResult } from "@apollo/client";
 import clsx from "clsx";
 import { Star1 } from "iconsax-react";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { ProductType } from "../../../typing";
-import Button from "../../components/Button";
+import CardTemplate from "../../components/CardTemplate";
 import { add } from "../../redux/features/dialogSlice";
 
 type Props = {
@@ -73,27 +72,16 @@ const ProductDetails = ({ data, canEdit }: Props) => {
   ];
 
   return (
-    <div className="w-[95%] md:w-[80%] rounded-lg dark:bg-dark dark:shadow-black/30 bg-white shadow-sm overflow-hidden pb-2 mt-8">
-      <div className="w-full border-b-[1px] border-b-neutral-100 dark:border-b-neutral-800 flex items-center justify-between">
-        <p className="py-[8px] pl-[15px] text-[1.2rem] text-black font-[600] dark:text-white">
-          General Infomation
-        </p>
-
-        {canEdit && (
-          <Button
-            className="text-green-600 bg-green-600/10 mr-2"
-            onClick={() =>
-              dispatch(add({ open: true, data, type: "edit" }))
-            }
-          >
-            Edit
-          </Button>
-        )}
-      </div>
+    <CardTemplate
+      title="General Infomation"
+      className="pb-2 mt-8"
+      showEditButton
+      onEditClick={() => dispatch(add({ open: true, data, type: "edit" }))}
+    >
 
       {items.map((item, index: number) => (
         <div key={index} className="py-2 pl-[25px] flex md:flex-row flex-col">
-          <strong className="text-lg font-medium text-black dark:text-white flex-[0.3]">
+          <strong className="text-lg font-normal text-black dark:text-white flex-[0.3]">
             {item.name}
           </strong>
           {typeof item.value !== "object" ? (
@@ -105,7 +93,7 @@ const ProductDetails = ({ data, canEdit }: Props) => {
           )}
         </div>
       ))}
-    </div>
+    </CardTemplate>
   );
 };
 

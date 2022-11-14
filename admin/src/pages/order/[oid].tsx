@@ -146,25 +146,14 @@ const Order = () => {
                   ].join(", "),
           },
     ],
-    [
-      data?.deliveryMethod !== "Pickup Station" && !data?.phoneNumber
-        ? {
-            name: "Delivery Address",
-            value:
-              data?.deliveryMethod === "Pickup Station"
-                ? data?.pickup
-                : [
-                    data?.address.street,
-                    data?.address.city,
-                    data?.address.state,
-                    data?.address.country,
-                  ].join(", "),
-          }
-        : {
+    data?.coupon?.code
+      ? [
+          {
             name: "Coupon",
             value: data.coupon.code,
           },
-    ],
+        ]
+      : [],
   ];
 
   const paymentItems: ItemDetails[][] = [

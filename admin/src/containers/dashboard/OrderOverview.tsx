@@ -79,7 +79,7 @@ const OrderOverview = ({data} : {data: OrderSummaryType }) => {
   return (
     <div className="w-[95%] md:w-[48%] rounded-lg dark:bg-dark dark:shadow-black/30 bg-white shadow-sm overflow-hidden pb-2 mt-8">
       <div className="w-full flex items-center justify-between">
-        <p className="pt-[8px] pl-[15px] text-[1.2rem] text-black font-[600] dark:text-white">
+        <p className="pt-[8px] pl-[15px] text-[1.2rem] text-black font-medium dark:text-white">
           Orders Overview
         </p>
       </div>
@@ -116,7 +116,7 @@ const OrderOverview = ({data} : {data: OrderSummaryType }) => {
                 className="h-[10px] w-[10px] mx-2 rounded-full"
                 style={{ backgroundColor: item.color }}
               ></strong>
-              <strong className="text-lg font-medium text-black dark:text-white">
+              <strong className="text-lg font-normal text-black dark:text-white">
                 {item.name}
               </strong>
             </div>

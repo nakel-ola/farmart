@@ -65,7 +65,7 @@ const Header = (props: Props) => {
         width
       )}
     >
-      <p className="text-[1.5rem] ml-[10px] font-[600] text-black dark:text-white whitespace-nowrap">
+      <p className="text-[1.5rem] ml-[10px] font-medium text-black dark:text-white whitespace-nowrap">
         {title}
       </p>
 

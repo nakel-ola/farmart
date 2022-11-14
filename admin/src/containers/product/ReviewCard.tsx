@@ -9,6 +9,7 @@ import { MessageText1, Trash } from "iconsax-react";
 import React from "react";
 import { ReviewType } from "../../../typing";
 import Avatar from "../../components/Avatar";
+import CardTemplate from "../../components/CardTemplate";
 import { Divider } from "../../components/Divider";
 
 const ReviewQuery = gql`
@@ -44,12 +45,7 @@ const ReviewCard = ({
   });
 
   return (
-    <div className="w-[95%] md:w-[80%] rounded-lg dark:bg-dark dark:shadow-black/30 bg-white shadow-sm overflow-hidden pb-2 my-8">
-      <div className="w-full border-b-[1px] border-b-neutral-100 dark:border-b-neutral-800 flex items-center justify-between">
-        <p className="py-[8px] pl-[15px] text-[1.2rem] text-black font-[600] dark:text-white">
-          Reviews
-        </p>
-      </div>
+    <CardTemplate title="Reviews" className="pb-2 my-8">
 
       {data && data?.reviews?.length > 0 ? (
         <div className="py-[8px] pl-[15px] pr-[8px] max-h-[300px] overflow-y-scroll">
@@ -74,7 +70,7 @@ const ReviewCard = ({
           <p className="text-black dark:text-white text-lg">No Review yet!</p>
         </div>
       )}
-    </div>
+    </CardTemplate>
   );
 };
 
