@@ -94,10 +94,10 @@ const Customers = () => {
                 ) : null
               }
             >
-              <TableHead tableList={tableList} />
+              <TableHead tableList={tableList} disableDivider={(data?.users as UserData)?.results?.length! > 0 ? false : true} />
 
               {(data?.users as UserData)?.results?.length! > 0 ? (
-                <TableBody disableDivider={pageCount > 1 ? false : true}>
+                <TableBody disableDivider={pageCount > 1 ? true : false }>
                   {(data?.users as UserData)?.results.map(
                     (user: UserType, index: number) => (
                       <TableRow
@@ -122,7 +122,7 @@ const Customers = () => {
                         </TableContent>
                         <TableContent>
                           <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                            {user.gender}
+                            {user.gender ?? "none"}
                           </p>
                         </TableContent>
                         <TableContent>

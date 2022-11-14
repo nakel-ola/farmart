@@ -124,7 +124,7 @@ const Employees = () => {
                         </TableContent>
                         <TableContent>
                           <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                            {employee.gender}
+                            {employee.gender ?? "none"}
                           </p>
                         </TableContent>
                         <TableContent>

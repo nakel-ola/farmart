@@ -8,11 +8,11 @@ import { useDispatch } from "react-redux";
 import { GraphQLOrdersResponse, OrdersData, OrderType } from "../../../typing";
 import Pagination from "../../components/Pagination";
 import {
-    Table,
-    TableBody,
-    TableContent,
-    TableHead,
-    TableRow
+  Table,
+  TableBody,
+  TableContent,
+  TableHead,
+  TableRow
 } from "../../components/tables";
 import Header from "../../components/tables/Header";
 import capitalizeFirstLetter from "../../helper/capitalizeFirstLetter";
@@ -100,7 +100,7 @@ const UserOrders = () => {
           ) : null
         }
       >
-        <TableHead tableList={tableList} />
+        <TableHead tableList={tableList} disableDivider={(data?.orders as OrdersData)?.results?.length! > 0 ? false : true} />
         {(data?.orders as OrdersData)?.results?.length! > 0 ? (
           <TableBody>
             {(data?.orders as OrdersData).results.map(
