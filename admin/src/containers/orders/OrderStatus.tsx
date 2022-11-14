@@ -1,10 +1,12 @@
 import { gql, useMutation } from "@apollo/client";
-import { Fade } from "@mui/material";
+import { Fade, Grow } from "@mui/material";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown2 } from "iconsax-react";
 import React, { useRef, useState } from "react";
 import { IoCheckmark } from "react-icons/io5";
 import { OrderProgress, OrderType } from "../../../typing";
 import Button from "../../components/Button";
+import CardTemplate from "../../components/CardTemplate";
 import InputField from "../../components/InputField";
 import { statusbg, statusColor } from "../../helper/statusColor";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
@@ -51,20 +53,18 @@ const OrderStatus = ({
   let isDelivered = !!order.progress.find(
     (p) => p.name === "delivered" && p.checked === true
   );
+  let isPending = !!order.progress.find(
+    (p) => p.name === "pending" && p.checked === true
+  );
 
   return (
-    <div className="-mt-2 w-[95%] md:w-[80%] rounded-lg dark:bg-dark dark:shadow-black/30 bg-white shadow-sm overflow-hidden pb-2 mb-8 ">
-      <div className="w-full border-b-[1px] border-b-neutral-100 dark:border-b-neutral-800">
-        <p className="py-[8px] pl-[15px] text-[1.2rem] text-black font-[600] dark:text-white">
-          Order Status
-        </p>
-      </div>
-
+    <CardTemplate title="Order Status" className="pb-2 mb-8 ">
       <div className="pl-[25px] mt-5">
         <StatusInputCard
           value={status}
           isCanceled={isCanceled}
           isDelivered={isDelivered}
+          isPending={isPending}
           placeholder="Change Progress Status"
           onChange={(value: string) => setStatus(value)}
         />
@@ -130,7 +130,7 @@ const OrderStatus = ({
           })}
         </div>
       </div>
-    </div>
+    </CardTemplate>
   );
 };
 
@@ -147,22 +147,28 @@ const StatusInputCard = ({
   onChange,
   placeholder,
   isCanceled,
-  isDelivered
+  isDelivered,
+  isPending
 }: {
   value: string | number;
   onChange(value: string): void;
   placeholder?: string;
   isCanceled: boolean;
   isDelivered: boolean;
+  isPending: boolean;
 }) => {
-  const statusList = ["Pending", !isCanceled && "Delivered", !isDelivered && "Canceled"].filter(
-    Boolean
-  ) as string[];
+  const statusList = [
+    "Pending",
+    !isCanceled && "Delivered",
+    !isDelivered && "Canceled",
+  ].filter(Boolean) as string[];
 
   const ref = useRef<HTMLDivElement>(null);
   const [toggle, setToggle] = useState(false);
 
   useOnClickOutside(ref, () => toggle && setToggle(false));
+
+  let disabled = (isPending && isDelivered) || isPending && isCanceled
 
   return (
     <div ref={ref} className="relative md:w-[60%] w-[80%] my-2">
@@ -173,7 +179,7 @@ const StatusInputCard = ({
         value={value}
         placeholder={placeholder}
         readOnly
-        onClick={() => setToggle(!toggle)}
+        onClick={() => !disabled && setToggle(!toggle)}
         IconRight={
           <div
             className="flex items-center justify-center"
@@ -193,7 +199,38 @@ const StatusInputCard = ({
         }
       />
 
-      <Fade
+      <AnimatePresence>
+        {!disabled && toggle && (
+          <motion.div
+            className={`grid absolute left-0 w-full place-items-center transition-all duration-300 z-[1] mt-1`}
+          >
+            <motion.div
+              className="w-[100%] max-h-[200px] overflow-scroll bg-white dark:bg-dark shadow-md shadow-slate-300 dark:shadow-black/10 rounded-lg scrollbar-hide"
+              initial={{ maxHeight: "0px" }}
+              animate={{ maxHeight: "200px" }}
+              exit={{ height: "0px" }}
+              transition={{ duration: 0.3 }}
+            >
+              {statusList.map((s: string, index: number) => (
+                <div
+                  key={index}
+                  className="flex items-center p-2 cursor-pointer hover:bg-slate-100 dark:bg-neutral-800"
+                  onClick={() => {
+                    onChange(s);
+                    setToggle(false);
+                  }}
+                >
+                  <p className="pl-1 text-black dark:text-white font-medium">
+                    {s}
+                  </p>
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* <Grow
         timeout={{ enter: 500, exit: 500, appear: 500 }}
         appear={toggle}
         in={toggle}
@@ -218,7 +255,7 @@ const StatusInputCard = ({
             ))}
           </div>
         </div>
-      </Fade>
+      </Grow> */}
     </div>
   );
 };

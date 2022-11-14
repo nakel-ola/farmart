@@ -1,29 +1,7 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400&display=swap'); */
-/* @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;700&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@font-face {
-  font-family: "funnect_text";
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: local("funnect_text"), url("/fonts/Inter-Medium.otf") format("opentype");
-}
-
-@font-face {
-  font-family: "Advio";
-  font-weight: bold;
-  font-display: swap;
-  src: local("Advio"), url("/fonts/advio/Advio Bold.otf") format("opentype");
-}
-
-@font-face {
-  font-family: "Advio_2";
-  src: url("/fonts/mw_bold.ttf");
-}
 
 @layer base {
   body {
@@ -41,7 +19,7 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    @apply rounded-[30px] bg-[rgb(15,118,110)] transition-all duration-300 absolute top-0 left-0;
+    @apply rounded-[30px] bg-primary transition-all duration-300 absolute top-0 left-0;
   }
 
 }

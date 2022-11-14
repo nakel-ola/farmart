@@ -4,14 +4,20 @@ import React from "react";
 const TableRow = ({
   children,
   className,
-  onClick
+  onClick,
 }: {
   children: React.ReactNode;
   className?: string;
   onClick?: (e: any) => void;
 }) => {
   return (
-    <tr className={clsx("bg-white dark:bg-dark", className)} onClick={onClick}>
+    <tr
+      className={clsx(
+        "bg-white dark:bg-dark ",
+        className
+      )}
+      onClick={onClick}
+    >
       {children}
     </tr>
   );

@@ -186,7 +186,6 @@ const Order = () => {
       </Head>
 
       <div className="grid place-items-center">
-        <Header />
 
         {data && (
           <>

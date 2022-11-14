@@ -14,6 +14,7 @@ import InputCard from "../../components/InputCard";
 import InputDropdown from "../../components/InputDropdown";
 import LoadingCard from "../../components/LoadingCard";
 import PopupTemplate from "../../components/PopupTemplate";
+import generateSlug from "../../helper/generateSlug";
 import { selectCatagory } from "../../redux/features/categorySlice";
 import { remove, selectDialog } from "../../redux/features/dialogSlice";
 import CurrencyFormCard from "./CurrencyFormCard";
@@ -70,12 +71,6 @@ const modifyVerify = (data: CreateProductForm, edit: any): boolean => {
   }
 
   return true;
-};
-
-const generateSlug = (text: string): string => {
-  const array = text.split(" ").map((t) => t.toLowerCase());
-  const newText = array.join("-");
-  return newText;
 };
 
 const Popup = ({ func }: { func?: (value?: any) => void }) => {

@@ -48,14 +48,10 @@ const Header = (props: Props) => {
     onSortClick,
   } = props;
   const [active, setActive] = useState<string>(activeSort ?? sortList[0]);
-  const [open, setOpen] = useState<boolean>(false);
-
-  const ref = useRef<HTMLDivElement>(null);
 
   const handleClick = (e: MouseEvent<HTMLDivElement>, selected: string) => {
     setActive(selected);
     onSortClick?.(e, selected);
-    setOpen(false);
   };
 
   return (
@@ -65,7 +61,7 @@ const Header = (props: Props) => {
         width
       )}
     >
-      <p className="text-[1.5rem] ml-[10px] font-medium text-black dark:text-white whitespace-nowrap">
+      <p className="text-xl ml-[10px] font-medium text-black dark:text-white whitespace-nowrap">
         {title}
       </p>
 

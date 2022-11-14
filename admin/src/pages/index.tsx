@@ -36,7 +36,7 @@ function Auth() {
   return (
     <div className="flex items-center justify-center h-screen 2xl:h-fit relative w-[100vw] 2xl:w-fit">
       <Head>
-        <title>{toggle}</title>
+        <title>{toggle ?? "sign in"}</title>
       </Head>
 
       <div

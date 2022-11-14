@@ -113,7 +113,7 @@ const NumberCard = ({
     <div className="flex">
       <button
         className={clsx(
-          "text-center transitions-all ease duration-300 h-[35px] w-[35px] text-base font-semibold",
+          "text-center transitions-all ease duration-300 h-[35px] w-[35px] text-base font-medium",
           selected
             ? "bg-slate-200 dark:bg-slate-100/20 text-black dark:text-white"
             : "text-neutral-700 dark:text-neutral-400"

@@ -154,10 +154,9 @@ const Account = () => {
           </div>
         ) : (
           <>
-            <Header />
 
             {newData && (
-              <div className="w-full shrink-0 flex flex-col items-center justify-center m-0 md:m-[10px] mt-2">
+              <div className="w-full shrink-0 flex flex-col items-center justify-center m-0 md:m-[10px] mt-2 lg:mt-10">
                 <UserInfo
                   title="My Infomation"
                   items={items}

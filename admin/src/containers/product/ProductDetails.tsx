@@ -81,11 +81,11 @@ const ProductDetails = ({ data, canEdit }: Props) => {
 
       {items.map((item, index: number) => (
         <div key={index} className="py-2 pl-[25px] flex md:flex-row flex-col">
-          <strong className="text-lg font-normal text-black dark:text-white flex-[0.3]">
+          <strong className="text-base font-medium text-black dark:text-white flex-[0.3]">
             {item.name}
           </strong>
           {typeof item.value !== "object" ? (
-            <p className="text-neutral-700 dark:text-neutral-400 md:pl-2 flex-1">
+            <p className="text-neutral-600 dark:text-neutral-400 md:pl-2 flex-1 mr-5">
               {item.value}
             </p>
           ) : (

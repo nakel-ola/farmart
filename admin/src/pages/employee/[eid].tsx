@@ -59,9 +59,9 @@ const Employee = () => {
       name: "Email Address",
       value: newData?.email,
     },
-    newData?.gender && {
+    {
       name: "Gender",
-      value: newData?.gender,
+      value: newData?.gender ?? "none",
     },
     {
       name: "Phone Number",
@@ -71,9 +71,9 @@ const Employee = () => {
       name: "Level",
       value: newData?.level,
     },
-    newData?.birthday && {
+    {
       name: "Birthday",
-      value: new Date(newData?.birthday).toDateString(),
+      value: newData?.birthday  ? new Date(newData?.birthday).toDateString() : "none",
     },
     {
       name: "Created At",
@@ -97,10 +97,9 @@ const Employee = () => {
           </div>
         ) : (
           <>
-            <Header />
 
             {newData && (
-              <div className="w-full shrink-0 flex flex-col items-center justify-center m-0 md:m-[10px] md:pb-0 mt-2 ">
+              <div className="w-full shrink-0 flex flex-col items-center justify-center m-0 md:m-[10px] md:pb-0 mt-2 lg:mt-10">
                 <UserInfo
                   title="Employee Infomation"
                   items={items}

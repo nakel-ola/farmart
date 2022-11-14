@@ -106,27 +106,27 @@ const Customers = () => {
                         onClick={() => router.push(`/customer/${user.id}`)}
                       >
                         <TableContent>
-                          <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          <p className="text-base text-neutral-700 dark:text-neutral-400 whitespace-nowrap">
                             {user.name}
                           </p>
                         </TableContent>
                         <TableContent>
-                          <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          <p className="text-base text-neutral-700 dark:text-neutral-400 whitespace-nowrap">
                             {user.phoneNumber}
                           </p>
                         </TableContent>
                         <TableContent>
-                          <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          <p className="text-base text-neutral-700 dark:text-neutral-400 whitespace-nowrap">
                             {user.email}
                           </p>
                         </TableContent>
                         <TableContent>
-                          <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          <p className="text-base text-neutral-700 dark:text-neutral-400 whitespace-nowrap">
                             {user.gender ?? "none"}
                           </p>
                         </TableContent>
                         <TableContent>
-                          <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          <p className="text-base text-neutral-700 dark:text-neutral-400 whitespace-nowrap">
                             {truncate(
                               new Date(user.createdAt).toDateString(),
                               15,

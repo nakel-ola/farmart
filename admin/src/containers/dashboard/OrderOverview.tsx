@@ -1,6 +1,7 @@
 import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
 import { OrderSummaryType } from "../../../typing";
+import CardTemplate from "../../components/CardTemplate";
 import { Divider } from "../../components/Divider";
 import { useTheme } from "../../styles/theme";
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
@@ -77,13 +78,7 @@ const OrderOverview = ({data} : {data: OrderSummaryType }) => {
   let totalPrice = items.reduce((amount, item) => amount + item.data[0], 0);
 
   return (
-    <div className="w-[95%] md:w-[48%] rounded-lg dark:bg-dark dark:shadow-black/30 bg-white shadow-sm overflow-hidden pb-2 mt-8">
-      <div className="w-full flex items-center justify-between">
-        <p className="pt-[8px] pl-[15px] text-[1.2rem] text-black font-medium dark:text-white">
-          Orders Overview
-        </p>
-      </div>
-      <Divider />
+    <CardTemplate title="Orders Overview" className="w-[95%] md:w-[48%] pb-2 mt-8">
 
       <div className="w-[100%] h-[300px] grid place-items-center">
         <ReactApexChart
@@ -127,7 +122,7 @@ const OrderOverview = ({data} : {data: OrderSummaryType }) => {
           </div>
         ))}
       </div>
-    </div>
+    </CardTemplate>
   );
 };
 

@@ -4,20 +4,24 @@ import { IoQrCode } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { Coupon } from "../../../typing";
 import Button from "../../components/Button";
+import CardTemplate from "../../components/CardTemplate";
 import { add } from "../../redux/features/dialogSlice";
 
-
-const CouponCard = ({ data,canEdit }: { data: Coupon[]; canEdit: boolean }) => {
+const CouponCard = ({
+  data,
+  canEdit,
+}: {
+  data: Coupon[];
+  canEdit: boolean;
+}) => {
   const dispatch = useDispatch();
 
   return (
-    <div className="w-[95%] md:w-[80%] rounded-lg dark:bg-dark dark:shadow-black/30 bg-white shadow-sm overflow-hidden pb-2 mt-8">
-      <div className="w-full border-b-[1px] border-b-slate-100 dark:border-b-neutral-800 flex items-center justify-between">
-        <p className="py-[8px] pl-[15px] text-[1.2rem] text-black font-[600] dark:text-white">
-          Customer coupons
-        </p>
-
-        {canEdit && (
+    <CardTemplate
+      title="Customer coupons"
+      showEditButton
+      editTitle={
+        canEdit && (
           <Button
             className="text-green-600 bg-green-600/10 mr-2"
             onClick={() =>
@@ -26,8 +30,10 @@ const CouponCard = ({ data,canEdit }: { data: Coupon[]; canEdit: boolean }) => {
           >
             Create coupon
           </Button>
-        )}
-      </div>
+        )
+      }
+      className="pb-2 mt-8"
+    >
 
       {data && data?.length > 0 ? (
         <div className="grid place-items-center">
@@ -46,14 +52,14 @@ const CouponCard = ({ data,canEdit }: { data: Coupon[]; canEdit: boolean }) => {
           <p className="text-black dark:text-white text-lg">No Coupon yet!</p>
         </div>
       )}
-    </div>
+    </CardTemplate>
   );
 };
 
 const Card = (props: Coupon) => {
   const dispatch = useDispatch();
   return (
-    <article className="relative w-[95%] md:w-[300px] lg:w-[360px] min-h-[140px] bg-slate-200/30 dark:bg-neutral-800 shadow m-3 md:m-3 lg:m-3 mx-4 rounded-lg ">
+    <article className="relative w-[95%] md:w-[300px] lg:w-[350px] min-h-[140px] bg-slate-200/30 dark:bg-neutral-800 shadow m-3 md:m-3 lg:m-3 mx-4 rounded-lg ">
       <div className="relative h-full w-full mx-[17.5px] flex xs:flex-col-reverse xs:justify-center sm:flex-row">
         <div className="xs:w-[85%] w-[50%] flex flex-col justify-between">
           <div className="">
@@ -83,7 +89,7 @@ const Card = (props: Coupon) => {
       <div className="absolute top-[50%] translate-y-[-50%] left-[-17.5px] h-[35px] w-[35px] bg-white dark:bg-dark rounded-full" />
 
       <div
-        className="absolute top-[50%] translate-y-[-50%] right-[-17.5px] h-[35px] w-[35px] bg-white dark:bg-dark rounded-full flex items-center justify-center hover:scale-105 active:scale-95"
+        className="absolute top-[50%] translate-y-[-50%] right-[-17.5px] h-[35px] w-[35px] bg-red-600/10 z-[1] rounded-full flex items-center justify-center hover:scale-105 active:scale-95 cursor-pointer"
         onClick={() =>
           dispatch(
             add({

@@ -36,6 +36,7 @@ function UserInfo(props: Props) {
       title={title}
       onEditClick={() => onEditClick?.()}
       showEditButton={showEditButton}
+      className="pb-2"
     >
       <input
         type="file"
@@ -69,10 +70,10 @@ function UserInfo(props: Props) {
       {items.map((item: Item, index: number) => (
         <Fragment key={index}>
           <div className="py-[5px] pl-[25px] cursor-pointer flex-1">
-            <strong className="text-lg font-medium text-black dark:text-white">
+            <strong className="text-base font-medium text-black dark:text-white">
               {item.name}
             </strong>
-            <p className="text-neutral-700 dark:text-neutral-400">
+            <p className="text-neutral-600 text-base dark:text-neutral-400">
               {item.value}
             </p>
           </div>

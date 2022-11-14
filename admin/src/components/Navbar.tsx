@@ -23,6 +23,7 @@ let mainPath = [
   "/products",
   "/customers",
   "/employees",
+  "/account"
 ];
 
 const config = {
@@ -59,7 +60,7 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
         <div className="flex items-center">
           <button
             className={clsx(
-              "mx-2  h-[35px] w-[35px] flex items-center justify-center lg:hidden hover:bg-slate-100 dark:hover:bg-neutral-800 hover:scale-105 active:scale-95 rounded-full"
+              "mx-2 h-[35px] w-[35px] flex items-center lg:hidden justify-center hover:bg-slate-100 dark:hover:bg-neutral-800 hover:scale-105 active:scale-95 rounded-full"
             )}
             onClick={() =>
               mainPath.includes(router.pathname)
@@ -79,6 +80,15 @@ const Navbar = ({ toggle, setToggle }: NavbarProps) => {
               />
             )}
           </button>
+
+          {!mainPath.includes(router.pathname) && (
+            <button className="mx-2 h-[35px] w-[35px] hidden items-center lg:flex justify-center hover:bg-slate-100 dark:hover:bg-neutral-800 hover:scale-105 active:scale-95 rounded-full" onClick={() => router.back()}>
+              <ArrowLeft
+                size={25}
+                className="text-[25px] text-black dark:text-white"
+              />
+            </button>
+          )}
 
           <p className="text-black hidden lg:inline dark:text-white lg:ml-2 font-[500] text-[1.2rem]">
             {capitalizeFirstLetter(

@@ -48,10 +48,10 @@ const IndoxCard = ({ data, refetch, canEdit }: Props) => {
                 {index !== data.results.length - 1 && <Divider />}
               </div>
             ))}
-            <div className="grid place-items-center w-[95%] md:w-[95%]">
+            <div className="grid place-items-center w-full">
               {pageCount > 1 && (
                 <Pagination
-                  width=" border-t-[1px] border-slate-100 dark:border-neutral-800 w-full"
+                  width="border-t-[1px] border-slate-100 dark:border-neutral-800 w-full"
                   pageCount={pageCount}
                   forcePage={data?.page ?? 1}
                   pageRangeDisplayed={10}
@@ -79,10 +79,10 @@ const Card = (props: InboxType) => {
   return (
     <>
       <div className="m-2 mx-4">
-        <h1 className="text-lg font-medium text-black dark:text-white">
+        <h1 className="text-base font-medium text-black dark:text-white">
           {props.title}
         </h1>
-        <p className="text-neutral-600 dark:text-neutral-400">
+        <p className="text-neutral-600 text-base dark:text-neutral-400">
           {props.description}
         </p>
         <time className="text-sm text-neutral-600 dark:text-neutral-400">

@@ -108,27 +108,27 @@ const Employees = () => {
                         key={index}
                       >
                         <TableContent>
-                          <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          <p className="text-base text-neutral-700 dark:text-neutral-400 whitespace-nowrap">
                             {employee.name}
                           </p>
                         </TableContent>
                         <TableContent>
-                          <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          <p className="text-base text-neutral-700 dark:text-neutral-400 whitespace-nowrap">
                             {employee.phoneNumber}
                           </p>
                         </TableContent>
                         <TableContent>
-                          <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          <p className="text-base text-neutral-700 dark:text-neutral-400 whitespace-nowrap">
                             {employee.email}
                           </p>
                         </TableContent>
                         <TableContent>
-                          <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          <p className="text-base text-neutral-700 dark:text-neutral-400 whitespace-nowrap">
                             {employee.gender ?? "none"}
                           </p>
                         </TableContent>
                         <TableContent>
-                          <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          <p className="text-base text-neutral-700 dark:text-neutral-400 whitespace-nowrap">
                             {truncate(
                               new Date(employee.createdAt).toDateString(),
                               15,
@@ -156,83 +156,6 @@ const Employees = () => {
               </div>
             </div>
           )}
-          {/* <Table>
-          <TableHeader
-            title="List of Employees"
-            showSearch={false}
-            tableList={tableList}
-          />
-          {data?.employees?.results?.length! > 0 ? (
-            <>
-              <TableList>
-                {data?.employees?.results.map(
-                  (employee: UserType, index: number) => user?.id !== employee.id && (
-                    <TableRow
-                      onClick={() => router.push(`/employee/${employee.id}`)}
-                      key={index}
-                    >
-                      <TableContent>
-                        <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                          {employee.name}
-                        </p>
-                      </TableContent>
-                      <TableContent>
-                        <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                          {employee.phoneNumber}
-                        </p>
-                      </TableContent>
-                      <TableContent>
-                        <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                          {employee.email}
-                        </p>
-                      </TableContent>
-                      <TableContent>
-                        <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                          {employee.gender}
-                        </p>
-                      </TableContent>
-                      <TableContent>
-                        <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                          {truncate(
-                            new Date(employee.createdAt).toDateString(),
-                            15,
-                            "middle"
-                          )}
-                        </p>
-                      </TableContent>
-                    </TableRow>
-                  )
-                )}
-              </TableList>
-
-              <div className="grid place-items-center w-full">
-                {pageCount > 1 && (
-                  <Pagination
-                    pageCount={pageCount}
-                    forcePage={data?.employees.page ?? 1}
-                    pageRangeDisplayed={10}
-                    breakLabel="•••"
-                    onPageChange={handlePageChange}
-                  />
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="flex-[0.35] ml-[5px] h-[80%] grid place-items-center my-5">
-              <div className="flex items-center justify-center flex-col ">
-                <Lottie
-                  loop={false}
-                  animationData={lottieJson}
-                  play
-                  style={{ width: 250, height: 250 }}
-                />
-                <p className="text-[1.2rem] text-slate-900 dark:text-white">
-                  No Users Yet!
-                </p>
-              </div>
-            </div>
-          )}
-        </Table> */}
         </div>
       </Layout>
     </>

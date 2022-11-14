@@ -6,12 +6,12 @@ import ReactLoading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/Button";
 import DeleteCard from "../../components/DeleteCard";
-import Header from "../../components/Header";
 import ImageCard from "../../containers/product/ImageCard";
 import ProductDetails from "../../containers/product/ProductDetails";
 import ReviewCard from "../../containers/product/ReviewCard";
 import Popup from "../../containers/products/Popup";
 import setting from "../../data/setting";
+import reverseSlug from "../../helper/reverseSlug";
 import Layout from "../../layout/Layout";
 import { add, selectDialog } from "../../redux/features/dialogSlice";
 import { selectUser } from "../../redux/features/userSlice";
@@ -96,7 +96,7 @@ const Product = () => {
     <>
       <Layout>
         <Head>
-          <title>{data?.title ?? router.query.slug}</title>
+          <title>{reverseSlug(router.query.slug?.toString())}</title>
         </Head>
         {loading ? (
           <div className="w-full h-full pt-[20px] flex items-center justify-center">
@@ -104,7 +104,6 @@ const Product = () => {
           </div>
         ) : (
           <>
-            <Header />
 
             {data && (
               <div className="w-full shrink-0 flex flex-col items-center justify-center m-0 md:m-[10px] md:pb-0 ">

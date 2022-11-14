@@ -5,11 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { InviteType } from "../../../typing";
 import Button from "../../components/Button";
 import {
-    Table,
-    TableBody,
-    TableContent,
-    TableHead,
-    TableRow
+  Table,
+  TableBody,
+  TableContent,
+  TableHead,
+  TableRow,
 } from "../../components/tables";
 import Header from "../../components/tables/Header";
 import { statusColor } from "../../helper/statusColor";
@@ -78,20 +78,20 @@ const InviteCard = ({ data, func }: { data: InviteType[]; func: any }) => {
             {data.map((item: InviteType, index: number) => (
               <TableRow key={index}>
                 <TableContent>
-                  <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                  <p className="text-base text-neutral-700 dark:text-neutral-400 whitespace-nowrap">
                     {item.email}
                   </p>
                 </TableContent>
 
                 <TableContent>
-                  <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                  <p className="text-base text-neutral-700 dark:text-neutral-400 whitespace-nowrap">
                     {item.level}
                   </p>
                 </TableContent>
                 <TableContent>
                   <p
                     className={clsx(
-                      "text-[0.9rem] font-medium dark:text-neutral-300 whitespace-nowrap ",
+                      "text-base dark:text-neutral-400 whitespace-nowrap ",
                       statusColor(item.status)
                     )}
                   >
@@ -99,7 +99,7 @@ const InviteCard = ({ data, func }: { data: InviteType[]; func: any }) => {
                   </p>
                 </TableContent>
                 <TableContent>
-                  <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                  <p className="text-base text-neutral-700 dark:text-neutral-400 whitespace-nowrap">
                     {new Date(item.createdAt).toDateString()}
                   </p>
                 </TableContent>
@@ -119,82 +119,19 @@ const InviteCard = ({ data, func }: { data: InviteType[]; func: any }) => {
           </TableBody>
         ) : null}
       </Table>
-      {/* <Table>
-        <TableHeader
-          title="Invites"
-          showSearch={false}
-          tableList={["Email", "Level", "Status", "Created At", ""]}
-          leftComponent={
-            user?.level == "Gold" ? (
-              <Button
-                className="text-green-600 bg-green-600/10"
-                onClick={() =>
-                  dispatch(
-                    add({
-                      open: true,
-                      data: null,
-                      type: "invite",
-                    })
-                  )
-                }
-              >
-                Send Invite
-              </Button>
-            ) : null
-          }
-        />
 
-        {data.length > 0 ? (
-          <TableList>
-            {data.map((item: InviteType, index: number) => (
-              <TableRow key={index}>
-                <TableContent>
-                  <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap ml-2">
-                    {item.email}
-                  </p>
-                </TableContent>
-
-                <TableContent>
-                  <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap ml-2">
-                    {item.level}
-                  </p>
-                </TableContent>
-                <TableContent>
-                  <p className={clsx("text-[0.9rem] font-medium dark:text-neutral-300 whitespace-nowrap ml-2", statusColor(item.status))}>
-                    {item.status}
-                  </p>
-                </TableContent>
-                <TableContent>
-                  <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap ml-2">
-                    {new Date(item.createdAt).toDateString()}
-                  </p>
-                </TableContent>
-
-                <button
-                  className="w-[35px] mr-2 flex items-center justify-center"
-                  onClick={() => handleDelete(item.id)}
-                >
-                  {user?.level === "Gold" && (
-                    <Trash size={25} className="text-red-600" />
-                  )}
-                </button>
-              </TableRow>
-            ))}
-          </TableList>
-        ) : (
-          <div className="w-full bg-white dark:bg-dark mt-2 rounded-lg shadow-sm">
-            <div className="flex flex-col items-center justify-center m-2 my-8 ">
-              <SmsStar
-                size={100}
-                className="text-5xl text-neutral-700 dark:text-neutral-400"
-              />
-              <p className="text-black dark:text-white text-lg">
-                No invite yet!
-              </p>
-            </div>
+      {data.length === 0 && (
+        <div className="w-full bg-white dark:bg-dark mt-2 rounded-lg shadow-sm">
+          <div className="flex flex-col items-center justify-center m-2 my-8 ">
+            <SmsStar
+              size={100}
+              className="text-5xl text-neutral-700 dark:text-neutral-400"
+            />
+            <p className="text-black dark:text-white text-lg">No invite yet!</p>
           </div>
-        )}
-      </Table> */}
+        </div>
+      )}
+
     </div>
   );
 };

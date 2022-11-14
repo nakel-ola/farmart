@@ -111,17 +111,17 @@ const Customer = () => {
       name: "Email Address",
       value: newData?.email,
     },
-    newData?.gender && {
+    {
       name: "Gender",
-      value: newData?.gender,
+      value: newData?.gender ?? "none",
     },
     {
       name: "Phone Number",
       value: newData?.phoneNumber,
     },
-    newData?.birthday && {
+    {
       name: "Birthday",
-      value: new Date(newData?.birthday).toDateString(),
+      value: newData?.birthday ? new Date(newData?.birthday).toDateString() : "none",
     },
     {
       name: "Created At",
@@ -159,10 +159,9 @@ const Customer = () => {
           </div>
         ) : (
           <>
-            <Header />
 
             {newData && (
-              <div className="w-full shrink-0 flex flex-col items-center m-0 md:m-[10px] md:pb-0 mt-8 md:mt-0">
+              <div className="w-full shrink-0 flex flex-col items-center m-0 md:m-[10px] md:pb-0 mt-8 lg:mt-10">
                 <UserInfo
                   title="Customer Infomation"
                   items={items}

@@ -1,10 +1,11 @@
 import clsx from "clsx";
 import React from "react";
+import Button from "./Button";
 
 type Props = {
   title: string;
   showEditButton?: boolean;
-  editTitle?: string;
+  editTitle?: React.ReactNode;
   onEditClick?(): void;
   children: React.ReactNode;
   className?: string;
@@ -16,7 +17,7 @@ const CardTemplate = (props: Props) => {
     onEditClick,
     children,
     className,
-    editTitle,
+    editTitle = "Edit",
   } = props;
   return (
     <div
@@ -26,17 +27,23 @@ const CardTemplate = (props: Props) => {
       )}
     >
       <div className="w-full border-b-[1px] border-b-slate-100 dark:border-b-neutral-800 flex items-center justify-between">
-        <p className="py-[8px] pl-[15px] text-[1.2rem] text-black font-medium dark:text-white">
+        <p className="py-[8px] pl-[15px] text-xl text-black font-medium dark:text-white">
           {title}
         </p>
 
         {showEditButton && (
-          <button
-            className={`px-3 mx-2 font-medium rounded-full py-[4px] text-green-600 bg-green-600/10 transition-all hover:scale-105 active:scale-95`}
-            onClick={() => onEditClick?.()}
-          >
-            {editTitle ?? "Edit"}
-          </button>
+          <>
+            {typeof editTitle === "string" ? (
+              <Button
+                className={`text-green-600 bg-green-600/10 mr-2`}
+                onClick={() => onEditClick?.()}
+              >
+                {editTitle ?? "Edit"}
+              </Button>
+            ) : (
+              editTitle
+            )}
+          </>
         )}
       </div>
 

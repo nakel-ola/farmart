@@ -11,7 +11,7 @@ const Table = forwardRef(
     return (
       <div
         ref={ref}
-        className="bg-white dark:bg-dark rounded-lg overflow-auto shadow my-8 flex flex-col w-full"
+        className="bg-white dark:bg-dark rounded-lg overflow-auto shadow-sm my-8 flex flex-col w-full"
       >
         {headerComponent}
         <table className="w-full">{children}</table>
