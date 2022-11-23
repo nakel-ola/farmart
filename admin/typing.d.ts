@@ -116,8 +116,8 @@ export interface CreateProductForm {
   category: string;
   description: string;
   image: any | null;
-  price: number | undefined;
-  currency: Currency | null;
+  price: string | undefined;
+  discount: string | null;
   stock: number | undefined;
 }
 

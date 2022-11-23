@@ -1,8 +1,7 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Heart, HeartSlash } from "iconsax-react";
+import { HeartSlash } from "iconsax-react";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import React, { useRef } from "react";
 import ReactLoading from "react-loading";
 import { useSelector } from "react-redux";
@@ -13,7 +12,6 @@ import InfiniteScroll from "../components/InfiniteScroll";
 import LoginCard from "../components/LoginCard";
 import Card from "../containers/home/Card";
 import { HtmlDivElement } from "../containers/home/Cards";
-import Cards from "../containers/search/Cards";
 import Layouts from "../layout/Layouts";
 import { selectUser } from "../redux/features/userSlice";
 
@@ -24,14 +22,13 @@ const FavoritesQuery = gql`
       results {
         id
         title
-        category
         image {
           url
         }
         price
         stock
-        rating
         description
+        discount
         currency {
           symbol
         }
@@ -51,14 +48,12 @@ const RemoveAllMutation = gql`
 const Favorite: NextPage = () => {
   const user = useSelector(selectUser);
   const { data, loading, refetch, fetchMore } = useQuery(FavoritesQuery, {
-    variables: { input: { offset: 0, limit: 10 } },
+    variables: { input: { offset: 0, limit: 10 } }
   });
 
   const [removeAll] = useMutation(RemoveAllMutation);
 
   const containerRef = useRef<HtmlDivElement | any>();
-
-  const router = useRouter();
 
   const handleFetchMore = () => {
     fetchMore({

@@ -14,6 +14,5 @@ const FavoriteResolver_1 = __importDefault(require("./FavoriteResolver"));
 const OrderResolver_1 = __importDefault(require("./OrderResolver"));
 const ProductResolver_1 = __importDefault(require("./ProductResolver"));
 const InboxResolver_1 = __importDefault(require("./InboxResolver"));
-const UploadResolver_1 = __importDefault(require("./UploadResolver"));
 const resolvers = {};
-exports.default = (0, lodash_1.merge)(resolvers, ProductResolver_1.default, AuthResolver_1.default, FavoriteResolver_1.default, AddressResolver_1.default, OrderResolver_1.default, BannersResolver_1.default, CustomResolver_1.default, EmployeeResolver_1.default, CouponResolver_1.default, InboxResolver_1.default, UploadResolver_1.default);
+exports.default = (0, lodash_1.merge)(resolvers, ProductResolver_1.default, AuthResolver_1.default, FavoriteResolver_1.default, AddressResolver_1.default, OrderResolver_1.default, BannersResolver_1.default, CustomResolver_1.default, EmployeeResolver_1.default, CouponResolver_1.default, InboxResolver_1.default);

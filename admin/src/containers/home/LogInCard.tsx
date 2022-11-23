@@ -1,9 +1,6 @@
 /* importing required files and packages */
 import { gql, useApolloClient, useMutation } from "@apollo/client";
-import {
-  Eye,
-  EyeSlash
-} from "iconsax-react";
+import { Eye, EyeSlash, InfoCircle } from "iconsax-react";
 import { JwtPayload } from "jsonwebtoken";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
@@ -62,7 +59,7 @@ type FormProps = {
   password: string;
 };
 
-const LogInCard = (props: { setLoading(value: boolean):void}) => {
+const LogInCard = (props: { setLoading(value: boolean): void }) => {
   const { setLoading } = props;
 
   const dispatch = useDispatch();
@@ -108,6 +105,8 @@ const LogInCard = (props: { setLoading(value: boolean):void}) => {
   return (
     <div className="w-full flex items-center justify-center h-full flex-col">
       <TitleCard title="Sign in to your account to continue..." />
+
+      <InfoCard />
 
       <form
         onSubmit={handleSubmit}
@@ -162,7 +161,9 @@ const LogInCard = (props: { setLoading(value: boolean):void}) => {
             Forget password ?
           </strong>
         </div>
-        <Button type="submit" className="my-5" disabled={validate(form)}>Sign In</Button>
+        <Button type="submit" className="my-5" disabled={validate(form)}>
+          Sign In
+        </Button>
       </form>
 
       {/* <Footer
@@ -172,6 +173,19 @@ const LogInCard = (props: { setLoading(value: boolean):void}) => {
           router.push("?type=signup");
         }}
       /> */}
+    </div>
+  );
+};
+
+const InfoCard = () => {
+  return (
+    <div className="h-[90px] w-[85%] rounded-lg flex items-center bg-primary/20">
+      <InfoCircle className="mx-5 text-dark dark:text-white" />
+
+      <p className="text-dark dark:text-white">
+        Use email: <strong>janedoe@gmail.com</strong> / password:{" "}
+        <strong className="">password</strong>
+      </p>
     </div>
   );
 };

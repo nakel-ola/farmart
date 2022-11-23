@@ -4,11 +4,11 @@ import React, {
   FormEvent,
   ReactNode,
   useEffect,
-  useState,
+  useState
 } from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { CreateProductForm, Currency, Image } from "../../../typing";
+import { CreateProductForm, Image } from "../../../typing";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import InputDropdown from "../../components/InputDropdown";
@@ -17,7 +17,6 @@ import PopupTemplate from "../../components/PopupTemplate";
 import generateSlug from "../../helper/generateSlug";
 import { selectCatagory } from "../../redux/features/categorySlice";
 import { remove, selectDialog } from "../../redux/features/dialogSlice";
-import CurrencyFormCard from "./CurrencyFormCard";
 import ImageCard from "./ImageCard";
 import Textarea from "./Textarea";
 
@@ -37,16 +36,15 @@ const ModifyProductMutation = gql`
 `;
 
 const verify = (data: CreateProductForm): boolean => {
-  const { title, price, currency, category, stock, image, description } = data;
+  const { title, price, category, stock, image, description } = data;
 
   if (
     title.length > 3 &&
     price &&
-    price > 0 &&
+    price.length > 0 &&
     category.length > 3 &&
     stock &&
     description.length > 5 &&
-    currency &&
     image
   ) {
     return false;
@@ -56,7 +54,7 @@ const verify = (data: CreateProductForm): boolean => {
 };
 
 const modifyVerify = (data: CreateProductForm, edit: any): boolean => {
-  const { title, price, currency, category, stock, image, description } = data;
+  const { title, price, discount, category, stock, image, description } = data;
 
   if (
     title !== edit?.product?.title ||
@@ -64,7 +62,7 @@ const modifyVerify = (data: CreateProductForm, edit: any): boolean => {
     category !== edit?.product?.category ||
     description !== edit?.product?.description ||
     Number(stock) !== Number(edit?.product?.stock) ||
-    currency?.code !== edit?.product?.currency?.code ||
+    discount !== edit?.product?.discount ||
     image?.url !== edit?.product?.image?.url
   ) {
     return false;
@@ -84,7 +82,7 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
     description: "",
     image: null,
     price: undefined,
-    currency: null,
+    discount: null,
     stock: undefined,
   });
 
@@ -123,18 +121,20 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
       setLoading(false);
     };
 
+
+
     if (!edit?.data) {
       createProduct({
         variables: {
           input: {
             title: form.title,
+            slug: generateSlug(form.title),
             category: form.category.toLowerCase(),
             description: form.description,
-            price: Number(form.price),
-            stock: Number(form.stock),
-            currency: form.currency,
-            slug: generateSlug(form.title),
             image: form.image,
+            price: Number(form.price?.split("$")[1]),
+            stock: Number(form.stock),
+            discount: form.discount,
           },
         },
         onCompleted: () => onCompleted("Created Successfully"),
@@ -158,15 +158,7 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
             imageUpload: isFile ? form.image : null,
             price: Number(form.price),
             stock: Number(form.stock),
-            currency: {
-              name: form?.currency!.name,
-              symbolNative: form?.currency!.symbolNative,
-              decimalDigits: form?.currency!.decimalDigits,
-              rounding: form?.currency!.rounding,
-              code: form?.currency!.code,
-              namePlural: form?.currency!.namePlural,
-              symbol: form?.currency!.symbol,
-            },
+            discount: form.discount,
             title: form.title,
           },
         },
@@ -198,24 +190,21 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
               margin
               id="price"
               name="price"
-              prefix={form.currency?.symbol}
+              prefix="$"
               isPrice
               type="number"
-              value={form.price!}
+              value={form.price! ?? ""}
               onChange={handleChange}
             />
-            <CurrencyFormCard
-              title="Currency"
-              id="currency"
-              name="currency"
-              type="text"
-              currency={form.currency}
-              onChange={(result: Currency) =>
-                setForm({
-                  ...form,
-                  currency: result,
-                })
-              }
+            <InputCard
+              title="Discount"
+              toggle
+              margin
+              id="discount"
+              name="discount"
+              type="number"
+              value={form.discount! ?? ""}
+              onChange={handleChange}
             />
           </Wrapper>
           <Wrapper>
@@ -236,7 +225,7 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
               id="stock"
               name="stock"
               toggle
-              value={form.stock!}
+              value={form.stock! ?? ""}
               onChange={handleChange}
             />
           </Wrapper>

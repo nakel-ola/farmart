@@ -31,7 +31,6 @@ const SearchQuery = gql`
         price
         slug
         stock
-        rating
         currency {
           symbol
         }
@@ -53,6 +52,8 @@ const Search: NextPage = () => {
 
   let prevFilter = usePrevious(filter);
 
+  console.log(router)
+
   const { data, loading, fetchMore, refetch } = useQuery(SearchQuery, {
     variables: {
       input: {
@@ -64,6 +65,8 @@ const Search: NextPage = () => {
       },
     },
     fetchPolicy: "network-only",
+    onCompleted: (data) => console.log(data),
+    onError: (data) => console.table(data),
   });
 
   const handleFetchMore = () => {
@@ -96,7 +99,7 @@ const Search: NextPage = () => {
   return (
     <Layouts ref={ref}>
       <Head>
-        <title>Search | {router.query.id}</title>
+        <title>Search | {router.query.q}</title>
       </Head>
 
       {loading ? (

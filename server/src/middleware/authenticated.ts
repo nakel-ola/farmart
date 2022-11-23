@@ -33,7 +33,7 @@ const authenticated =
           req.level = data.level;
           return fn(args, req, res, context, info);
         } else if (!req.admin && parse.auth) {
-          const data = await getDb(parse.grocery ?? "", req.admin);
+          const data = await getDb(parse.auth ?? "", req.admin);
           req.userId = data.id;
           req.blocked = data.block;
           return fn(args, req, res, context, info);

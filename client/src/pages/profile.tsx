@@ -65,25 +65,17 @@ const Profile: NextPage = () => {
     },
     {
       name: "Gender",
-      value: userData?.gender!,
+      value: userData?.gender! ?? "none",
     },
     {
       name: "Phone Number",
-      value: userData?.phoneNumber!,
+      value: userData?.phoneNumber! ?? "none",
     },
-    userData?.birthday && {
+    {
       name: "Birthday",
-      value: new Date(userData?.birthday!).toDateString(),
-    },
-    {
-      name: "Created At",
-      value: new Date(userData?.createdAt!).toDateString(),
-    },
-    {
-      name: "Last updated",
-      value: new Date(userData?.updatedAt!).toDateString(),
-    },
-  ].filter(Boolean);
+      value: userData?.birthday ? new Date(userData?.birthday!).toDateString() : "none",
+    }
+  ];
 
   const handleLogOut = async () => {
     await logOut({

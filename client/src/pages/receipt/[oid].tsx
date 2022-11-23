@@ -205,7 +205,6 @@ const Order = () => {
       {data && (
         <div className="grid place-items-center mt-8 lg:mt-0">
           <DetailsTemplate title="Order Info" list={infoItems} />
-          <div className="h-4" />
           <DetailsTemplate title=" Payment Details" list={paymentItems} />
           <OrderProduct products={data?.products} />
           <OrderStatus order={data} />

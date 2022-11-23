@@ -22,7 +22,10 @@ const ProductQuery = gql`
         price
         slug
         stock
-        rating
+        rating {
+          name
+          value
+        }
         discount
         currency {
           symbol

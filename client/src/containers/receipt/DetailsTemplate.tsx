@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { ReactNode } from "react";
 import CardTemplate from "../../components/CardTemplate";
 
@@ -17,7 +18,7 @@ const DetailsTemplate = (props: Props) => {
   const { title, list,className } = props;
 
   return (
-    <CardTemplate title={title} className={className}>
+    <CardTemplate title={title} className={clsx("mt-8 pb-2",className)}>
       {list.map((item, index: number) => (
         <div key={index} className="flex flex-col md:flex-row justify-between md:mt-3 md:mb-2">
           {item.map((prop: ItemDetails, i: number) => (
@@ -30,7 +31,7 @@ const DetailsTemplate = (props: Props) => {
               </strong>
               {typeof prop.value !== "object" ? (
                 <p
-                  className={` break-all ${
+                  className={` break-all pr-5  ${
                     prop.color ?? "text-neutral-700 dark:text-neutral-400"
                   } ${prop.bold && "font-medium"}`}
                 >

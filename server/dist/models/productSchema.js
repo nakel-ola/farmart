@@ -6,7 +6,7 @@ const reviewSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
-    photoUrl: {
+    title: {
         type: String,
         required: false,
     },
@@ -14,8 +14,22 @@ const reviewSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    rating: {
+        type: Number,
+        required: true
+    },
     userId: {
         type: String,
+        required: true,
+    },
+});
+const ratingSchema = new mongoose_1.Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    value: {
+        type: Number,
         required: true,
     },
 });
@@ -89,7 +103,7 @@ const productSchema = new mongoose_1.Schema({
         required: true,
     },
     rating: {
-        type: Number,
+        type: [ratingSchema],
         required: true,
     },
     discount: {

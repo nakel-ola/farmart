@@ -18,6 +18,11 @@ const ProductTypes = (0, graphql_tag_1.gql) `
     namePlural: String
   }
 
+  type Rating {
+    name: String!
+    value: Int!
+  }
+
   type Product {
     id: ID!
     title: String!
@@ -27,7 +32,7 @@ const ProductTypes = (0, graphql_tag_1.gql) `
     image: ProductImage!
     price: Float!
     stock: Int!
-    rating: Int!
+    rating: [Rating!]!
     discount: String
     currency: Currency!
     createdAt: Date!
@@ -40,7 +45,8 @@ const ProductTypes = (0, graphql_tag_1.gql) `
     name: String!
     userId: String!
     message: String!
-    photoUrl: String!
+    title: String!
+    rating: Int!
   }
   
   type Category {
@@ -61,9 +67,10 @@ const ProductTypes = (0, graphql_tag_1.gql) `
   }
 
   input ReviewInput {
-    name: String!
     productId: String!
-    photoUrl: String
+    name: String!
+    title: String!
+    rating: Int!
     message: String!
   }
 
@@ -90,7 +97,7 @@ const ProductTypes = (0, graphql_tag_1.gql) `
     image: Upload!
     price: Float!
     stock: Int!
-    currency: CurrencyInput!
+    discount: String
   }
 
   input ModifyProductInput {

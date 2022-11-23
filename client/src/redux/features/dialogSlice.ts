@@ -24,9 +24,10 @@ export type DialogState = {
   delivery: Option;
   filter: Option;
   cart: Option;
+  review: Option;
 };
 
-type Type = "edit" | "delete" | "category" | "banner" | "block" | "coupon" | "couponDelete" | "inbox" | "userEdit" | "invite" | "address" | "selectAddress" | "delivery" | "filter" | "cart";
+type Type = "edit" | "delete" | "category" | "banner" | "block" | "coupon" | "couponDelete" | "inbox" | "userEdit" | "invite" | "address" | "selectAddress" | "delivery" | "filter" | "cart" | "review";
 
 type PayloadProps = {
   type: Type;
@@ -94,6 +95,10 @@ export const dialogSlice = createSlice({
       data: null
     },
     cart: {
+      open: false,
+      data: null
+    },
+    review: {
       open: false,
       data: null
     },

@@ -10,9 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("fs");
-require("path");
 const util_1 = require("util");
-require(".");
 const gcloud_1 = require("./gcloud");
 const ImageUplaod = ({ filename, createReadStream, }) => new Promise((resolve, reject) => {
     const blob = gcloud_1.bucket.file(filename);
@@ -22,7 +20,9 @@ const ImageUplaod = ({ filename, createReadStream, }) => new Promise((resolve, r
         resumable: false,
         gzip: true,
     }))
-        .on("error", (err) => reject(err)) // reject on error
+        .on("error", (err) => {
+        reject(err);
+    }) // reject on error
         .on("finish", () => __awaiter(void 0, void 0, void 0, function* () {
         const publicUrl = (0, util_1.format)(`https://storage.googleapis.com/${gcloud_1.bucket.name}/${blob.name}`);
         try {
@@ -31,7 +31,6 @@ const ImageUplaod = ({ filename, createReadStream, }) => new Promise((resolve, r
         catch (_a) {
             console.log(`Uploaded the file successfully: ${filename}, but public access is denied!`);
         }
-        console.log(publicUrl);
         resolve({ url: publicUrl, name: filename });
     }));
 });

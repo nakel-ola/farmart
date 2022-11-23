@@ -18,7 +18,7 @@ const DetailsTemplate = (props: Props) => {
   return (
     <CardTemplate title={title} className="mt-8 pb-2">
       {list.map((item, index: number) => (
-        <div key={index} className="flex justify-between mt-3 mb-2">
+        <div key={index} className="flex flex-col md:flex-row justify-between md:mt-3 md:mb-2">
           {item.map((prop: ItemDetails, i: number) => (
             <div
               key={i}

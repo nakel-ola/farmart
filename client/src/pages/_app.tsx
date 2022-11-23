@@ -1,18 +1,14 @@
-import { ApolloProvider, gql } from "@apollo/client";
-import cookies from "next-cookies";
+import { ApolloProvider } from "@apollo/client";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { Router } from "next/router";
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
 import PageLoader from "../components/PageLoader";
-import { initializeApollo, useApollo } from "../hooks/useApollo";
+import { useApollo } from "../hooks/useApollo";
 import Wrapper from "../layout/Wrapper";
-import { add } from "../redux/features/categorySlice";
-import { login, setCookies } from "../redux/features/userSlice";
-import { persistor, RootState, wrapper } from "../redux/store";
+import { wrapper } from "../redux/store";
 import "../styles/globals.css";
 import { ThemeProvider } from "../styles/theme";
 
@@ -40,19 +36,14 @@ function MyApp({ Component, ...others }: AppProps) {
         defaultTheme="light"
       >
         <Provider store={store}>
-          <PersistGate
-            persistor={persistor(store)}
-            loading={<PageLoader fill />}
-          >
-            <ApolloProvider client={client}>
-              <Wrapper>
-                <Toaster />
+          <ApolloProvider client={client}>
+            <Wrapper>
+              <Toaster />
 
-                <Component {...pageProps} />
-                {loading && <PageLoader />}
-              </Wrapper>
-            </ApolloProvider>
-          </PersistGate>
+              <Component {...pageProps} />
+              {loading && <PageLoader />}
+            </Wrapper>
+          </ApolloProvider>
         </Provider>
       </ThemeProvider>
     </>

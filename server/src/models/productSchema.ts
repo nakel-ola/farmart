@@ -1,11 +1,12 @@
 import { model, Schema } from "mongoose";
 
+
 const reviewSchema = new Schema({
   name: {
     type: String,
     required: true,
   },
-  photoUrl: {
+  title: {
     type: String,
     required: false,
   },
@@ -13,8 +14,23 @@ const reviewSchema = new Schema({
     type: String,
     required: true,
   },
+  rating: {
+    type: Number,
+    required: true
+  },
   userId: {
     type: String,
+    required: true,
+  },
+});
+
+const ratingSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  value: {
+    type: Number,
     required: true,
   },
 });
@@ -61,51 +77,54 @@ const currencySchema = new Schema({
   },
 });
 
-const productSchema = new Schema({
-  title: {
-    type: String,
-    required: true,
+const productSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    slug: {
+      type: String,
+      required: true,
+    },
+    category: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: imageSchema,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    stock: {
+      type: Number,
+      required: true,
+    },
+    rating: {
+      type: [ratingSchema],
+      required: true,
+    },
+    discount: {
+      type: String,
+      required: false,
+    },
+    currency: {
+      type: currencySchema,
+      required: true,
+    },
+    reviews: {
+      type: [reviewSchema],
+      required: false,
+    },
   },
-  slug: {
-    type: String,
-    required: true,
-  },
-  category: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  image: {
-    type: imageSchema,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  stock: {
-    type: Number,
-    required: true,
-  },
-  rating: {
-    type: Number,
-    required: true,
-  },
-  discount: {
-    type: String,
-    required: false,
-  },
-  currency: {
-    type: currencySchema,
-    required: true,
-  },
-  reviews: {
-    type: [reviewSchema],
-    required: false,
-  },
-}, { timestamps: true });
+  { timestamps: true }
+);
 
 export default model("products", productSchema);

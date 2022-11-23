@@ -76,7 +76,10 @@ const SearchQuery = gql`
         }
         price
         stock
-        rating
+        rating {
+          name
+          value
+        }
         updatedAt
         createdAt
       }

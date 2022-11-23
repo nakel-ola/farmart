@@ -5,7 +5,7 @@ function LocationCard() {
   return (
     <CardTemplate
       title="Delivery Details"
-      className="mt-[10px]"
+      className="mt-8"
     >
       <Card
         Icon={Truck}

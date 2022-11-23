@@ -8,9 +8,12 @@ import { graphqlUploadExpress } from "graphql-upload-minimal";
 import mongoose from "mongoose";
 import path from "path";
 import config from "./config";
+import { getListFiles } from "./helper/gcloud";
 import cors from "./middleware/cors";
 import resolvers from "./resolvers";
 import typeDefs from "./type-defs";
+
+// "dev": "tsc-watch --onSuccess \"node ./dist/index.js\""
 
 export const MemoryStore = MongoStore.create({
   mongoUrl: config.mongodb_uri,
@@ -23,23 +26,12 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: false }));
 app.use(cors);
 app.use(cookieParser());
+app.use(express.static(path.resolve(__dirname, "../public")));
+
+
 
 
 let production = false;
-
-let sessionOptions: SessionOptions = {
-  name: "auth",
-  secret: config.session_key,
-  resave: false,
-  store: MemoryStore,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: 604800000,
-    sameSite: "none",
-    httpOnly: true,
-    secure: process.env.NODE_ENV !== "development",
-  },
-};
 
 if (app.get("env") === "production") {
   app.set("trust proxy", 1); // trust first proxy
@@ -70,7 +62,6 @@ app.use((req, res, next) => {
   }
 });
 
-app.use(express.static(path.resolve(__dirname, "../public")));
 
 export const schema = buildSchema(print(typeDefs));
 

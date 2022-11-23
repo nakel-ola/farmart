@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import xss from "xss";
+import currencies from "../data/currencies.json";
 import clean from "../helper/clean";
 import ImageUplaod from "../helper/ImageUpload";
 import authenticated from "../middleware/authenticated";
@@ -93,7 +94,6 @@ const productSearch = async (
 
     let filter = clean({
       price: { $lte: price[1], $gte: price[0] },
-      rating: { $gte: rating },
       discount: discount ? { $in: discount } : null,
       category: category ? { $in: category } : null,
       stock: outOfStock ? 0 : null,
@@ -182,7 +182,8 @@ const createReview = authenticated(
         input = args.input,
         name = xss(input.name),
         productId = xss(input.productId),
-        photoUrl = xss(input.photoUrl),
+        title = xss(input.title),
+        rating = Number(xss(input.rating.toString())),
         message = xss(input.message);
 
       if (!mongoose.Types.ObjectId.isValid(productId)) {
@@ -192,13 +193,19 @@ const createReview = authenticated(
       const newReview = {
         name,
         userId,
-        photoUrl,
+        title,
+        rating,
         message,
       };
 
       await db.productSchema.updateOne(
         { _id: productId },
         { $push: { reviews: newReview } }
+      );
+
+      await db.productSchema.updateOne(
+        { "rating.name": rating },
+        { $inc: { "rating.$.value": 1 } }
       );
 
       return { msg: "Successfully added review" };
@@ -273,16 +280,29 @@ const createProduct = authenticated(
         image = input.image,
         price = Number(xss(`${input.price}`)),
         stock = Number(xss(`${input.stock}`)),
-        rating = 0,
-        currency = {
-          name: xss(input.currency.name),
-          symbol: xss(input.currency.symbol),
-          symbolNative: xss(input.currency.symbolNative),
-          decimalDigits: xss(`${input.currency.decimalDigits}`),
-          rounding: xss(`${input.currency.rounding}`),
-          code: xss(input.currency.code),
-          namePlural: xss(input.currency.namePlural),
-        },
+        rating = [
+          {
+            name: "5",
+            value: 0,
+          },
+          {
+            name: "4",
+            value: 0,
+          },
+          {
+            name: "3",
+            value: 0,
+          },
+          {
+            name: "2",
+            value: 0,
+          },
+          {
+            name: "1",
+            value: 0,
+          },
+        ],
+        currency = currencies[0],
         reviews = [];
 
       if (!admin) {
@@ -303,6 +323,8 @@ const createProduct = authenticated(
         currency,
         reviews,
       };
+
+      console.log(data);
       const newData = await db.productSchema.create(data);
       if (newData) {
         return { msg: "Created successfully" };

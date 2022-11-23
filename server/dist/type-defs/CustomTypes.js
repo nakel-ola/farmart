@@ -8,20 +8,5 @@ const CustomTypes = (0, graphql_tag_1.gql) `
   type ErrorMsg {
     error: String!
   }
-
-  input UploadFileInput {
-    dataUrl: String!
-    fileName: String!
-    mimeType: String!
-  }
-
-  type UploadFile {
-    url: String!
-    name: String!
-  }
-
-  extend type Mutation {
-    uploadFile(input: UploadFileInput!): UploadFile
-  }
 `;
 exports.default = CustomTypes;

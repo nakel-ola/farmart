@@ -4,7 +4,8 @@ import { useRouter } from "next/router";
 import React from "react";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { Currency } from "../../../typing";
+import { Currency, RatingType } from "../../../typing";
+import calculateRating from "../../helper/calculateRating";
 import {
   AddToFavorites,
   FavoriteQuery,
@@ -15,9 +16,10 @@ type Props = {
   title: string;
   price: number;
   category: string;
-  rating: number;
+  rating: Array<RatingType>;
   data: boolean;
   currency: Currency;
+  discount: string | null;
 };
 
 const TitleCard = ({
@@ -27,6 +29,7 @@ const TitleCard = ({
   rating,
   data,
   currency,
+  discount,
 }: Props) => {
   const router = useRouter();
 
@@ -67,22 +70,23 @@ const TitleCard = ({
     }
   };
 
+  let newRating = calculateRating(rating);
+
   return (
     <div className="w-[95%] md:w-[80%] mt-[10px] bg-white dark:bg-dark dark:shadow-black/30 pb-[12px] p-[5px] pt-[12px] shadow-sm rounded-lg pl-[23px]">
       <div className="flex items-center justify-between">
-        <p className="text-[1.2rem] text-black font-[600] dark:text-white">
-          {" "}
+        <p className="text-xl text-black font-medium dark:text-white">
           {title}
         </p>
 
-        <div className="w-[40px] h-[25px] rounded-lg mx-[5px] bg-red-600/10 flex items-center justify-center ">
-          <p className="text-red-600 font-semibold text-base"> -20%</p>
-        </div>
+        {discount && (
+          <div className="w-[40px] h-[25px] rounded-lg mx-[5px] bg-red-600/10 flex items-center justify-center ">
+            <p className="text-red-600 font-semibold text-base"> -{discount}%</p>
+          </div>
+        )}
       </div>
       <div className="flex items-center py-2 pr-[5px]">
-        <p className="text-base text-dark dark:text-white">
-          Category:{" "}
-        </p>
+        <p className="text-base text-dark dark:text-white">Category: </p>
         <p className="text-base text-blue-600 pl-2">
           {capitalizeFirstLetter(category)}
         </p>
@@ -94,7 +98,7 @@ const TitleCard = ({
 
       <div className="flex items-center justify-between pt-[5px] pr-[5px]">
         <span className="flex items-center">
-          {Array(rating)
+          {Array(Math.floor(newRating.average))
             .fill(0)
             .map((_, i) => (
               <Star1
@@ -104,7 +108,7 @@ const TitleCard = ({
                 className="text-[#f8b808] text-[20px]"
               />
             ))}
-          {Array(rating && 5 - rating)
+          {Array(5 - Math.floor(newRating.average))
             .fill(0)
             .map((_, i) => (
               <Star1

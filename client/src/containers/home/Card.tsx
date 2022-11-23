@@ -111,7 +111,7 @@ const Card = (props: any) => {
     description,
     title,
     currency,
-  };
+  } as any;
 
   const increment = () => {
     dispatch(

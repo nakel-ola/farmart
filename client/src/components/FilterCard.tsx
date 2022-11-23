@@ -58,9 +58,9 @@ const FilterCard = () => {
         setValue={setPrice}
       />
 
-      <Divider />
+      {/* <Divider />
 
-      <RatingCard setRating={setRating} rating={rating} />
+      <RatingCard setRating={setRating} rating={rating} /> */}
 
       <Divider />
 
@@ -242,7 +242,7 @@ const RatingCard = ({ rating, setRating }: RatingProps) => (
           {Array(item)
             .fill(1)
             .map((_, i) => (
-              <Star1 key={i} variant="Bold" className="text-yellow-500" />
+              <Star1 key={i} variant="Bold" className="text-yellow" />
             ))}
           {Array(5 - item)
             .fill(1)

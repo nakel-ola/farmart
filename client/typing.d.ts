@@ -13,6 +13,19 @@ export type Currency = {
   namePlural: string;
 };
 
+export type RatingType = {
+  name: string;
+  value: number;
+};
+
+export type ReviewType = {
+  id: string;
+  name: string;
+  message: string;
+  rating: number;
+  title: string;
+  userId: string;
+};
 export type Product = {
   id: string;
   title: string;
@@ -22,7 +35,8 @@ export type Product = {
   price: number;
   currency: Currency;
   stock: number;
-  rating: number;
+  rating: Array<RatingType>;
+  review: Array<ReviewType>
 };
 
 export interface Basket extends Product {
@@ -72,9 +86,9 @@ export type OrderType = {
   pickup: String;
   coupon: Coupon;
   phoneNumber: string;
-  products: OrderProduct[];
+  products: Array<OrderProduct>;
   address: AddressType;
-  progress: OrderProgress[];
+  progress: Array<OrderProgress>;
 };
 
 export type AddressType = {
@@ -100,7 +114,7 @@ export type InboxType = {
 export type InboxData = {
   page: number;
   totalItems: number;
-  results: InboxType[];
+  results: Array<InboxType>;
 };
 
 export type Coupon = {
@@ -122,7 +136,7 @@ export type OrdersData = {
   page: number;
   status?: string;
   totalItems: number;
-  results: OrderType[];
+  results: Array<OrderType>;
 };
 
 export type ErrorMsg = {

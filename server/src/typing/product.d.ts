@@ -75,7 +75,8 @@ export type CreateReviewArgs = {
   input: {
     name: string;
     productId: string;
-    photoUrl: string;
+    title: string;
+    rating: number;
     message: string;
   };
 };

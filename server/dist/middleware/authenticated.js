@@ -35,7 +35,7 @@ const authenticated = (fn) => (args, req, res, context, info) => __awaiter(void 
                 return fn(args, req, res, context, info);
             }
             else if (!req.admin && parse.auth) {
-                const data = yield getDb((_b = parse.grocery) !== null && _b !== void 0 ? _b : "", req.admin);
+                const data = yield getDb((_b = parse.auth) !== null && _b !== void 0 ? _b : "", req.admin);
                 req.userId = data.id;
                 req.blocked = data.block;
                 return fn(args, req, res, context, info);

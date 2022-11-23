@@ -39,7 +39,10 @@ export const ProductQuery = gql`
       }
       price
       stock
-      rating
+      rating {
+        name
+        value
+      }
       createdAt
       updatedAt
     }

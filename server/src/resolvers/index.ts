@@ -9,7 +9,6 @@ import FavoriteResolver from "./FavoriteResolver";
 import OrderResolver from "./OrderResolver";
 import ProductResolver from "./ProductResolver";
 import InboxResolver from "./InboxResolver";
-import UploadResolver from "./UploadResolver";
 
 const resolvers = {};
 export default merge(
@@ -24,5 +23,4 @@ export default merge(
   EmployeeResolver,
   CouponResolver,
   InboxResolver,
-  UploadResolver
 );

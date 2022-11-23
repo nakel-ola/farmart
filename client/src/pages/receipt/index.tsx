@@ -1,31 +1,32 @@
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import clsx from "clsx";
-import { Receipt21 } from "iconsax-react";
+import { Receipt21, ShoppingCart } from "iconsax-react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, MouseEvent, useState } from "react";
 import { toast } from "react-hot-toast";
-import { NumericFormat } from "react-number-format";
+import ReactLoading from "react-loading";
+import { NumericFormat as NumberFormat } from "react-number-format";
 import { useSelector } from "react-redux";
 import { GraphQLOrdersResponse, OrdersData, OrderType } from "../../../typing";
-import Header from "../../components/Header";
 import LoginCard from "../../components/LoginCard";
 import Pagination from "../../components/Pagination";
-import Table from "../../components/Table";
-import TableContent from "../../components/TableContent";
-import TableHeader from "../../components/TableHeader";
-import TableList from "../../components/TableList";
-import TableRow from "../../components/TableRow";
+import {
+  Header,
+  Table,
+  TableBody,
+  TableContent,
+  TableHead,
+  TableRow,
+} from "../../components/tables";
+import setting from "../../data/setting";
 import capitalizeFirstLetter from "../../helper/capitalizeFirstLetter";
 import roundUp from "../../helper/roundUp";
 import { statusColor } from "../../helper/statusColor";
 import truncate from "../../helper/truncate";
 import Layouts from "../../layout/Layouts";
 import { selectUser } from "../../redux/features/userSlice";
-import ReactLoading from "react-loading";
-import setting from "../../data/setting";
-
 
 export const OrdersQuery = gql`
   query Orders($input: OrdersInput!) {
@@ -146,21 +147,16 @@ export const FilterByStatus = gql`
   }
 `;
 
-const sortList: string[] = [
-  "All",
-  "Pending",
-  "Delivered",
-  "Canceled",
-];
-export const tableList: string[] = [
-  "Order Id",
-  "Status",
-  "Price",
-  "Date",
-  "Payment",
-  "Delivery",
-];
+const sortList: string[] = ["All", "Pending", "Delivered", "Canceled"];
 
+export const tableList: any[] = [
+  { title: "Order Id" },
+  { title: "Status" },
+  { title: "Price" },
+  { title: "Date" },
+  { title: "Payment" },
+  { title: "Delivery" },
+];
 let limit = 10;
 
 const Receipt: NextPage = () => {
@@ -260,14 +256,14 @@ const Receipt: NextPage = () => {
       <Head>
         <title>Receipt</title>
       </Head>
-      <Header title="History" />
       {user ? (
         <div className="h-full w-full flex items-center flex-col">
           {!loading ? (
-            (data?.orders as OrdersData)?.results?.length >= 1 ? (
-              <div className="w-[95%]">
-                <Table>
-                  <TableHeader
+            <div className="w-[95%] md:w-[90%]">
+              <Table
+                headerComponent={
+                  <Header
+                    width="w-[670px]"
                     title="Order History"
                     sortList={sortList}
                     activeSort={
@@ -275,17 +271,39 @@ const Receipt: NextPage = () => {
                         ? capitalizeFirstLetter(router.query.type.toString())
                         : active
                     }
-                    tableList={tableList}
                     searchValue={input}
                     onSearchChange={(e) => setInput(e.target.value)}
                     onSearchSubmit={handleSubmit}
                     onSortClick={handleSortClick}
                     placeholder="Search by order ID"
                   />
+                }
+                footerComponent={
+                  pageCount > 1 ? (
+                    <Pagination
+                      width="w-[670px]"
+                      pageCount={pageCount}
+                      forcePage={(data?.orders as OrdersData).page ?? 1}
+                      pageRangeDisplayed={10}
+                      breakLabel="•••"
+                      onPageChange={handlePageChange}
+                    />
+                  ) : null
+                }
+              >
+                <TableHead
+                  disableDivider={
+                    (data?.orders as OrdersData)?.results.length! > 0
+                      ? false
+                      : true
+                  }
+                  tableList={tableList}
+                />
 
-                  <TableList>
+                {(data?.orders as OrdersData)?.results?.length! > 0 ? (
+                  <TableBody disableDivider={pageCount > 1 ? false : true}>
                     {(data?.orders as OrdersData).results.map(
-                      (props: OrderType, i: number) => {
+                      (props, index: number) => {
                         const trueStatus = props.progress.filter(
                           (r) => r.checked
                         );
@@ -293,20 +311,21 @@ const Receipt: NextPage = () => {
                           trueStatus[trueStatus.length - 1]?.name ?? "Pending";
                         return (
                           <TableRow
-                            key={i}
+                            key={index}
                             onClick={() => {
                               router.push(`/receipt/${props.id}`);
                             }}
+                            className="cursor-pointer"
                           >
                             <TableContent>
-                              <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                              <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
                                 {props.orderId}
                               </p>
                             </TableContent>
                             <TableContent>
                               <p
                                 className={clsx(
-                                  "text-[0.9rem] font-medium text-center w800espace-nowrap py-[2px] px-2 rounded-lg",
+                                  "text-sm font-medium text-left whitespace-nowrap py-[2px] rounded-lg",
                                   statusColor(status)
                                 )}
                               >
@@ -318,19 +337,21 @@ const Receipt: NextPage = () => {
                                 )}
                               </p>
                             </TableContent>
+
                             <TableContent>
-                              <NumericFormat
+                              <NumberFormat
                                 thousandSeparator
                                 displayType="text"
                                 value={Number(props.totalPrice).toFixed(2)}
                                 prefix="$"
                                 renderText={(value: string) => (
-                                  <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap ml-2">
+                                  <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
                                     {value}
                                   </p>
                                 )}
                               />
                             </TableContent>
+
                             <TableContent>
                               <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
                                 {truncate(
@@ -354,42 +375,24 @@ const Receipt: NextPage = () => {
                         );
                       }
                     )}
-                  </TableList>
+                  </TableBody>
+                ) : null}
+              </Table>
 
-                  <div className="grid place-items-center w-full">
-                    {pageCount > 1 && (
-                      <Pagination
-                        pageCount={pageCount}
-                        forcePage={(data?.orders as OrdersData).page ?? 1}
-                        pageRangeDisplayed={10}
-                        breakLabel="•••"
-                        onPageChange={handlePageChange}
-                      />
-                    )}
-                  </div>
-                </Table>
-              </div>
-            ) : (
-              <div className="ml-[5px] h-[80%] w-full grid place-items-center">
-                <div className="flex items-center justify-center flex-col">
-                  <Receipt21
-                    size={100}
-                    className="text-5xl text-neutral-700 dark:text-neutral-400"
-                  />
-
-                  <p className="text-[1.2rem] text-slate-900 dark:text-white">
-                    No Order yet!!
-                  </p>
-
-                  <div
-                    className="w-[80%] h-[40px] bg-primary rounded-xl flex items-center justify-center m-[10px]  "
-                    onClick={() => router.back()}
-                  >
-                    <p className="text-white text-[1rem] p-[8px]">Go Back</p>
+              {(data?.orders as OrdersData)?.results?.length! === 0 ? (
+                <div className="grid my-10 place-items-center">
+                  <div className="flex items-center justify-center flex-col">
+                    <ShoppingCart
+                      size={100}
+                      className="text-neutral-700 dark:text-neutral-400"
+                    />
+                    <p className="text-neutral-700 dark:text-neutral-400 text-lg font-semibold my-1">
+                      No Orders Yet!
+                    </p>
                   </div>
                 </div>
-              </div>
-            )
+              ) : null}
+            </div>
           ) : (
             <div className="w-full h-[80%] grid place-items-center">
               <ReactLoading type="spinningBubbles" color={setting.primary} />

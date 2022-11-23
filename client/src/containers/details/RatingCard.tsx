@@ -1,105 +1,124 @@
-import { Star1 } from "iconsax-react";
-import React from "react";
-import CardTemplate from "../../components/CardTemplate";
+import { gql, useMutation } from "@apollo/client";
+import { ChangeEvent, FormEvent, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Button from "../../components/Button";
+import InputCard from "../../components/InputCard";
+import LoadingCard from "../../components/LoadingCard";
+import PopupTemplate from "../../components/PopupTemplate";
+import StarRating from "../../components/StarRating";
+import Textarea from "../../components/Textarea";
+import { remove } from "../../redux/features/dialogSlice";
 
-const progress = (total: number, value: number) => {
-  return (value / total) * 100;
-};
+interface Props {
+  title: string;
+  productId: string;
+}
 
-const rating = (value: number) => {
-  return Math.min(5, Math.max(0, value));
-};
+const ReviewMutation = gql`
+  mutation CreateReview($input: ReviewInput!) {
+    createReview(input: $input) {
+      msg
+    }
+  }
+`;
+const RatingCard = (props: Props) => {
+  const { title, productId } = props;
 
-const RatingCard = () => {
-  const items = [
-    {
-      name: "5",
-      value: 194,
-    },
-    {
-      name: "4",
-      value: 50,
-    },
-    {
-      name: "3",
-      value: 13,
-    },
-    {
-      name: "2",
-      value: 7,
-    },
-    {
-      name: "1",
-      value: 2,
-    },
-  ];
+  const dispatch = useDispatch();
 
-  let total = items.reduce((amount, item) => item.value + amount, 0);
+  const { user } = useSelector((store: any) => store.user);
+
+  const [form, setForm] = useState({
+    title: "",
+    message: "",
+    rating: 0,
+  });
+
+  const [createReview, { loading }] = useMutation(ReviewMutation);
+  const close = () => dispatch(remove({ type: "review" }));
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    console.log(form);
+    createReview({
+      variables: {
+        input: {
+          name: user?.name,
+          productId,
+          title: form.title,
+          message: form.message,
+          rating: form.rating,
+        },
+      },
+      onCompleted: (data) => {
+        close();
+        console.log(data);
+      },
+      onError: (data) => console.table(data),
+    });
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const target = e.target;
+    setForm({ ...form, [target.name]: target.value });
+  };
 
   return (
-    <CardTemplate title="Rating" className="mt-3">
-      <div className="flex justify-center w-[30%] flex-col m-2">
-        <div className="w-full h-[200px] bg-yellow/10 rounded-lg flex items-center justify-center flex-col">
-          <h1 className="text-yellow text-3xl font-bold my-2">
-            {rating(total)} / 5
-          </h1>
+    <PopupTemplate
+      title={`Review & Rating`}
+      className=""
+      onOutsideClick={close}
+    >
+      {!loading ? (
+        <form
+          onSubmit={handleSubmit}
+          className="py-[10px] grid place-items-center"
+        >
+          <InputCard
+            title=""
+            placeholder="Enter a title"
+            id="title"
+            name="title"
+            type="text"
+            value={form.title}
+            onChange={handleChange}
+          />
+          <Textarea
+            title=""
+            placeholder="Enter a review"
+            id="message"
+            name="message"
+            value={form.message}
+            onChange={handleChange}
+          />
 
-          <span className="flex items-center my-2">
-            {Array(4)
-              .fill(0)
-              .map((_, i) => (
-                <Star1
-                  key={i}
-                  size={25}
-                  variant="Bold"
-                  className="text-yellow text-[20px]"
-                />
-              ))}
-            {Array(4 && 5 - 4)
-              .fill(0)
-              .map((_, i) => (
-                <Star1
-                  key={i}
-                  size={25}
-                  variant="Bold"
-                  className="text-[#bdbdbd] text-[20px]"
-                />
-              ))}
-          </span>
+          <div className="w-[80%] py-2">
+            <p className="">How would you rate this products ?</p>
+            <StarRating
+              onClick={(value: number) =>
+                setForm({ ...form, rating: value + 1 })
+              }
+            />
+          </div>
 
-          <p className="my-2 text-lg">{total} verified ratings</p>
-        </div>
-        <div className="my-2">
-          {items.map((item, index) => (
-            <div key={index} className="flex items-center">
-              <div className="flex items-center flex-1">
-                <p className="px-2 text-lg font-semibold">{item.name}</p>
-                <span className="">
-                  <Star1
-                    size={25}
-                    variant="Bold"
-                    className="text-yellow text-[20px]"
-                  />
-                </span>
-
-                <p className="text-neutral-600 dark:text-neutral-400 mx-2">
-                  ({item.value})
-                </p>
-              </div>
-
-              <span className="w-[150px] rounded-full h-3 bg-slate-100  flex overflow-hidden">
-                <span
-                  className="bg-yellow h-full"
-                  style={{
-                    width: progress(total, item.value) + "px",
-                  }}
-                ></span>
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </CardTemplate>
+          <div className="flex items-center justify-center mt-5">
+            <Button
+              type="button"
+              className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white mx-2"
+              onClick={close}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" className="bg-primary text-white mx-2">
+              Submit
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <LoadingCard title="Creating review"  />
+      )}
+    </PopupTemplate>
   );
 };
 

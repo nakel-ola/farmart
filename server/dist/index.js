@@ -14,6 +14,7 @@ const graphql_upload_minimal_1 = require("graphql-upload-minimal");
 const mongoose_1 = __importDefault(require("mongoose"));
 const path_1 = __importDefault(require("path"));
 const config_1 = __importDefault(require("./config"));
+require("./helper/gcloud");
 const cors_1 = __importDefault(require("./middleware/cors"));
 const resolvers_1 = __importDefault(require("./resolvers"));
 const type_defs_1 = __importDefault(require("./type-defs"));
@@ -27,20 +28,8 @@ app.use(express_1.default.json({ limit: "50mb" }));
 app.use(express_1.default.urlencoded({ limit: "50mb", extended: false }));
 app.use(cors_1.default);
 app.use((0, cookie_parser_1.default)());
+app.use(express_1.default.static(path_1.default.resolve(__dirname, "../public")));
 let production = false;
-let sessionOptions = {
-    name: "auth",
-    secret: config_1.default.session_key,
-    resave: false,
-    store: exports.MemoryStore,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 604800000,
-        sameSite: "none",
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== "development",
-    },
-};
 if (app.get("env") === "production") {
     app.set("trust proxy", 1); // trust first proxy
     production = true;
@@ -68,7 +57,6 @@ app.use((req, res, next) => {
         next();
     }
 });
-app.use(express_1.default.static(path_1.default.resolve(__dirname, "../public")));
 exports.schema = (0, graphql_1.buildSchema)((0, graphql_1.print)(type_defs_1.default));
 mongoose_1.default
     .connect(config_1.default.mongodb_uri)

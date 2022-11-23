@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const xss_1 = __importDefault(require("xss"));
+const currencies_json_1 = __importDefault(require("../data/currencies.json"));
 const clean_1 = __importDefault(require("../helper/clean"));
 const ImageUpload_1 = __importDefault(require("../helper/ImageUpload"));
 const authenticated_1 = __importDefault(require("../middleware/authenticated"));
@@ -75,7 +76,6 @@ const productSearch = (args) => __awaiter(void 0, void 0, void 0, function* () {
             : 0, offset = Number((0, xss_1.default)((_e = args.input.offset.toString()) !== null && _e !== void 0 ? _e : "0")), limit = Number((0, xss_1.default)((_f = args.input.limit.toString()) !== null && _f !== void 0 ? _f : "10")) + offset, outOfStock = (_g = args.input) === null || _g === void 0 ? void 0 : _g.outOfStock;
         let filter = (0, clean_1.default)({
             price: { $lte: price[1], $gte: price[0] },
-            rating: { $gte: rating },
             discount: discount ? { $in: discount } : null,
             category: category ? { $in: category } : null,
             stock: outOfStock ? 0 : null,
@@ -144,17 +144,19 @@ const deleteCategories = (0, authenticated_1.default)((args, req) => __awaiter(v
 }));
 const createReview = (0, authenticated_1.default)((args, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let userId = req.userId, input = args.input, name = (0, xss_1.default)(input.name), productId = (0, xss_1.default)(input.productId), photoUrl = (0, xss_1.default)(input.photoUrl), message = (0, xss_1.default)(input.message);
+        let userId = req.userId, input = args.input, name = (0, xss_1.default)(input.name), productId = (0, xss_1.default)(input.productId), title = (0, xss_1.default)(input.title), rating = Number((0, xss_1.default)(input.rating.toString())), message = (0, xss_1.default)(input.message);
         if (!mongoose_1.default.Types.ObjectId.isValid(productId)) {
             throw new Error("ID must be a valid");
         }
         const newReview = {
             name,
             userId,
-            photoUrl,
+            title,
+            rating,
             message,
         };
         yield models_1.default.productSchema.updateOne({ _id: productId }, { $push: { reviews: newReview } });
+        yield models_1.default.productSchema.updateOne({ "rating.name": rating }, { $inc: { "rating.$.value": 1 } });
         return { msg: "Successfully added review" };
     }
     catch (e) {
@@ -198,15 +200,28 @@ const reviews = (args) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const createProduct = (0, authenticated_1.default)((args, req) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let admin = req.admin, input = args.input, title = (0, xss_1.default)(input.title), slug = (0, xss_1.default)(input.slug), category = (0, xss_1.default)(input.category), description = (0, xss_1.default)(input.description), image = input.image, price = Number((0, xss_1.default)(`${input.price}`)), stock = Number((0, xss_1.default)(`${input.stock}`)), rating = 0, currency = {
-            name: (0, xss_1.default)(input.currency.name),
-            symbol: (0, xss_1.default)(input.currency.symbol),
-            symbolNative: (0, xss_1.default)(input.currency.symbolNative),
-            decimalDigits: (0, xss_1.default)(`${input.currency.decimalDigits}`),
-            rounding: (0, xss_1.default)(`${input.currency.rounding}`),
-            code: (0, xss_1.default)(input.currency.code),
-            namePlural: (0, xss_1.default)(input.currency.namePlural),
-        }, reviews = [];
+        let admin = req.admin, input = args.input, title = (0, xss_1.default)(input.title), slug = (0, xss_1.default)(input.slug), category = (0, xss_1.default)(input.category), description = (0, xss_1.default)(input.description), image = input.image, price = Number((0, xss_1.default)(`${input.price}`)), stock = Number((0, xss_1.default)(`${input.stock}`)), rating = [
+            {
+                name: "5",
+                value: 0,
+            },
+            {
+                name: "4",
+                value: 0,
+            },
+            {
+                name: "3",
+                value: 0,
+            },
+            {
+                name: "2",
+                value: 0,
+            },
+            {
+                name: "1",
+                value: 0,
+            },
+        ], currency = currencies_json_1.default[0], reviews = [];
         if (!admin) {
             throw new Error("You don't have permission to create products");
         }
@@ -223,6 +238,7 @@ const createProduct = (0, authenticated_1.default)((args, req) => __awaiter(void
             currency,
             reviews,
         };
+        console.log(data);
         const newData = yield models_1.default.productSchema.create(data);
         if (newData) {
             return { msg: "Created successfully" };
