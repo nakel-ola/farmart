@@ -27,13 +27,16 @@ const authenticated =
       if (req.headers.cookie) {
         let parse = cookie.parse(req.headers.cookie);
 
-        if (req.admin && parse.auth_admin) {
-          const data = await getDb(parse.auth_admin ?? "", req.admin);
+        let admin = parse[config.admin_session_name] ?? "";
+        let client = parse[config.client_session_name] ?? "";
+
+        if (req.admin && admin) {
+          const data = await getDb(admin, req.admin);
           req.userId = data.id;
           req.level = data.level;
           return fn(args, req, res, context, info);
-        } else if (!req.admin && parse.auth) {
-          const data = await getDb(parse.auth ?? "", req.admin);
+        } else if (!req.admin && client) {
+          const data = await getDb(client, req.admin);
           req.userId = data.id;
           req.blocked = data.block;
           return fn(args, req, res, context, info);

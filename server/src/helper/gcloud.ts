@@ -3,29 +3,19 @@ import type { FileUpload } from "graphql-upload-minimal";
 import path from "path";
 import { format } from "util";
 import config from "../config";
-const serviceKey = path.join(__dirname, "../data/farmart-8bdb8-firebase-adminsdk-dy37a-08706b1478.json")
+const serviceKey = path.join(__dirname, config.storage_credentials_path)
 
 const storage = new Storage({
   keyFilename: serviceKey,
-  projectId: config.firebase_project_id
+  projectId: config.storage_project_id
 });
-// const storage = new Storage({
-//   projectId: config.firebase_project_id,
-//   token: config.firebase_token,
-//   credentials: {
-//     private_key: `${config.firebase_private_key}`,
-//     client_email: config.firebase_client_email,
-//     client_id: config.firebase_client_id,
-//     token_url: config.firebase_token_url,
-//   },
-// });
 
 type ImageUploadType = {
   url: string;
   name: string;
 };
 
-export const bucket = storage.bucket(config.firebase_bucket_name);
+export const bucket = storage.bucket(config.storage_bucket_name);
 
 export const getListFiles = async () => {
   try {

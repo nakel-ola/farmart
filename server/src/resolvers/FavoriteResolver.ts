@@ -50,9 +50,9 @@ const favorite = authenticated(async (args, req) => {
     const favorite = await db.favoriteSchema.findOne({ userId });
 
     const data = favorite?.data?.find((p) => p === id);
-    if (data === undefined) {
-      throw new Error("Product not Found");
-    }
+    // if (data === undefined) {
+    //   throw new Error("Product not Found");
+    // }
     return { id: data } ?? null;
   } catch (e) {
     throw new Error(e.message);

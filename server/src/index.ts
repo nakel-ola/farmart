@@ -8,12 +8,10 @@ import { graphqlUploadExpress } from "graphql-upload-minimal";
 import mongoose from "mongoose";
 import path from "path";
 import config from "./config";
-import { getListFiles } from "./helper/gcloud";
 import cors from "./middleware/cors";
 import resolvers from "./resolvers";
 import typeDefs from "./type-defs";
 
-// "dev": "tsc-watch --onSuccess \"node ./dist/index.js\""
 
 export const MemoryStore = MongoStore.create({
   mongoUrl: config.mongodb_uri,
@@ -28,9 +26,6 @@ app.use(cors);
 app.use(cookieParser());
 app.use(express.static(path.resolve(__dirname, "../public")));
 
-
-
-
 let production = false;
 
 if (app.get("env") === "production") {
@@ -39,11 +34,13 @@ if (app.get("env") === "production") {
 }
 
 app.use((req, res, next) => {
-  const allowports = config.allowport.split(",");
+  const allowports = [config.client_url,config.admin_url];
   if (allowports.find((port) => port === req.header("Origin"))) {
     let options: SessionOptions = {
       name:
-        req.headers.origin === config.admin_url ? "auth_admin" : "auth",
+        req.headers.origin === config.admin_url
+          ? config.admin_session_name
+          : config.client_session_name,
       secret: config.session_key,
       resave: false,
       store: MemoryStore,
@@ -62,7 +59,6 @@ app.use((req, res, next) => {
   }
 });
 
-
 export const schema = buildSchema(print(typeDefs));
 
 mongoose
@@ -74,7 +70,7 @@ mongoose
       graphqlHTTP({
         schema,
         rootValue: resolvers,
-        graphiql: true,
+        graphiql: !production
       })
     );
     app.listen(config.port, () =>

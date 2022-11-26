@@ -13,6 +13,7 @@ const httpLink = createUploadLink({
   credentials: "include",
   fetchOptions: {
     credentials: "include",
+    
   }
 })
 

@@ -1,7 +1,6 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import { MessageText1, Star1 } from "iconsax-react";
-import React, { FormEvent, useState } from "react";
-import { IoCloseCircle } from "react-icons/io5";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RatingType, ReviewType } from "../../../typing";
 import CardTemplate from "../../components/CardTemplate";
@@ -10,14 +9,6 @@ import calculateRating, {
   RatingReturnValue,
 } from "../../helper/calculateRating";
 import { add } from "../../redux/features/dialogSlice";
-
-const ReviewMutation = gql`
-  mutation CreateReview($input: ReviewInput!) {
-    createReview(input: $input) {
-      msg
-    }
-  }
-`;
 
 const ReviewQuery = gql`
   query Reviews($productId: ID!) {
@@ -34,10 +25,11 @@ const ReviewQuery = gql`
 interface Props {
   productId: string;
   rating: Array<RatingType>;
+  reload: boolean;
+  setReload: React.Dispatch<React.SetStateAction<boolean>>
 }
-const ReviewCard = ({ productId, rating }: Props) => {
+const ReviewCard = ({ productId, rating,reload,setReload }: Props) => {
   const dispatch = useDispatch();
-  const [input, setInput] = useState("");
 
   const { user } = useSelector((store: any) => store.user);
 
@@ -47,35 +39,12 @@ const ReviewCard = ({ productId, rating }: Props) => {
     onError: (err) => console.table(err),
   });
 
-  const [createReview] = useMutation(ReviewMutation, {
-    variables: {
-      input: {
-        name: user?.name,
-        productId,
-        photoUrl: user?.photoUrl,
-        message: input,
-      },
-    },
-    onCompleted: () => {
-      setInput("");
-      refetch();
-    },
-    onError: (e) => console.log(e),
-  });
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    createReview({
-      variables: {
-        input: {
-          name: user?.name,
-          productId,
-          photoUrl: user?.photoUrl,
-          message: input,
-        },
-      },
-    });
-  };
+  useEffect(() => {
+    if (reload) {
+      refetch({ productId });
+      setReload(false);
+    }
+  }, [productId, refetch, reload, setReload]);
 
   const newRating = calculateRating(rating);
 
@@ -94,7 +63,8 @@ const ReviewCard = ({ productId, rating }: Props) => {
           {newRating.total > 0 || data?.reviews?.length > 0 ? (
             <>
               <RatingCard rating={newRating} />
-              <div className="pb-2 pl-[15px] pr-[8px] max-h-[300px] overflow-y-scroll">
+              <Divider />
+              <div className="pb-2 pl-[15px] pr-[8px]">
                 {(data?.reviews as Array<ReviewType>)?.map(
                   (review: any, index: number) => (
                     <>

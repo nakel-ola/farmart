@@ -3,12 +3,10 @@ import type { Upload } from "graphql-upload-minimal";
 import jwt from "jsonwebtoken";
 import { merge } from "lodash";
 import mongoose from "mongoose";
-import { v4 } from "uuid";
 import xss from "xss";
 import config from "../config";
 import { invitationMail, passwordChangeMail, verificationMail } from "../data/emailData";
 import { nanoid } from "../helper";
-import clean from "../helper/clean";
 import emailer from "../helper/emailer";
 import generateCode from "../helper/generateCode";
 import ImageUplaod from "../helper/ImageUpload";
@@ -33,9 +31,6 @@ import type {
 const employeeRegister = async (
   args,
   req: ReqBody,
-  res,
-  context,
-  info
 ): Promise<EmployeeTypes> => {
   try {
     let name = xss(args.input.name),
@@ -192,9 +187,9 @@ const employeeForgetPassword = async (
     await db.validateSchema.create(obj);
 
     await emailer({
-      from: '"Grocery Team" noreply@grocery.com',
+      from: config.email_from,
       to: email,
-      subject: "Your Grocery app verification code",
+      subject: `Your ${config.app_name} app verification code`,
       text: null,
       html: verificationMail({ code: id, name }),
     });
@@ -258,7 +253,7 @@ const employeeChangePassword = async (
     await db.validateSchema.deleteOne({ email, name });
 
     await emailer({
-      from: '"Grocery Team" noreply@grocery.com',
+      from: config.email_from,
       to: email,
       subject: "Your password was changed",
       text: null,
@@ -316,7 +311,7 @@ const employeeUpdatePassword = authenticated(
       });
 
       await emailer({
-        from: '"Grocery Team" noreply@grocery.com',
+        from: config.email_from,
         to: email,
         subject: "	Your password was changed",
         text: null,
@@ -536,9 +531,9 @@ const createEmployeeInvite = authenticated(
       console.log(link);
 
       await emailer({
-        from: '"Grocery Team" noreply@grocery.com',
+        from: config.email_from,
         to: email,
-        subject: "Your Grocery app verification code",
+        subject: `Your ${config.app_name} app verification code`,
         text: null,
         html: invitationMail({ link  }),
       });

@@ -43,7 +43,11 @@ export const ProductQuery = gql`
 function Details() {
   const router = useRouter();
 
-  const { data: item, loading } = useQuery(ProductQuery, {
+  const {
+    data: item,
+    loading,
+    refetch,
+  } = useQuery(ProductQuery, {
     variables: { slug: router.query.slug },
     onError: (err: any) => console.table(err),
   });
@@ -51,7 +55,15 @@ function Details() {
   const data = item && item.product;
 
   const [error, setError] = useState<string>("");
+  const [reload, setReload] = useState<boolean>(false);
   const dialogState = useSelector(selectDialog);
+
+  const handleRefetch = () => {
+    setReload(true);
+    refetch({
+      slug: router.query.slug,
+    });
+  };
 
   useEffect(() => {
     if (loading && data) {
@@ -92,14 +104,26 @@ function Details() {
 
               <DescriptionCard description={data?.description} />
 
-              <ReviewCard productId={data.id as string} rating={data?.rating} />
+              <ReviewCard
+                productId={data.id as string}
+                rating={data?.rating}
+                setReload={setReload}
+                reload={reload}
+              />
 
               {data.stock > 0 && <Footer {...data} setError={setError} />}
             </div>
           )
         )}
       </Layouts>
-      {dialogState.review.open && <RatingCard title={data?.title} productId={data.id as string} />}
+
+      {dialogState.review.open && (
+        <RatingCard
+          title={data?.title}
+          productId={data.id as string}
+          func={handleRefetch}
+        />
+      )}
     </>
   );
 }

@@ -3,15 +3,13 @@ import type { Upload } from "graphql-upload-minimal";
 import jwt from "jsonwebtoken";
 import { merge } from "lodash";
 import mongoose from "mongoose";
-import { v4 } from "uuid";
 import xss from "xss";
 import config from "../config";
 import {
   passwordChangeMail,
   verificationMail,
-  welcomeMsg
+  welcomeMsg,
 } from "../data/emailData";
-import { nanoidV2 } from "../helper";
 import emailer from "../helper/emailer";
 import generateCode from "../helper/generateCode";
 import ImageUplaod from "../helper/ImageUpload";
@@ -24,7 +22,7 @@ import type {
   RegisterArgs,
   UserDataType,
   UsersArgs,
-  UserType
+  UserType,
 } from "../typing/auth";
 import type { Msg } from "../typing/custom";
 import type {
@@ -33,7 +31,7 @@ import type {
   LoginArgs,
   UpdatePasswordArgs,
   ValidateCodeArgs,
-  ValidationTokenType
+  ValidationTokenType,
 } from "../typing/employee";
 
 const register = async (
@@ -78,9 +76,9 @@ const register = async (
     (req.session as any).auth = token;
 
     await emailer({
-      from: '"Grocery Team" noreply@grocery.com',
+      from: config.email_from,
       to: email,
-      subject: "Welcome to the Grocery family!",
+      subject: `Welcome to the ${config.app_name} family!`,
       text: "",
       html: welcomeMsg({ name }),
     });
@@ -112,8 +110,12 @@ const login = async (args: LoginArgs, req: ReqBody): Promise<UserType> => {
 
     const user = await db.userSchema.findOne({ email });
 
-    if (!user || user?.blocked) {
+    if (!user) {
       throw new Error("Something went wrong");
+    }
+
+    if (user?.blocked) {
+      throw new Error("Account blocked");
     }
 
     const isPassword = compareSync(password, user.password);
@@ -148,7 +150,7 @@ const forgetPassword = async (
       email = xss(args.input.email);
 
     // let id = nanoidV2("0123456789", 5, 8);
-    let id = generateCode(11111, 99999)
+    let id = generateCode(11111, 99999);
 
     const user = await db.userSchema.findOne({ email, name });
 
@@ -166,15 +168,14 @@ const forgetPassword = async (
     await db.validateSchema.create(obj);
 
     await emailer({
-      from: '"Grocery Team" noreply@grocery.com',
+      from: config.email_from,
       to: email,
-      subject: "Your Grocery app verification code",
+      subject: `Your ${config.app_name} app verification code`,
       text: null,
       html: verificationMail({ code: id, name }),
     });
 
-
-    console.log(id)
+    console.log(id);
 
     return { validationToken: id.toString() };
   } catch (e) {
@@ -197,7 +198,6 @@ const validateCode = async (
       validationToken,
     });
 
-    
     if (!validate) {
       return { validate: false };
     }
@@ -248,7 +248,7 @@ const changePassword = async (
     await db.validateSchema.deleteOne({ email, name });
 
     await emailer({
-      from: '"Grocery Team" noreply@grocery.com',
+      from: config.email_from,
       to: email,
       subject: "Your password was changed",
       text: null,
@@ -325,7 +325,6 @@ const updatePassword = authenticated(
 
       req.res.clearCookie("auth");
 
-
       req.session.destroy((err) => {
         if (err) {
           throw new Error(err.message);
@@ -340,13 +339,13 @@ const updatePassword = authenticated(
 
       (req.session as any).auth = token;
 
-      // await emailer({
-      //   from: '"Grocery Team" noreply@grocery.com',
-      //   to: email,
-      //   subject: "	Your password was changed",
-      //   text: null,
-      //   html: passwordChangeMail({ name: user.name, email }),
-      // });
+      await emailer({
+        from: '"Grocery Team" noreply@grocery.com',
+        to: email,
+        subject: "	Your password was changed",
+        text: null,
+        html: passwordChangeMail({ name: user.name, email }),
+      });
 
       return merge({ __typename: "User" }, user) as any;
     } catch (e) {

@@ -1,3 +1,4 @@
+import type { info } from "console";
 import mongoose from "mongoose";
 import xss from "xss";
 import currencies from "../data/currencies.json";
@@ -29,7 +30,12 @@ const products = async (
     let genre = args.input.genre ? xss(args.input.genre) : null,
       offset = Number(xss(args.input.offset.toString() ?? "0")),
       limit = Number(xss(args.input.limit.toString() ?? "10")) + offset,
-      outOfStock = args.input?.outOfStock;
+      outOfStock = args.input?.outOfStock,
+      admin = req.admin;
+
+      if(outOfStock && !admin) {
+        throw new Error("You dont have admin permission")
+      }
 
     let filter = clean({
       stock: outOfStock ? 0 : null,
@@ -44,7 +50,7 @@ const products = async (
     };
     return newData;
   } catch (e) {
-    console.log(e);
+    // console.log(e);
     throw new Error(e.message);
   }
 };
@@ -204,7 +210,7 @@ const createReview = authenticated(
       );
 
       await db.productSchema.updateOne(
-        { "rating.name": rating },
+        { _id: productId, "rating.name": rating },
         { $inc: { "rating.$.value": 1 } }
       );
 

@@ -1,3 +1,5 @@
+import config from "../config";
+
 export const welcomeMsg = ({
   name,
 }: { name: string }) => `<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
@@ -315,7 +317,7 @@ export const welcomeMsg = ({
                                               >
                                                 <img
                                                   src="https://cdn.dribbble.com/users/230124/screenshots/15645740/media/5712571f79a059e26b5e4dd286598452.jpg?compress=1&resize=120x100&vertical=top"
-                                                  alt="Grocery"
+                                                  alt="${config.app_name}"
                                                 />
                                               </a>
                                             </td>
@@ -377,7 +379,7 @@ export const welcomeMsg = ({
                                               <a
                                                 href="#"
                                                 style="color: #0000ee"
-                                                >grocery.com</a
+                                                >${config.app_name.toLowerCase()}.com</a
                                               >, <b>#1 online marketplace</b>.
                                               We are delighted to have you as a
                                               customer!
@@ -489,7 +491,7 @@ export const welcomeMsg = ({
                                               "
                                             >
                                               <div style="padding-top: 10px">
-                                                Thanks,<br />The Grocery Team
+                                                Thanks,<br />The ${config.app_name} Team
                                               </div>
                                             </td>
                                           </tr>
@@ -550,7 +552,7 @@ export const welcomeMsg = ({
                           word-break: normal;
                         "
                       >
-                        © 2022 Grocery Inc.
+                        © 2022 ${config.app_name} Inc.
                       </div>
                     </td>
                   </tr>
@@ -884,7 +886,7 @@ export const verificationMail = ({
                                               >
                                                 <img
                                                   src="https://cdn.dribbble.com/users/230124/screenshots/15645740/media/5712571f79a059e26b5e4dd286598452.jpg?compress=1&resize=120x100&vertical=top"
-                                                  alt="Grocery"
+                                                  alt="${config.app_name}"
                                                 />
                                               </a>
                                             </td>
@@ -1006,7 +1008,7 @@ export const verificationMail = ({
                                                   text-decoration: underline;
                                                   word-break: break-word;
                                                 "
-                                                >Grocery Support</a
+                                                >${config.app_name} Support</a
                                               >
                                               if you did not authorize this
                                               change.
@@ -1029,7 +1031,7 @@ export const verificationMail = ({
                                               "
                                             >
                                               <div style="padding-top: 10px">
-                                                Thanks,<br />The Grocery Team
+                                                Thanks,<br />The ${config.app_name} Team
                                               </div>
                                             </td>
                                           </tr>
@@ -1090,7 +1092,7 @@ export const verificationMail = ({
                           word-break: normal;
                         "
                       >
-                        © 2022 Grocery Inc.
+                        © 2022 ${config.app_name} Inc.
                       </div>
                     </td>
                   </tr>
@@ -1425,7 +1427,7 @@ export const passwordChangeMail = ({
                                               >
                                                 <img
                                                   src="https://cdn.dribbble.com/users/230124/screenshots/15645740/media/5712571f79a059e26b5e4dd286598452.jpg?compress=1&resize=120x100&vertical=top"
-                                                  alt="Grocery"
+                                                  alt="${config.app_name}"
                                                 />
                                               </a>
                                             </td>
@@ -1530,7 +1532,7 @@ export const passwordChangeMail = ({
                                                   text-decoration: underline;
                                                   word-break: break-word;
                                                 "
-                                                >Grocery Support</a
+                                                >${config.app_name} Support</a
                                               >
                                               if you did not authorize this
                                               change.
@@ -1553,7 +1555,7 @@ export const passwordChangeMail = ({
                                               "
                                             >
                                               <div style="padding-top: 10px">
-                                                Thanks,<br />The Grocery Team
+                                                Thanks,<br />The ${config.app_name} Team
                                               </div>
                                             </td>
                                           </tr>
@@ -1614,7 +1616,7 @@ export const passwordChangeMail = ({
                           word-break: normal;
                         "
                       >
-                        © 2022 Grocery Inc.
+                        © 2022 ${config.app_name} Inc.
                       </div>
                     </td>
                   </tr>
@@ -1944,7 +1946,7 @@ export const invitationMail = ({ link }: { link: string }) => `
                                               <a href="#">
                                                 <img
                                                   src="https://cdn.dribbble.com/users/230124/screenshots/15645740/media/5712571f79a059e26b5e4dd286598452.jpg?compress=1&resize=120x100&vertical=top"
-                                                  alt="Grocery"
+                                                  alt="${config.app_name}"
                                                 />
                                               </a>
                                             </td>
@@ -1999,7 +2001,7 @@ export const invitationMail = ({ link }: { link: string }) => `
                                               "
                                             >
                                               <b>Olamilekan Nunu</b> has invited
-                                              you to collaborate <b>Grocery</b>
+                                              you to collaborate <b>${config.app_name}</b>
                                             </td>
                                           </tr>
                                           <tr>
@@ -2110,7 +2112,7 @@ export const invitationMail = ({ link }: { link: string }) => `
                                               "
                                             >
                                               <div style="padding-top: 10px">
-                                                Thanks,<br />The Grocery Team
+                                                Thanks,<br />The ${config.app_name} Team
                                               </div>
                                             </td>
                                           </tr>
@@ -2171,7 +2173,7 @@ export const invitationMail = ({ link }: { link: string }) => `
                           word-break: normal;
                         "
                       >
-                        © 2022 Grocery Inc.
+                        © 2022 ${config.app_name} Inc.
                       </div>
                     </td>
                   </tr>

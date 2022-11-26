@@ -12,6 +12,7 @@ import { remove } from "../../redux/features/dialogSlice";
 interface Props {
   title: string;
   productId: string;
+  func?(): void;
 }
 
 const ReviewMutation = gql`
@@ -22,7 +23,7 @@ const ReviewMutation = gql`
   }
 `;
 const RatingCard = (props: Props) => {
-  const { title, productId } = props;
+  const { title, productId,func } = props;
 
   const dispatch = useDispatch();
 
@@ -53,6 +54,7 @@ const RatingCard = (props: Props) => {
       },
       onCompleted: (data) => {
         close();
+        func?.();
         console.log(data);
       },
       onError: (data) => console.table(data),

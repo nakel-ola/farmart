@@ -1,4 +1,4 @@
-import { merge } from "lodash";
+import merge from "lodash.merge";
 import AddressResolver from "./AddressResolver";
 import AuthResolver from "./AuthResolver";
 import BannersResolver from "./BannersResolver";

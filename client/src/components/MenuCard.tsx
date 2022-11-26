@@ -22,11 +22,11 @@ const MenuCard = ({
     <div
       className={
         toggle
-          ? "fixed top-0 right-0 h-screen w-full md:hidden bg-black/50 z-[9999999]"
+          ? "fixed top-0 right-0 h-screen w-full lg:hidden bg-black/50 z-[9999999]"
           : "-z-50"
       }
     >
-      <div ref={ref} className="h-full bg-white dark:bg-dark w-[70%] px-2">
+      <div ref={ref} className="h-full bg-white dark:bg-dark w-[70%] md:w-[50%] px-2">
         <div className="h-[60px] py-[10px] flex items-center justify-between">
           <div
             className="h-[50px] shrink-0 flex items-center justify-center"

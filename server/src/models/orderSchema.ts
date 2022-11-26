@@ -34,6 +34,7 @@ const couponSchema = new Schema(
   },
   { timestamps: true }
 );
+
 const productSchema = new Schema(
   {
     id: {

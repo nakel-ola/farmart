@@ -1,8 +1,10 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
+import { useRouter } from "next/router";
 import { ReactNode } from "react";
 import { useDispatch } from "react-redux";
+import { LogoutMutation } from "../components/Sidebar";
 import { add } from "../redux/features/categorySlice";
-import { login } from "../redux/features/userSlice";
+import { login, logout } from "../redux/features/userSlice";
 
 export const UserQuery = gql`
   query User {
@@ -37,11 +39,30 @@ export const CategoriesQuery = gql`
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
   const dispatch = useDispatch();
+  const router = useRouter();
+  const [logOut] = useMutation(LogoutMutation);
+  const client = useApolloClient();
+
+  const handleLogout = async () => {
+    await logOut({
+      onCompleted: () => {
+        client.resetStore().then(() => {
+          dispatch(logout());
+          router.push("/");
+        });
+      },
+      onError: (er) => console.table(er),
+    });
+  };
 
   useQuery(UserQuery, {
-    onCompleted: (data) => {
+    onCompleted: async (data) => {
       if (data.user?.__typename !== "ErrorMsg") {
-        dispatch(login(data.user));
+        if (!data.user.blocked) {
+          dispatch(login(data.user));
+        } else {
+          await handleLogout()
+        }
       }
     },
     onError: (err) => {

@@ -97,6 +97,8 @@ const LogInCard = (props: { setLoading(value: boolean): void }) => {
     setLoading(false);
   };
 
+ 
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const target = e.target;
     setForm({ ...form, [target.name]: target.value });
