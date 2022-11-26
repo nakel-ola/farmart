@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm install && tsc",
-    "start": "nodemon ./src/index.ts",
+    "build": "npm install && tsc -p .",
+    "start": "nodemon ./dist/index.js",
     "dev": "nodemon ./src/index.ts"
   },
   "author": "Nunu Olamilekan",
