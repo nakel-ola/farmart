@@ -47,7 +47,6 @@ const fulfillOrder = async (session: any, headers: any) => {
     },
   })
     .then((data) => console.log(data))
-    .catch((err) => console.log(err));
 };
 
 export default async function handler(
