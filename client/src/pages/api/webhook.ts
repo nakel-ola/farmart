@@ -37,6 +37,7 @@ const fulfillOrder = async (session: any, headers: any) => {
     },
   };
 
+  console.log(process.env.SERVER_URL)
   await request({
     url: process.env.SERVER_URL!,
     document: PaymentQuery,
