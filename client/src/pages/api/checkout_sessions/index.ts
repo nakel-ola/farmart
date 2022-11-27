@@ -85,8 +85,8 @@ export default async function handler(
         payment_method_types: ["card"],
         billing_address_collection: "auto",
         line_items,
-        success_url: `http://localhost:3000/checkout?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `http://localhost:3000/checkout`,
+        success_url: `${process.env.HOST}/checkout?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.HOST}/checkout`,
         mode: "payment",
         metadata
       };
