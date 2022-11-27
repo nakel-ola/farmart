@@ -37,7 +37,6 @@ const fulfillOrder = async (session: any, headers: any) => {
     },
   };
 
-  console.log(process.env.SERVER_URL)
   await request({
     url: process.env.SERVER_URL!,
     document: PaymentQuery,
@@ -46,9 +45,7 @@ const fulfillOrder = async (session: any, headers: any) => {
       ...headers,
       userId: metadata.userId,
     },
-  })
-    .then((data) => console.log(data))
-    .catch((data) => console.log(data))
+  }).then((data) => console.log(data));
 };
 
 export default async function handler(
