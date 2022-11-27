@@ -1,8 +1,7 @@
 import { gql } from "@apollo/client";
+import { request } from "graphql-request";
 import { buffer } from "micro";
 import { NextApiRequest, NextApiResponse } from "next";
-import { request } from 'graphql-request';
-
 
 // Establish connection to Stripe
 
@@ -35,7 +34,7 @@ const fulfillOrder = async (session: any, headers: any) => {
       paymentMethod: metadata.paymentMethod,
       deliveryMethod: metadata.deliveryMethod,
       phoneNumber: metadata.phoneNumber,
-    }
+    },
   };
 
   await request({
@@ -43,10 +42,12 @@ const fulfillOrder = async (session: any, headers: any) => {
     document: PaymentQuery,
     variables: variables,
     requestHeaders: {
-        ...headers,
-        userId: metadata.userId
+      ...headers,
+      userId: metadata.userId,
     },
-  }).then((data) => console.log(data))
+  })
+    .then((data) => console.log(data))
+    .catch((err) => console.log(err));
 };
 
 export default async function handler(
@@ -76,7 +77,7 @@ export default async function handler(
         .then(() => res.status(200))
         .catch((err: any) => {
           console.log(err);
-          res.status(400).send(`Webhook Error: ${err.message}`);
+          res.status(400).send(`${err.message}`);
         });
     }
   }
