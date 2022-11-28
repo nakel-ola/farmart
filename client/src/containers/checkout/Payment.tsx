@@ -1,11 +1,9 @@
 import { useLazyQuery } from "@apollo/client";
-import { loadStripe } from "@stripe/stripe-js";
-import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import {
   IoRadioButtonOffOutline,
-  IoRadioButtonOnOutline,
+  IoRadioButtonOnOutline
 } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { Coupon } from "../../../typing";
@@ -18,8 +16,6 @@ import { RootState } from "../../redux/store";
 import { VerifyCouponQuery } from "../sidecart/Footer";
 import PromoCard from "../sidecart/PromoCard";
 
-let stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-
 const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
   const [type, setType] = useState("Stripe");
   const [input, setInput] = useState("");
@@ -31,7 +27,7 @@ const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
 
   const router = useRouter();
 
-  let sessionId= router.query?.session_id
+  let sessionId = router.query?.session_id;
 
   const price = getBasketTotal(basket);
 
@@ -57,23 +53,6 @@ const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
         },
       },
     });
-  };
-
-  const createStripeSession = async () => {
-    const stripe = await stripePromise;
-    const res = await axios.post("/api/checkout_sessions", {
-      email: user?.email,
-      products: basket,
-      discount: null,
-    });
-
-    console.log(res.data);
-
-    const result = await stripe?.redirectToCheckout({
-      sessionId: res.data.id,
-    });
-
-    console.log(result);
   };
 
   return (
@@ -154,7 +133,7 @@ const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
             )}
           </div>
           <div className="pl-2">
-            <p className="font-medium text-black dark:text-white">Paystack</p>
+            <p className="font-medium text-black dark:text-white">Stripe</p>
             <p className="font text-neutral-800 dark:text-neutral-300">
               Pay with a secure platform
             </p>
@@ -184,10 +163,13 @@ const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
       </CardTemplate>
 
       <div className="w-full grid place-items-center mb-4">
-        <Button onClick={() => onNext(type)}>{sessionId ? "Proceed" : "Pay Now"}</Button>
+        <Button onClick={() => onNext(type)}>
+          {sessionId ? "Proceed" : "Pay Now"}
+        </Button>
       </div>
     </div>
   );
 };
+
 
 export default Payment;

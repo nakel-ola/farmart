@@ -85,7 +85,7 @@ export default async function handler(
         payment_method_types: ["card"],
         billing_address_collection: "auto",
         line_items,
-        success_url: `${process.env.HOST}checkout?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${process.env.HOST}success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.HOST}checkout`,
         mode: "payment",
         metadata
@@ -94,6 +94,9 @@ export default async function handler(
 
       const checkoutSession: Stripe.Checkout.Session =
         await stripe.checkout.sessions.create(params);
+
+
+      // console.log(checkoutSession.client)
 
 
       res.status(200).json(checkoutSession);

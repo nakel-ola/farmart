@@ -37,7 +37,7 @@ const fulfillOrder = async (session: any, headers: any) => {
     },
   };
 
-  await request({
+  return await request({
     url: process.env.SERVER_URL!,
     document: PaymentQuery,
     variables: variables,
@@ -45,7 +45,7 @@ const fulfillOrder = async (session: any, headers: any) => {
       ...headers,
       userId: metadata.userId,
     },
-  }).then((data) => console.log(data));
+  });
 };
 
 export default async function handler(
@@ -72,7 +72,10 @@ export default async function handler(
       const session = event.data.object;
 
       return fulfillOrder(session, req.headers)
-        .then(() => res.status(200))
+        .then((data) => {
+          console.log(data)
+          res.status(200);
+        })
         .catch((err: any) => {
           console.log(err);
           res.status(400).send(`${err.message}`);
