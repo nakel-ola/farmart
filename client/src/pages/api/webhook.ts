@@ -2,11 +2,6 @@ import { gql } from "@apollo/client";
 import { request } from "graphql-request";
 import { buffer } from "micro";
 import { NextApiRequest, NextApiResponse } from "next";
-const { createApolloFetch } = require('apollo-fetch');
-
-const fetch = createApolloFetch({
-    uri: 'https://1jzxrj179.lp.gql.zone/graphql',
-});
 
 // Establish connection to Stripe
 
@@ -44,7 +39,16 @@ const fulfillOrder = async (session: any, headers: any) => {
 
   return await request({
     url: process.env.SERVER_URL!,
-    document: PaymentQuery,
+    document: `
+      mutation CreateOrder($input: OrderInput!) {
+        createOrder(input: $input) {
+          id
+          orderId
+          trackingId
+          userId
+        }
+      }
+    `,
     variables: variables,
     requestHeaders: {
       ...headers,
@@ -76,14 +80,14 @@ export default async function handler(
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
 
-      return fulfillOrder(session, req.headers)
+      return await fulfillOrder(session, req.headers)
         .then((data) => {
-          console.log(data)
+          console.log(data);
           res.status(200);
         })
         .catch((err: any) => {
           console.log(err);
-          res.status(400).send(`${process.env.SERVER_URL!} ======>${err.message}`);
+          res.status(400).send(`${err.message}`);
         });
     }
   }
