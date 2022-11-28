@@ -87,7 +87,7 @@ export default async function handler(
         })
         .catch((err: any) => {
           console.log(err);
-          res.status(400).send(`${err.message}`);
+          res.status(400).send(`${JSON.stringify(err)}`);
         });
     }
   }
