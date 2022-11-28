@@ -2,6 +2,11 @@ import { gql } from "@apollo/client";
 import { request } from "graphql-request";
 import { buffer } from "micro";
 import { NextApiRequest, NextApiResponse } from "next";
+const { createApolloFetch } = require('apollo-fetch');
+
+const fetch = createApolloFetch({
+    uri: 'https://1jzxrj179.lp.gql.zone/graphql',
+});
 
 // Establish connection to Stripe
 
@@ -78,7 +83,7 @@ export default async function handler(
         })
         .catch((err: any) => {
           console.log(err);
-          res.status(400).send(`${err.message}`);
+          res.status(400).send(`${process.env.SERVER_URL!} ======>${err.message}`);
         });
     }
   }
