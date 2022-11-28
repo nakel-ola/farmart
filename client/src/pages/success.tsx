@@ -4,7 +4,6 @@ import React, { useRef } from "react";
 import Confetti from "react-confetti";
 import Button from "../components/Button";
 import CardTemplate from "../components/CardTemplate";
-import useWindowSize from "../hooks/useWindowSize";
 import Layouts from "../layout/Layouts";
 
 const Success = () => {
