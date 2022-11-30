@@ -41,11 +41,6 @@ const authenticated =
           req.blocked = data.block;
           return fn(args, req, res, context, info);
         }
-      } else if (req.headers["userid"] && req.headers["stripe-signature"]) {
-        console.log(req.headers["userid"], req.headers["stripe-signature"])
-        if (mongoose.Types.ObjectId.isValid(req.headers["userid"].toString())) {
-          return fn(args, req, res, context, info);
-        }
       }
 
       return errorMsg;

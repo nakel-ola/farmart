@@ -113,7 +113,6 @@ const Checkout: NextPage = () => {
         input: data,
       },
       onCompleted: (data) => {
-        console.log(data);
         router.push(`/success?orderId=${data.createOrder.id}`);
         dispatch(removeAll());
       },

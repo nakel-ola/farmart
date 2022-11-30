@@ -7,7 +7,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { StripeElementsOptions } from "@stripe/stripe-js";
 import axios from "axios";
-import { FormEvent, useState } from "react";
+import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import {
   IoRadioButtonOffOutline,
   IoRadioButtonOnOutline,
@@ -39,6 +39,7 @@ const Payment = ({
   const [input, setInput] = useState("");
   const [clientSecret, setClientSecret] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState(false);
 
   const { basket, coupon, shippingFee } = useSelector(
     (store: RootState) => store.basket
@@ -223,11 +224,12 @@ const Payment = ({
         <LoadingCard title="" />
       ) : (
         clientSecret &&
-        stripePromise && (
+        stripePromise &&
+        !success && (
           <CardTemplate showHeader={false} className="mb-4">
             <div className="flex w-[90%] items-center justify-center my-2 ml-[25px] cursor-pointer">
               <Elements stripe={stripePromise} options={options}>
-                <CheckoutForm onNext={onNext} />
+                <CheckoutForm onNext={onNext} setSuccess={setSuccess} />
               </Elements>
             </div>
           </CardTemplate>
@@ -237,11 +239,11 @@ const Payment = ({
   );
 };
 
-const CheckoutForm = ({
-  onNext,
-}: {
+interface CheckoutFormProps {
+  setSuccess: Dispatch<SetStateAction<boolean>>;
   onNext(value: string, id: string): void;
-}) => {
+}
+const CheckoutForm = ({ onNext, setSuccess }: CheckoutFormProps) => {
   const elements = useElements();
   const stripe = useStripe();
   const user = useSelector(selectUser);
@@ -266,9 +268,10 @@ const CheckoutForm = ({
 
     if (error) {
       console.log(error);
+      setSuccess(false);
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
-      // console.log(paymentIntent.id);
-      onNext("Stripe", paymentIntent.id);
+      onNext("Stripe", paymentIntent?.id);
+      setSuccess(true);
     }
 
     setLoading(false);
