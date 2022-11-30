@@ -34,7 +34,6 @@ function InputField(props: InputFieldProps, ref?: any) {
     className,
     clearInput,
     isPrice = false,
-    
     ...other
   } = props;
 

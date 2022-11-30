@@ -2,7 +2,7 @@ import clsx from "clsx";
 import React from "react";
 
 type Props = {
-  title: string;
+  title?: string;
   showEditButton?: boolean;
   editTitle?: string;
   onEditClick?(): void;

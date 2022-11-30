@@ -70,6 +70,7 @@ const OrderTypes = gql`
     phoneNumber: String
     deliveryMethod: String!
     products: [OrderProductInput!]!
+    paymentId: String!
   }
 
   input OrdersInput {

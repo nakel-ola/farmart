@@ -1,33 +1,49 @@
 import { useLazyQuery } from "@apollo/client";
-import { useRouter } from "next/router";
-import { useState } from "react";
+import {
+  Elements,
+  PaymentElement,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js";
+import { StripeElementsOptions } from "@stripe/stripe-js";
+import axios from "axios";
+import { FormEvent, useState } from "react";
 import {
   IoRadioButtonOffOutline,
-  IoRadioButtonOnOutline
+  IoRadioButtonOnOutline,
 } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { Coupon } from "../../../typing";
 import Button from "../../components/Button";
 import CardTemplate from "../../components/CardTemplate";
+import setting from "../../data/setting";
 import calculateDiscount from "../../helper/calculateDiscount";
+import getStripe from "../../helper/getStripe";
+import { formatAmountForStripe } from "../../helper/stripe-helpers";
 import { addCoupon, getBasketTotal } from "../../redux/features/basketSlice";
 import { selectUser } from "../../redux/features/userSlice";
 import { RootState } from "../../redux/store";
+import { useTheme } from "../../styles/theme";
 import { VerifyCouponQuery } from "../sidecart/Footer";
 import PromoCard from "../sidecart/PromoCard";
+import LoadingCard from "../../components/LoadingCard";
 
-const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
-  const [type, setType] = useState("Stripe");
+const stripePromise = getStripe();
+
+const Payment = ({
+  onNext,
+}: {
+  onNext: (value: string, id: string) => void;
+}) => {
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [input, setInput] = useState("");
+  const [clientSecret, setClientSecret] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { basket, coupon, shippingFee } = useSelector(
     (store: RootState) => store.basket
   );
   const user = useSelector(selectUser);
-
-  const router = useRouter();
-
-  let sessionId = router.query?.session_id;
 
   const price = getBasketTotal(basket);
 
@@ -53,6 +69,48 @@ const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
         },
       },
     });
+  };
+
+  const { systemTheme, theme } = useTheme();
+
+  const currentTheme = theme === "system" ? systemTheme : theme;
+
+  const createClientSecret = async () => {
+    setLoading(true);
+    const amount = basket.reduce(
+      (total, item) => total + formatAmountForStripe(item.price, "USD"),
+      0
+    );
+    // Create PaymentIntent as soon as the page loads
+    await axios
+      .post("/api/create-payment-intent", {
+        amount,
+      })
+      .then((data) => {
+        setLoading(false);
+        console.log(data);
+        setClientSecret(data.data.clientSecret);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  };
+
+  let isDark = currentTheme === "dark";
+
+  const options: StripeElementsOptions = {
+    // passing the client secret obtained from the server
+    clientSecret,
+    appearance: {
+      theme: "stripe",
+      variables: {
+        colorPrimary: setting.primary,
+        colorText: isDark ? "white" : "black",
+        colorBackground: isDark ? "rgb(38,38,38)" : "rgb(241,245,249)",
+        borderRadius: "8px",
+      },
+    },
   };
 
   return (
@@ -122,11 +180,12 @@ const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
         <div
           className="flex w-[90%] items-start my-2 ml-[25px] cursor-pointer"
           onClick={() => {
-            setType("Stripe");
+            setPaymentMethod("Stripe");
+            createClientSecret();
           }}
         >
           <div className="flex justify-center items-center mt-[3px]">
-            {type === "Stripe" ? (
+            {paymentMethod === "Stripe" ? (
               <IoRadioButtonOnOutline className="text-[25px] text-primary" />
             ) : (
               <IoRadioButtonOffOutline className="text-[25px] text-primary" />
@@ -142,34 +201,88 @@ const Payment = ({ onNext }: { onNext: (value: string) => void }) => {
 
         <div
           className="flex w-[90%] items-start my-2 ml-[25px] cursor-pointer"
-          onClick={() => setType("Cash On Delivery")}
+          // onClick={() => setPaymentMethod("Cash On Delivery")}
         >
           <div className="flex justify-center items-center mt-[3px]">
-            {type === "Cash On Delivery" ? (
+            {paymentMethod === "Cash On Delivery" ? (
               <IoRadioButtonOnOutline className="text-[25px] text-primary" />
             ) : (
-              <IoRadioButtonOffOutline className="text-[25px] text-primary" />
+              <IoRadioButtonOffOutline className="text-[25px] text-neutral-600" />
             )}
           </div>
           <div className="pl-2">
-            <p className="font-medium text-black dark:text-white">
-              Cash On Delivery
-            </p>
-            <p className="font text-neutral-800 dark:text-neutral-300">
+            <p className="font-medium text-neutral-600">Cash On Delivery</p>
+            <p className="font text-neutral-600">
               Not available for your orders
             </p>
           </div>
         </div>
       </CardTemplate>
 
-      <div className="w-full grid place-items-center mb-4">
-        <Button onClick={() => onNext(type)}>
-          {sessionId ? "Proceed" : "Pay Now"}
-        </Button>
-      </div>
+      {loading ? (
+        <LoadingCard title=""/>
+      ) : (
+        clientSecret &&
+        stripePromise && (
+          <CardTemplate showHeader={false} className="mb-4">
+            <div className="flex w-[90%] items-center justify-center my-2 ml-[25px] cursor-pointer">
+              <Elements stripe={stripePromise} options={options}>
+                <CheckoutForm onNext={onNext} />
+              </Elements>
+            </div>
+          </CardTemplate>
+        )
+      )}
     </div>
   );
 };
 
+const CheckoutForm = ({
+  onNext,
+}: {
+  onNext(value: string, id: string): void;
+}) => {
+  const elements = useElements();
+  const stripe = useStripe();
+  const user = useSelector(selectUser);
+
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) return;
+
+    setLoading(true);
+
+    const { error, paymentIntent } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/success`,
+        receipt_email: user?.email,
+      },
+      redirect: "if_required",
+    });
+
+    if (error) {
+      console.log(error)
+    } else if (paymentIntent && paymentIntent.status === "succeeded") {
+      onNext("Stripe", paymentIntent?.id);
+    }
+
+    setLoading(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} id="paymentform" className="w-full">
+      <PaymentElement className="" />
+      <div className="w-full grid place-items-center mt-4">
+        <Button disabled={!stripe || loading}>
+          {loading ? "Processing..." : "Pay"}
+        </Button>
+      </div>
+    </form>
+  );
+};
 
 export default Payment;

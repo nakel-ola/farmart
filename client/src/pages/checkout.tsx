@@ -1,13 +1,13 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
-import { BagTick2, Book1, Wallet2 } from "iconsax-react";
+import { Book1, Wallet2 } from "iconsax-react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AddressType } from "../../typing";
+import { AddressType, Basket } from "../../typing";
 import EmptyCart from "../components/EmptyCart";
 import Header from "../components/Header";
 import LoginCard from "../components/LoginCard";
@@ -27,10 +27,6 @@ import { selectDialog } from "../redux/features/dialogSlice";
 import { selectUser } from "../redux/features/userSlice";
 import { RootState } from "../redux/store";
 import { AddressesQuery } from "./address";
-let stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-
-
-
 
 const OrderMutation = gql`
   mutation CreateOrder($input: OrderInput!) {
@@ -50,7 +46,6 @@ const Checkout: NextPage = () => {
   const [deliveryMethod, setDeliveryMethod] = useState<
     "Door Delivery" | "Pickup Station"
   >("Door Delivery");
-  const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [pickup, setPickup] = useState<string | null>(null);
   const [address, setAddress] = useState<AddressType | null>(null);
   const { basket, coupon, shippingFee } = useSelector(
@@ -69,12 +64,14 @@ const Checkout: NextPage = () => {
     },
   });
 
-  const createStripeSession = async (type: string) => {
-    const stripe = await stripePromise;
+  const [createOrder] = useMutation(OrderMutation);
 
+  const handleAddress = () => {
+    setProgress("payment");
+  };
+
+  const handleOrder = async (type: string, paymentId: string) => {
     const data = {
-      userId: user?.id,
-      email: user?.email,
       totalPrice: `${Number(getBasketTotal(basket)).toFixed(2)}`,
       pickup,
       address: !pickup
@@ -89,8 +86,6 @@ const Checkout: NextPage = () => {
             phoneNumber2: address!.phoneNumber2,
           }
         : null,
-      shippingFee: `${shippingFee}`,
-      products: basket,
       coupon: coupon
         ? {
             id: coupon.id,
@@ -103,23 +98,29 @@ const Checkout: NextPage = () => {
           }
         : null,
       paymentMethod: type,
-      deliveryMethod,
+      shippingFee: `${shippingFee}`,
       phoneNumber: pickup ? user?.phoneNumber : null,
+      deliveryMethod,
+      products: basket.map((b: Basket) => ({
+        id: b.id,
+        quantity: b.quantity,
+        price: `${b.price * b.quantity}`,
+      })),
+      paymentId,
     };
-    const res = await axios.post("/api/checkout_sessions", data);
-
-    await stripe?.redirectToCheckout({
-      sessionId: res.data.id,
+    await createOrder({
+      variables: {
+        input: data,
+      },
+      onCompleted: (data) => {
+        console.log(data);
+        router.push(`/success?orderId=${data.createOrder.id}`);
+        dispatch(removeAll());
+      },
+      onError: (data) => {
+        console.table(data);
+      },
     });
-  };
-
-  const handleAddress = () => {
-    setProgress("payment");
-  };
-
-  const handlePayment = async (type: string) => {
-    setPaymentMethod(type);
-    await createStripeSession(type)
   };
 
   return (
@@ -146,19 +147,7 @@ const Checkout: NextPage = () => {
                     setDeliveryMethod={setDeliveryMethod}
                   />
                 )}
-                {progress === "payment" && <Payment onNext={handlePayment} />}
-
-                {/* {progress === "summary" && (
-                  <Summary
-                    paymentMethod={paymentMethod}
-                    deliveryMethod={deliveryMethod}
-                    pickup={pickup}
-                    shippingFee={shippingFee}
-                    totalPrice={getBasketTotal(basket)}
-                    address={address}
-                    handleCheckout={handleCheckout}
-                  />
-                )} */}
+                {progress === "payment" && <Payment onNext={handleOrder} />}
               </div>
             </>
           ) : (
@@ -194,10 +183,8 @@ type StepperProps = {
 const Stepper = (props: StepperProps) => {
   const { progress, setProgress } = props;
 
-  let isAddress =
-    progress === "address" || progress === "payment" || progress === "summary";
-  let isPayment =
-    progress === "summary" || progress === "payment" || progress === "checkout";
+  let isAddress = progress === "address" || progress === "payment";
+  let isPayment = progress === "payment" || progress === "checkout";
 
   return (
     <div className="w-full grid place-items-center">
@@ -215,7 +202,6 @@ const Stepper = (props: StepperProps) => {
           className={`w-[50px] h-[5px] ${
             progress === "address" ||
             progress === "payment" ||
-            progress === "summary" ||
             progress === "checkout"
               ? "bg-primary"
               : "bg-neutral-300"
@@ -236,7 +222,7 @@ const Stepper = (props: StepperProps) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-around w-[285px]">
+      <div className="flex items-center justify-around w-[200px]">
         <p className="text-black dark:text-white font-medium">Address</p>
         <p className="text-black dark:text-white font-medium">Payment</p>
       </div>

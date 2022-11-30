@@ -18,7 +18,7 @@ import type {
   OrderProductInput,
   OrdersArgs,
   OrderType,
-  UpdateProgressArgs,
+  UpdateProgressArgs
 } from "../typing/order";
 
 const createOrder = authenticated(
@@ -61,6 +61,7 @@ const createOrder = authenticated(
         })),
         totalPrice = xss(input.totalPrice),
         phoneNumber = input.phoneNumber ? xss(input.phoneNumber) : null,
+        paymentId = xss(input.paymentId),
         progress = [
           {
             name: "pending",
@@ -77,7 +78,6 @@ const createOrder = authenticated(
         ],
         orderId = nanoid(15),
         trackingId = nanoid(),
-        paymentId = nanoid(),
         status = "pending";
 
       let price = Number(

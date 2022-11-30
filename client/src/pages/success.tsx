@@ -9,6 +9,8 @@ import Layouts from "../layout/Layouts";
 const Success = () => {
   const router = useRouter();
 
+  const orderId = router.query?.orderId;
+
   return (
     <>
       <Layouts className="w-full grid place-items-center">
@@ -29,8 +31,11 @@ const Success = () => {
               Woohoo! You payment was successful, and your order is complete.
             </p>
 
-            <Button className="mb-4" onClick={() => router.push("/receipt")}>
-              Check orders
+            <Button
+              className="mb-4"
+              onClick={() => router.push(`/receipt/${orderId}`)}
+            >
+              Check order
             </Button>
           </CardTemplate>
         </div>
