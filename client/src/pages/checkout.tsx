@@ -71,7 +71,6 @@ const Checkout: NextPage = () => {
   };
 
   const handleOrder = async (type: string, paymentId: string) => {
-    console.log(paymentId)
     const data = {
       totalPrice: `${Number(getBasketTotal(basket)).toFixed(2)}`,
       pickup,
@@ -123,6 +122,8 @@ const Checkout: NextPage = () => {
       },
     });
   };
+
+  // "Variable "$input" got invalid value { totalPrice: "226.69", pickup: null, address: { name: "John Doe", street: "32, Suberu lamidi harmony estate agege lagos", city: "Ota", state: "Ogun State", country: "Nigeria", info: null, phoneNumber: "+2349152663635", phoneNumber2: null }, coupon: null, paymentMethod: "Stripe", shippingFee: "2", phoneNumber: null, deliveryMethod: "Door Delivery", products: [[Object], [Object], [Object], [Object], [Object]], paymentId: "pi_3M9fFgGWZB98mBX81yNBFkfN" }; Field "paymentId" is not defined by type "OrderInput"."
 
   return (
     <>
