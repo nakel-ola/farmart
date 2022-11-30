@@ -70,7 +70,7 @@ mongoose
       graphqlHTTP({
         schema,
         rootValue: resolvers,
-        graphiql: false
+        graphiql: !production
       })
     );
     app.listen(config.port, () =>
