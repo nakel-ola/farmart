@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Coupon } from "../../../typing";
 import Button from "../../components/Button";
 import CardTemplate from "../../components/CardTemplate";
+import LoadingCard from "../../components/LoadingCard";
 import setting from "../../data/setting";
 import calculateDiscount from "../../helper/calculateDiscount";
 import getStripe from "../../helper/getStripe";
@@ -26,7 +27,6 @@ import { RootState } from "../../redux/store";
 import { useTheme } from "../../styles/theme";
 import { VerifyCouponQuery } from "../sidecart/Footer";
 import PromoCard from "../sidecart/PromoCard";
-import LoadingCard from "../../components/LoadingCard";
 
 const stripePromise = getStripe();
 
@@ -78,7 +78,8 @@ const Payment = ({
   const createClientSecret = async () => {
     setLoading(true);
     const amount = basket.reduce(
-      (total, item) => total + formatAmountForStripe(item.price, "USD"),
+      (total, item) =>
+        total + formatAmountForStripe(item.price * item.quantity, "USD"),
       0
     );
     // Create PaymentIntent as soon as the page loads
@@ -88,7 +89,6 @@ const Payment = ({
       })
       .then((data) => {
         setLoading(false);
-        console.log(data);
         setClientSecret(data.data.clientSecret);
       })
       .catch((err) => {
@@ -220,7 +220,7 @@ const Payment = ({
       </CardTemplate>
 
       {loading ? (
-        <LoadingCard title=""/>
+        <LoadingCard title="" />
       ) : (
         clientSecret &&
         stripePromise && (
@@ -265,9 +265,10 @@ const CheckoutForm = ({
     });
 
     if (error) {
-      console.log(error)
+      console.log(error);
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
-      onNext("Stripe", paymentIntent?.id);
+      console.log(paymentIntent.id);
+      onNext("Stripe", paymentIntent.id);
     }
 
     setLoading(false);
