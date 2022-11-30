@@ -65,7 +65,7 @@ mongoose_1.default
     app.use("/graphql", (0, graphql_upload_minimal_1.graphqlUploadExpress)({ maxFileSize: 2 * 1024 * 1024, maxFiles: 1 }), (0, express_graphql_1.graphqlHTTP)({
         schema: exports.schema,
         rootValue: resolvers_1.default,
-        graphiql: !production
+        graphiql: true
     }));
     app.listen(config_1.default.port, () => console.log(`\nServer started at: http://localhost:${config_1.default.port}/graphql\n`));
 })

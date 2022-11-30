@@ -48,7 +48,7 @@ const createOrder = (0, authenticated_1.default)((args, req) => __awaiter(void 0
             id: (0, xss_1.default)(p.id),
             price: (0, xss_1.default)(p.price),
             quantity: Number((0, xss_1.default)(p.quantity.toString())),
-        })), totalPrice = (0, xss_1.default)(input.totalPrice), phoneNumber = input.phoneNumber ? (0, xss_1.default)(input.phoneNumber) : null, progress = [
+        })), totalPrice = (0, xss_1.default)(input.totalPrice), phoneNumber = input.phoneNumber ? (0, xss_1.default)(input.phoneNumber) : null, paymentId = (0, xss_1.default)(input.paymentId), progress = [
             {
                 name: "pending",
                 checked: true,
@@ -61,7 +61,7 @@ const createOrder = (0, authenticated_1.default)((args, req) => __awaiter(void 0
                 name: "delivered",
                 checked: false,
             },
-        ], orderId = (0, index_1.nanoid)(15), trackingId = (0, index_1.nanoid)(), paymentId = (0, index_1.nanoid)(), status = "pending";
+        ], orderId = (0, index_1.nanoid)(15), trackingId = (0, index_1.nanoid)(), status = "pending";
         let price = Number((_b = (0, calculateDiscount_1.default)(Number(totalPrice), coupon ? Number(coupon.discount) : 0) + Number(shippingFee)) !== null && _b !== void 0 ? _b : 0).toFixed(2);
         const data = {
             orderId,

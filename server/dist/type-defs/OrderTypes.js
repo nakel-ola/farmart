@@ -71,6 +71,7 @@ const OrderTypes = (0, graphql_tag_1.gql) `
     phoneNumber: String
     deliveryMethod: String!
     products: [OrderProductInput!]!
+    paymentId: String!
   }
 
   input OrdersInput {
