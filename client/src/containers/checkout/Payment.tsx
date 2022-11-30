@@ -267,7 +267,7 @@ const CheckoutForm = ({
     if (error) {
       console.log(error);
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
-      console.log(paymentIntent.id);
+      // console.log(paymentIntent.id);
       onNext("Stripe", paymentIntent.id);
     }
 

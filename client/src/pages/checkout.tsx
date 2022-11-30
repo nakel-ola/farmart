@@ -71,6 +71,7 @@ const Checkout: NextPage = () => {
   };
 
   const handleOrder = async (type: string, paymentId: string) => {
+    console.log(paymentId)
     const data = {
       totalPrice: `${Number(getBasketTotal(basket)).toFixed(2)}`,
       pickup,
