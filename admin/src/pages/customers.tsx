@@ -25,24 +25,18 @@ const tableList: any[] = [
   { title: "Created" },
 ];
 
-const UsersQuery = gql`
+export const UsersQuery = gql`
   query users($input: UsersInput!) {
     users(input: $input) {
-      ... on UsersData {
-        page
-        totalItems
-        results {
-          id
-          email
-          name
-          gender
-          phoneNumber
-          createdAt
-        }
-      }
-
-      ... on ErrorMsg {
-        error
+      page
+      totalItems
+      results {
+        id
+        email
+        name
+        gender
+        phoneNumber
+        createdAt
       }
     }
   }
@@ -54,7 +48,7 @@ const Customers = () => {
   const router = useRouter();
   const [page, setPage] = useState(1);
   const { data, refetch } = useQuery<GraphQLUserResponse>(UsersQuery, {
-    variables: { input: { admin: false, limit, page: 1 } },
+    variables: { input: { limit, page: 1 } },
     fetchPolicy: "network-only",
     onError: (data) => console.table(data),
   });
@@ -77,7 +71,7 @@ const Customers = () => {
       </Head>
       <Layout className="flex items-center flex-col">
         <div className="w-[95%] md:w-[90%]">
-          {data?.users?.__typename !== "ErrorMsg" && (
+          {data?.users && (
             <Table
               headerComponent={
                 <Header title="List of Customers" showSearch={false} />
@@ -94,10 +88,15 @@ const Customers = () => {
                 ) : null
               }
             >
-              <TableHead tableList={tableList} disableDivider={(data?.users as UserData)?.results?.length! > 0 ? false : true} />
+              <TableHead
+                tableList={tableList}
+                disableDivider={
+                  (data?.users as UserData)?.results?.length! > 0 ? false : true
+                }
+              />
 
               {(data?.users as UserData)?.results?.length! > 0 ? (
-                <TableBody disableDivider={pageCount > 1 ? true : false }>
+                <TableBody disableDivider={pageCount > 1 ? true : false}>
                   {(data?.users as UserData)?.results.map(
                     (user: UserType, index: number) => (
                       <TableRow

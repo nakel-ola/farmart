@@ -1,16 +1,19 @@
 import {
   ApolloQueryResult,
-  gql,
   OperationVariables,
+  gql,
   useMutation,
   useQuery,
 } from "@apollo/client";
+import { AnimatePresence } from "framer-motion";
 import { MessageText1, Trash } from "iconsax-react";
-import React from "react";
+import React, { useState } from "react";
 import { ReviewType } from "../../../typing";
 import Avatar from "../../components/Avatar";
 import CardTemplate from "../../components/CardTemplate";
+import DeleteCard from "../../components/DeleteCard";
 import { Divider } from "../../components/Divider";
+import StarRating from "../../components/StarRating";
 
 const ReviewQuery = gql`
   query Reviews($productId: ID!) {
@@ -18,7 +21,8 @@ const ReviewQuery = gql`
       id
       name
       message
-      photoUrl
+      rating
+      title
       userId
     }
   }
@@ -27,7 +31,7 @@ const ReviewQuery = gql`
 const DeleteQuery = gql`
   mutation DeleteReview($input: DeleteReviewInput!) {
     deleteReview(input: $input) {
-      msg
+      message
     }
   }
 `;
@@ -41,19 +45,19 @@ const ReviewCard = ({
 }) => {
   const { data, refetch } = useQuery<{ reviews: ReviewType[] }>(ReviewQuery, {
     variables: { productId },
+    onCompleted: (data) => console.log(data),
     onError: (err) => console.table(err),
   });
 
   return (
     <CardTemplate title="Reviews" className="pb-2 my-8">
-
       {data && data?.reviews?.length > 0 ? (
         <div className="py-[8px] pl-[15px] pr-[8px] max-h-[300px] overflow-y-scroll">
           {(data?.reviews as any)?.map((review: ReviewType, index: number) => (
             <div key={index}>
               <Card
                 {...review}
-                refetch={refetch}
+                refetch={() => refetch({ productId })}
                 productId={productId}
                 canEdit={canEdit}
               />
@@ -74,26 +78,17 @@ const ReviewCard = ({
   );
 };
 
-interface CardType extends ReviewType {
-  refetch: (variables?: Partial<OperationVariables> | undefined) => Promise<
-    ApolloQueryResult<{
-      reviews: ReviewType[];
-    }>
-  >;
+interface CardProps extends ReviewType {
+  refetch(): void;
   productId: string;
   canEdit: boolean;
 }
 
-const Card = ({
-  photoUrl,
-  name,
-  message,
-  refetch,
-  productId,
-  id,
-  canEdit,
-}: CardType) => {
-  const [deleteReview] = useMutation(DeleteQuery);
+
+const Card = (props: CardProps) => {
+  const { message, refetch, productId, id, canEdit,title,rating,userId } = props;
+  const [toggle, setToggle] = useState(false);
+  const [deleteReview, { loading }] = useMutation(DeleteQuery);
 
   const handleDelete = async () => {
     await deleteReview({
@@ -104,7 +99,7 @@ const Card = ({
         },
       },
       onCompleted: (data) => {
-        refetch({ productId });
+        refetch();
       },
       onError: (err) => {
         console.table(err);
@@ -113,27 +108,50 @@ const Card = ({
   };
 
   return (
-    <div className="my-2">
-      <div className="flex items-center justify-between m-2 mb-0">
-        <div className="flex items-center">
-          <Avatar src={photoUrl} alt="" className="h-[40px] w-[40px]" />
-          <p className="p-2 py-0 text-black dark:text-white font-medium">
-            {name}
-          </p>
+    <>
+      <div className="my-2 flex items-start justify-between">
+        <div className="">
+          <h1 className="font-medium text-xl text-black dark:text-white">
+            {title}
+          </h1>
+          <StarRating
+            value={rating - 1}
+            size={20}
+            spacing={0}
+            variant="Bold"
+            color="#bdbdbd"
+            activeColor="#f8b808"
+            disabled
+          />
+          <p className="text-black dark:text-white">{message}</p>
         </div>
+
         {canEdit && (
           <button
-            className={`px-2 mx-2 font-medium rounded-full pt-[2px] text-red-600 hover:bg-red-600/10`}
-            onClick={handleDelete}
+            type="button"
+            className="flex items-center justify-center h-[35px] w-[35px] hover:scale-105 active:scale-95 bg-red-600/10 rounded-full"
+            onClick={() => setToggle(true)}
           >
-            <Trash size={20} />
+            <Trash
+              size={25}
+              variant="Bold"
+              className="text-red-600  text-[25px]"
+            />
           </button>
         )}
       </div>
-      <p className="ml-14 mb-2 text-neutral-700 dark:text-neutral-400">
-        {message}
-      </p>
-    </div>
+
+      <AnimatePresence>
+        {toggle && (
+          <DeleteCard
+            message="Are you sure you want to delete product ?"
+            onClose={() => setToggle(false)}
+            onDelete={handleDelete}
+            loading={loading}
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

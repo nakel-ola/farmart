@@ -8,20 +8,17 @@ export type ImageUploadType = {
   name: string;
 };
 
-const ImageUplaod = ({
-  filename,
-  createReadStream,
-}: FileUpload): Promise<ImageUploadType> =>
+const ImageUplaod = (props: FileUpload): Promise<string> =>
   new Promise((resolve, reject) => {
+    const { filename, createReadStream } = props;
     const blob = bucket.file(filename);
     let stream = createReadStream();
 
     stream
       .pipe(
-        bucket.file(filename).createWriteStream({
-          resumable: false,
-          gzip: true,
-        })
+        bucket
+          .file(filename)
+          .createWriteStream({ resumable: false, gzip: true })
       )
       .on("error", (err: any) => {
         reject(err);
@@ -38,7 +35,7 @@ const ImageUplaod = ({
             `Uploaded the file successfully: ${filename}, but public access is denied!`
           );
         }
-        resolve({ url: publicUrl, name: filename });
+        resolve(publicUrl);
       });
   });
 export default ImageUplaod;

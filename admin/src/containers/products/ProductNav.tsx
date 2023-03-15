@@ -1,20 +1,25 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import { AnimatePresence } from "framer-motion";
+import React, { useState } from "react";
 import Button from "../../components/Button";
-import { add } from "../../redux/features/dialogSlice";
+import CategoryCard from "./CategoryCard";
 
 const ProductNav = () => {
-  const dispatch = useDispatch();
+
+  const [toggle, setToggle] = useState(false);
 
   return (
-    <Button
-      className="text-black dark:text-white bg-slate-100 dark:bg-neutral-800 "
-      onClick={() =>
-        dispatch(add({ type: "category", data: null, open: true }))
-      }
-    >
-      Create categories
-    </Button>
+    <>
+      <Button
+        className="text-black dark:text-white bg-slate-100 dark:bg-neutral-800 "
+        onClick={() => setToggle(true)}
+      >
+        Create categories
+      </Button>
+
+      <AnimatePresence>
+        {toggle && <CategoryCard onClose={() => setToggle(false)} />}
+      </AnimatePresence>
+    </>
   );
 };
 

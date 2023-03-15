@@ -13,7 +13,7 @@ import { remove } from "../../redux/features/dialogSlice";
 const CreateQuery = gql`
   mutation CreateCategories($categories: [String!]!) {
     createCategories(categories: $categories) {
-      msg
+      message
     }
   }
 `;
@@ -21,15 +21,16 @@ const CreateQuery = gql`
 const DeleteQuery = gql`
   mutation DeleteCategories($categories: [String!]!) {
     deleteCategories(categories: $categories) {
-      msg
+      message
     }
   }
 `;
 
-const CategoryCard = () => {
-  const dispatch = useDispatch();
+interface Props {
+  onClose(): void;
+}
 
-  const close = () => dispatch(remove({ type: "category" }));
+const CategoryCard: React.FC<Props> = ({ onClose }) => {
 
   const [createCategories] = useMutation(CreateQuery);
   const [deleteCategories] = useMutation(DeleteQuery);
@@ -47,7 +48,7 @@ const CategoryCard = () => {
       variables: { categories },
       onCompleted: () => {
         setLoading(false);
-        close();
+        onClose();
       },
       onError: (err) => {
         setLoading(false);
@@ -62,7 +63,7 @@ const CategoryCard = () => {
       variables: { categories: deleteList },
       onCompleted: (data) => {
         setLoading(false);
-        close();
+        onClose();
       },
       onError: (err) => {
         setLoading(false);
@@ -89,7 +90,7 @@ const CategoryCard = () => {
   return (
     <PopupTemplate
       title="Categories"
-      onOutsideClick={close}
+      onOutsideClick={onClose}
       showEditButton
       buttonText={
         !loading ? (
@@ -200,7 +201,7 @@ const CategoryCard = () => {
             <Button
               type="button"
               className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white mx-2"
-              onClick={close}
+              onClick={onClose}
             >
               Cancel
             </Button>

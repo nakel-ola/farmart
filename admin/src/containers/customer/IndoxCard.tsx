@@ -1,6 +1,7 @@
+import { AnimatePresence } from "framer-motion";
 import { DirectboxNotif } from "iconsax-react";
 import { useRouter } from "next/router";
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { useDispatch } from "react-redux";
 import { InboxData, InboxType } from "../../../typing";
 import Button from "../../components/Button";
@@ -9,25 +10,20 @@ import { Divider } from "../../components/Divider";
 import Pagination from "../../components/Pagination";
 import { roundUp } from "../../pages/orders";
 import { add } from "../../redux/features/dialogSlice";
+import CreateInboxCard from "./CreateInboxCard";
 
 type Props = {
   data: InboxData;
-  refetch: any;
+  refetch(page?: number): void;
   canEdit: boolean;
 };
 
 let limit = 5;
-const IndoxCard = ({ data, refetch, canEdit }: Props) => {
-  const dispatch = useDispatch();
+const IndoxCard = ({ data, refetch }: Props) => {
   const router = useRouter();
   let pageCount = roundUp(Math.abs(data?.totalItems! / limit));
 
-  const handlePageChange = (e: ChangeEvent, page: number) => {
-    refetch({
-      customerId: router.query.cid,
-      input: { page, limit, customerId: router.query.cid },
-    });
-  };
+  const [toggle, setToggle] = useState(false);
 
   return (
     <>
@@ -36,9 +32,7 @@ const IndoxCard = ({ data, refetch, canEdit }: Props) => {
         showEditButton
         editTitle="Send inbox"
         className="mb-8"
-        onEditClick={() =>
-          dispatch(add({ type: "inbox", open: true, data: null }))
-        }
+        onEditClick={() => setToggle(true)}
       >
         {data.results.length > 0 ? (
           <div className="">
@@ -56,7 +50,7 @@ const IndoxCard = ({ data, refetch, canEdit }: Props) => {
                   forcePage={data?.page ?? 1}
                   pageRangeDisplayed={10}
                   breakLabel="•••"
-                  onPageChange={handlePageChange}
+                  onPageChange={(e, page) => refetch(page)}
                 />
               )}
             </div>
@@ -71,11 +65,22 @@ const IndoxCard = ({ data, refetch, canEdit }: Props) => {
           </div>
         )}
       </CardTemplate>
+
+      <AnimatePresence>
+        {toggle && (
+          <CreateInboxCard
+            func={refetch}
+            customerId={router.query.cid?.toString()!}
+            onClose={() => setToggle(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };
 
 const Card = (props: InboxType) => {
+  const { userId, title, description, createdAt } = props;
   return (
     <>
       <div className="m-2 mx-4">

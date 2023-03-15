@@ -49,35 +49,4 @@ function MyApp({ Component, ...others }: AppProps) {
     </>
   );
 }
-
-// export const UserQuery = gql`
-//   query User {
-//     user {
-//       ... on User {
-//         id
-//         email
-//         name
-//         photoUrl
-//         blocked
-//         gender
-//         birthday
-//         phoneNumber
-//         createdAt
-//         updatedAt
-//       }
-
-//       ... on ErrorMsg {
-//         error
-//       }
-//     }
-//   }
-// `;
-
-// export const CategoriesQuery = gql`
-//   query Categories {
-//     categories {
-//       name
-//     }
-//   }
-// `;
 export default MyApp;

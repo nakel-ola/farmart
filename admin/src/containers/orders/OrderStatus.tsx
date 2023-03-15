@@ -14,7 +14,7 @@ import useOnClickOutside from "../../hooks/useOnClickOutside";
 const UpdateQuery = gql`
   mutation UpdateProgress($input: ProgressInput!) {
     updateProgress(input: $input) {
-      msg
+      message
     }
   }
 `;

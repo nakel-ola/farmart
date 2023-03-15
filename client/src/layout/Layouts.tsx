@@ -1,5 +1,6 @@
 import clsx from "clsx";
-import { forwardRef, ReactNode, Ref, RefObject, useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import { ReactNode, Ref, RefObject, forwardRef, useState } from "react";
 import { useSelector } from "react-redux";
 import CartCard from "../components/CartCard";
 import FilterCard from "../components/FilterCard";
@@ -40,9 +41,11 @@ const Layouts = forwardRef(
           </div>
         </main>
 
-        {dialogState.cart.open && <CartCard />}
+        <AnimatePresence>
+          {dialogState.cart.open && <CartCard />}
 
-        {dialogState.filter.open && <FilterCard />}
+          {dialogState.filter.open && <FilterCard />}
+        </AnimatePresence>
       </div>
     );
   }

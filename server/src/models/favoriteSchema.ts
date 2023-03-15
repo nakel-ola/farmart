@@ -1,6 +1,8 @@
 import { Schema, model } from "mongoose";
+import type { FavoriteType } from "../../typing";
 
-const favoriteSchema = new Schema({
+
+const favoriteSchema = new Schema<FavoriteType>({
   userId: {
     type: String,
     required: true,
@@ -11,4 +13,4 @@ const favoriteSchema = new Schema({
   },
 });
 
-export default model("favorites", favoriteSchema);
+export default model<FavoriteType>("favorites", favoriteSchema);

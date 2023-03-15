@@ -1,25 +1,30 @@
-import userSchema from "./userSchema";
-import validateSchema from "./validateSchema";
-import productSchema from "./productSchema";
-import bannerSchema from "./bannerSchema";
-import favoriteSchema from "./favoriteSchema";
-import orderSchema from "./orderSchema";
-import couponSchema from "./couponSchema";
-import categorySchema from "./categorySchema";
-import employeeSchema from "./employeeSchema";
-import inboxSchema from "./inboxSchema";
-import inviteSchema from "./inviteSchema";
+import type { DBType } from "../../typing";
+import banners from "./bannerSchema";
+import categories from "./categorySchema";
+import coupons from "./couponSchema";
+import favorites from "./favoriteSchema";
+import inboxes from "./inboxSchema";
+import invites from "./inviteSchema";
+import orders from "./orderSchema";
+import products from "./productSchema";
+import users from "./userSchema";
+import validate from "./validateSchema";
+import addresses from "./addressSchema";
+import reviews from "./reviewSchema";
 
-export default {
-    userSchema,
-    validateSchema,
-    productSchema,
-    bannerSchema,
-    favoriteSchema,
-    orderSchema,
-    couponSchema,
-    categorySchema,
-    employeeSchema,
-    inboxSchema,
-    inviteSchema
-}
+const db: DBType = {
+  users,
+  validate,
+  products,
+  banners,
+  favorites,
+  orders,
+  coupons,
+  categories,
+  inboxes,
+  invites,
+  addresses,
+  reviews
+};
+
+export default db;

@@ -4,26 +4,15 @@ import { Eye, EyeSlash } from "iconsax-react";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useDispatch } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import { Footer } from "../../pages/auth";
-import { login } from "../../redux/features/userSlice";
 import TitleCard from "./TitleCard";
 
 const LoginMutation = gql`
   mutation Login($input: LoginInput!) {
     login(input: $input) {
-      id
-      email
-      name
-      photoUrl
-      blocked
-      gender
-      birthday
-      phoneNumber
-      createdAt
-      updatedAt
+      message
     }
   }
 `;
@@ -48,8 +37,6 @@ const validate = (form: FormProps): boolean => {
 const LogInCard = (props: any) => {
   const { setLoading } = props;
 
-  const dispatch = useDispatch();
-
   const router = useRouter();
 
   const [form, setForm] = useState({ email: "", password: "" });
@@ -67,7 +54,6 @@ const LogInCard = (props: any) => {
     await loginUser({
       variables: { input: form },
       onCompleted: (data) => {
-        dispatch(login(data.login));
         toast.success("Login Successfully", { id: loginToast });
         router.replace("/");
       },

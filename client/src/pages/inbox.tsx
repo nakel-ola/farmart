@@ -2,16 +2,15 @@ import { gql, useQuery } from "@apollo/client";
 import { DirectboxNotif } from "iconsax-react";
 import Head from "next/head";
 import { ChangeEvent } from "react";
+import ReactLoading from "react-loading";
 import { InboxType } from "../../typing";
 import CardTemplate from "../components/CardTemplate";
 import Divider from "../components/Divider";
+import EmptyCard from "../components/EmptyCard";
 import Header from "../components/Header";
 import Pagination from "../components/Pagination";
 import roundUp from "../helper/roundUp";
 import Layouts from "../layout/Layouts";
-import ReactLoading from "react-loading";
-
-
 
 const InboxQuery = gql`
   query Inboxes($input: InboxInput!) {
@@ -32,10 +31,8 @@ const InboxQuery = gql`
 let limit = 5;
 
 const Inbox = () => {
-
   const { data, loading, refetch } = useQuery(InboxQuery, {
     variables: { input: { page: 1, limit } },
-    onCompleted: (err) => console.table(err),
     onError: (err) => console.table(err),
   });
 
@@ -59,31 +56,17 @@ const Inbox = () => {
         <div className="w-full h-[80%] flex items-center justify-center">
           <ReactLoading type="spinningBubbles" />
         </div>
-      ) : (
+      ) : data?.inboxes?.results?.length > 0 ? (
         <div className="w-full shrink-0 flex flex-col items-center justify-center mt-2">
           <CardTemplate title="Inbox">
-            {data?.inboxes?.results?.length > 0 ? (
-              <div className="">
-                {data.inboxes.results.map(
-                  (result: InboxType, index: number) => (
-                    <div key={index}>
-                      <Card {...result} />
-                      {index !== data.inboxes.results.length - 1 && <Divider />}
-                    </div>
-                  )
-                )}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center m-2 my-8">
-                <DirectboxNotif
-                  size={100}
-                  className="text-5xl text-neutral-700 dark:text-neutral-400"
-                />
-                <p className="text-black dark:text-white text-lg">
-                  No Inbox yet!
-                </p>
-              </div>
-            )}
+            <div className="">
+              {data.inboxes.results.map((result: InboxType, index: number) => (
+                <div key={index}>
+                  <Card {...result} />
+                  {index !== data.inboxes.results.length - 1 && <Divider />}
+                </div>
+              ))}
+            </div>
           </CardTemplate>
 
           <div className="grid place-items-center w-[95%] md:w-[80%] mb-8 mt-4">
@@ -98,6 +81,8 @@ const Inbox = () => {
             )}
           </div>
         </div>
+      ) : (
+        <EmptyCard Icon={DirectboxNotif} title="No Inbox yet!" />
       )}
     </Layouts>
   );

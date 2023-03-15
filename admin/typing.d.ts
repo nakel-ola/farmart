@@ -1,5 +1,5 @@
 export type OrderProduct = {
-  id: string;
+  productId: string;
   quantity: number;
   price: string;
 };
@@ -43,9 +43,10 @@ export type OrderType = {
 export type ReviewType = {
   id: string;
   name: string;
-  userId: string;
   message: string;
-  photoUrl: string;
+  rating: number;
+  title: string;
+  userId: string;
 };
 
 export type ProductType = {
@@ -54,7 +55,7 @@ export type ProductType = {
   slug: string;
   category: string;
   description: string;
-  image: Image;
+  image: string;
   currency: Currency;
   price: number;
   stock: number;
@@ -79,13 +80,13 @@ export type ErrorMsg = {
 };
 
 export interface GraphQLDashboardResponse extends GraphQLOrdersResponse {
-  productsSummary: ProductSummaryType | ErrorMsg;
-  ordersSummary: OrderSummaryType | ErrorMsg;
-  ordersStatistics: OrderStatisticsType | ErrorMsg;
+  productsSummary: ProductSummaryType;
+  ordersSummary: OrderSummaryType;
+  ordersStatistics: OrderStatisticsType;
 }
 
 export type GraphQLOrdersResponse = {
-  orders: OrdersData | ErrorMsg;
+  orders: OrdersData;
 };
 
 export type GraphQLProductResponse = {
@@ -115,7 +116,7 @@ export interface CreateProductForm {
   title: string;
   category: string;
   description: string;
-  image: any | null;
+  image: File | null;
   price: string | undefined;
   discount: string | null;
   stock: number | undefined;
@@ -141,7 +142,6 @@ export type OrderStatisticsType = {
   week: number[];
   month: number[];
 };
-
 
 export type UserType = {
   birthday: Date;
@@ -169,14 +169,13 @@ export type EmployeeType = {
 };
 
 export type UserData = {
-  __typename: string;
   page: number;
   totalItems: number;
   results: UserType[];
 };
 
 export type GraphQLUserResponse = {
-  users: UserData | ErrorMsg;
+  users: UserData;
 };
 export type GraphQLEmployeesResponse = {
   employees: {
@@ -234,4 +233,10 @@ export type InviteType = {
   level: Level;
   status: "pending" | "accepted";
   createdAt: Date;
+};
+
+export type UploadResponse = {
+  uploadFile: {
+    url: string;
+  };
 };

@@ -1,6 +1,9 @@
 import { Schema, model } from "mongoose";
+import type { CouponType } from "../../typing";
 
-const couponSchema = new Schema({
+
+
+const couponSchema = new Schema<CouponType>({
   email: {
     type: String,
     required: true,
@@ -27,4 +30,4 @@ const couponSchema = new Schema({
   },
 },{ timestamps: true });
 
-export default model('coupons', couponSchema)
+export default model<CouponType>('coupons', couponSchema)

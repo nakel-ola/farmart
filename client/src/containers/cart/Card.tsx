@@ -58,7 +58,7 @@ function Card(props: Basket) {
       <div className="flex w-[90%] shadow-sm bg-white dark:bg-dark dark:shadow-black/30 rounded-lg relative">
         <div className="overflow-hidden rounded-lg shrink-0 m-[3px]">
           <img
-            src={image?.url}
+            src={image}
             alt=""
             className="h-20 w-24 rounded-md object-cover  hover:scale-110 transition-all duration-300 ease"
           />

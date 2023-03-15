@@ -1,23 +1,20 @@
 import { useQuery } from "@apollo/client";
 import { Book1 } from "iconsax-react";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { AddressType } from "../../../typing";
 import Button from "../../components/Button";
 import Divider from "../../components/Divider";
 import PopupTemplate from "../../components/PopupTemplate";
 import { AddressesQuery } from "../../pages/address";
-import { add, remove } from "../../redux/features/dialogSlice";
 
-const AddressList = ({
-  func,
-  defaultAddress,
-}: {
-  func: any;
-  defaultAddress: any;
-}) => {
-  const dispatch = useDispatch();
-
-  const close: any = () => dispatch(remove({ type: "selectAddress" }));
+interface Props {
+  func: (address: AddressType) => void;
+  defaultAddress: AddressType | null;
+  onClose(): void;
+  onCreate(): void;
+}
+const AddressList: React.FC<Props> = (props) => {
+  const { func, defaultAddress, onClose, onCreate } = props;
 
   const { data } = useQuery(AddressesQuery, {
     onCompleted: (data) => {
@@ -31,28 +28,23 @@ const AddressList = ({
   return (
     <PopupTemplate
       title="Select Address"
-      onOutsideClick={close}
+      onOutsideClick={onClose}
       showEditButton
       buttonText="Create"
-      onEditClick={() =>
-        dispatch(
-          add({
-            open: true,
-            data: null,
-            type: "address",
-          })
-        )
-      }
+      onEditClick={() => {
+        onClose();
+        onCreate();
+      }}
     >
       {data?.addresses.length > 0 ? (
         data?.addresses.map((address: any, index: number) => (
           <div key={index} className=" pl-[15px]">
             <Card
               {...address}
-              isSelected={defaultAddress.id === address.id}
+              isSelected={defaultAddress?.id === address.id}
               handleSelect={() => {
                 func?.(address);
-                close();
+                onClose();
               }}
             />
             {index !== data?.addresses.length - 1 && <Divider />}

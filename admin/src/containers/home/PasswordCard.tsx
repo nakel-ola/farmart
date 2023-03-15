@@ -13,13 +13,13 @@ import { JwtUserType } from "./LogInCard";
 import TitleCard from "./TitleCard";
 
 const PasswordMutation = gql`
-  mutation EmployeeChangePassword($input: ChangePasswordInput!) {
-    employeeChangePassword(input: $input) {
+  mutation ChangePassword($input: ChangePasswordInput!) {
+    changePassword(input: $input) {
       id
       email
       name
       photoUrl
-      level
+      blocked
       gender
       birthday
       phoneNumber
@@ -28,7 +28,6 @@ const PasswordMutation = gql`
     }
   }
 `;
-
 type FormProps = {
   password: string;
   confirmPassword: string;

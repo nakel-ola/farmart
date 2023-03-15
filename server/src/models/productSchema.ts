@@ -1,30 +1,7 @@
-import { model, Schema } from "mongoose";
+import { Schema, model } from "mongoose";
+import type { CurrencyType, ProductType, RatingType } from "../../typing";
 
-
-const reviewSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: false,
-  },
-  message: {
-    type: String,
-    required: true,
-  },
-  rating: {
-    type: Number,
-    required: true
-  },
-  userId: {
-    type: String,
-    required: true,
-  },
-});
-
-const ratingSchema = new Schema({
+const ratingSchema = new Schema<RatingType>({
   name: {
     type: String,
     required: true,
@@ -35,18 +12,7 @@ const ratingSchema = new Schema({
   },
 });
 
-const imageSchema = new Schema({
-  name: {
-    type: String,
-    required: false,
-  },
-  url: {
-    type: String,
-    required: true,
-  },
-});
-
-const currencySchema = new Schema({
+const currencySchema = new Schema<CurrencyType>({
   name: {
     type: String,
     required: true,
@@ -77,7 +43,7 @@ const currencySchema = new Schema({
   },
 });
 
-const productSchema = new Schema(
+const productSchema = new Schema<ProductType>(
   {
     title: {
       type: String,
@@ -96,7 +62,7 @@ const productSchema = new Schema(
       required: true,
     },
     image: {
-      type: imageSchema,
+      type: String,
       required: true,
     },
     price: {
@@ -119,12 +85,9 @@ const productSchema = new Schema(
       type: currencySchema,
       required: true,
     },
-    reviews: {
-      type: [reviewSchema],
-      required: false,
-    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
-
-export default model("products", productSchema);
+export default model<ProductType>("products", productSchema);

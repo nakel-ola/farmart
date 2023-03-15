@@ -3,7 +3,7 @@ import { Sort } from "iconsax-react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactLoading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../../components/Header";
@@ -14,6 +14,7 @@ import usePrevious from "../../hooks/usePrevious";
 import Layouts from "../../layout/Layouts";
 import { add } from "../../redux/features/dialogSlice";
 import { selectFilter } from "../../redux/features/filterSlice";
+import { SearchQuerys } from "../../types/graphql.types";
 
 const SearchQuery = gql`
   query ProductSearch($input: ProductSearchInput!) {
@@ -25,9 +26,7 @@ const SearchQuery = gql`
         title
         category
         description
-        image {
-          url
-        }
+        image
         price
         slug
         stock
@@ -45,16 +44,15 @@ const Search: NextPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-
   const filter = useSelector(selectFilter);
 
   const ref = useRef<HTMLDivElement>(null);
 
   let prevFilter = usePrevious(filter);
 
-  console.log(router)
+  const [data, setData] = useState<SearchQuerys["productSearch"] | null>(null);
 
-  const { data, loading, fetchMore, refetch } = useQuery(SearchQuery, {
+  const { loading, fetchMore, refetch } = useQuery<SearchQuerys>(SearchQuery, {
     variables: {
       input: {
         search: router.query.q,
@@ -65,7 +63,7 @@ const Search: NextPage = () => {
       },
     },
     fetchPolicy: "network-only",
-    onCompleted: (data) => console.log(data),
+    onCompleted: (data) => setData(data.productSearch),
     onError: (data) => console.table(data),
   });
 
@@ -74,7 +72,7 @@ const Search: NextPage = () => {
       variables: {
         input: {
           search: router.query.q,
-          offset: data.productSearch.results.length,
+          offset: data?.results.length,
           limit,
           outOfStock: false,
         },
@@ -96,6 +94,19 @@ const Search: NextPage = () => {
     }
   }, [filter, prevFilter, refetch, router.query.q]);
 
+  const updateFavorite = (id: string, favorite: boolean) => {
+    if (!data) return;
+    let newProducts = [...data?.results];
+
+    const inx = newProducts.findIndex((p) => p.id === id);
+
+    if (inx === -1) return;
+
+    newProducts[inx] = { ...newProducts[inx], favorite };
+
+    setData({ ...data, results: newProducts });
+  };
+
   return (
     <Layouts ref={ref}>
       <Head>
@@ -111,7 +122,7 @@ const Search: NextPage = () => {
         data && (
           <div className="mb-2">
             <Header
-              title={`${data.productSearch.totalItems} products found`}
+              title={`${data.totalItems} products found`}
               subtitle={
                 <button
                   type="button"
@@ -126,10 +137,11 @@ const Search: NextPage = () => {
             />
             <div className="mt-8 w-full grid place-items-center transition-all duration-300 ease">
               <Cards
-                data={data.productSearch.results}
-                totalItems={data.productSearch.totalItems}
+                data={data.results}
+                totalItems={data.totalItems}
                 handleFetchMore={handleFetchMore}
                 containerRef={ref}
+                updateFavorite={updateFavorite}
               />
             </div>
           </div>

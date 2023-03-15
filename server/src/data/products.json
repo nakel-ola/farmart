@@ -6,10 +6,7 @@
     "title": "Brown eggs",
     "category": "dairy",
     "description": "Raw organic brown eggs in a basket",
-    "image": {
-      "url": "http://localhost:4000/images/0.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/0.jpg",
     "stock": 0,
     "price": 28.1,
     "currency": {
@@ -44,7 +41,6 @@
       }
     ],
     "slug": "brown-eggs",
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -54,8 +50,7 @@
       "$date": {
         "$numberLong": "1667616125220"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -65,10 +60,7 @@
     "category": "fruit",
     "slug": "sweet-fresh-stawberry",
     "description": "Sweet fresh stawberry on the wooden table",
-    "image": {
-      "url": "http://localhost:4000/images/1.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/1.jpg",
     "stock": 15,
     "price": 29.45,
     "currency": {
@@ -102,7 +94,6 @@
         "value": 560
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -112,8 +103,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -122,10 +112,7 @@
     "title": "Asparagus",
     "category": "vegetable",
     "description": "Asparagus with ham on the wooden table",
-    "image": {
-      "url": "http://localhost:4000/images/2.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/2.jpg",
     "stock": 2,
     "slug": "asparagus",
     "price": 18.95,
@@ -160,7 +147,6 @@
         "value": 128
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -170,8 +156,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -180,10 +165,7 @@
     "title": "Green smoothie",
     "category": "dairy",
     "description": "Glass of green smoothie with quail egg's yolk, served with cocktail tube, green apple and baby spinach leaves over tin surface.",
-    "image": {
-      "url": "http://localhost:4000/images/3.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/3.jpg",
     "stock": 4,
     "slug": "green-smoothie",
     "price": 17.68,
@@ -218,7 +200,6 @@
         "value": 297
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -228,8 +209,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -238,10 +218,7 @@
     "title": "Raw legums",
     "category": "vegetable",
     "description": "Raw legums on the wooden table",
-    "image": {
-      "url": "http://localhost:4000/images/4.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/4.jpg",
     "stock": 20,
     "price": 17.11,
     "currency": {
@@ -276,7 +253,6 @@
         "value": 512
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -286,8 +262,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -296,10 +271,7 @@
     "title": "Baking cake",
     "category": "dairy",
     "description": "Baking cake in rural kitchen - dough  recipe ingredients (eggs, flour, sugar) on vintage wooden table from above.",
-    "image": {
-      "url": "http://localhost:4000/images/5.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/5.jpg",
     "slug": "baking-cake",
     "stock": 8,
     "price": 11.14,
@@ -334,7 +306,6 @@
         "value": 635
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -344,8 +315,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -354,10 +324,7 @@
     "title": "Pesto with basil",
     "category": "vegetable",
     "description": "Italian traditional pesto with basil, chesse and oil",
-    "image": {
-      "url": "http://localhost:4000/images/6.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/6.jpg",
     "slug": "pesto-with-basil",
     "stock": 10,
     "price": 18.19,
@@ -392,7 +359,6 @@
         "value": 576
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -402,8 +368,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -412,10 +377,7 @@
     "title": "Hazelnut in black ceramic bowl",
     "category": "vegetable",
     "description": "Hazelnut in black ceramic bowl on old wooden background. forest wealth. rustic style. selective focus",
-    "image": {
-      "url": "http://localhost:4000/images/7.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/7.jpg",
     "slug": "hazelnut-in-black-ceramic-bowl",
     "stock": 6,
     "price": 27.35,
@@ -450,7 +412,6 @@
         "value": 234
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -460,8 +421,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -470,10 +430,7 @@
     "title": "Fresh stawberry",
     "category": "fruit",
     "description": "Sweet fresh stawberry on the wooden table",
-    "image": {
-      "url": "http://localhost:4000/images/8.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/8.jpg",
     "slug": "fresh-stawberry",
     "stock": 33,
     "price": 28.59,
@@ -508,7 +465,6 @@
         "value": 299
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -518,8 +474,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -529,10 +484,7 @@
     "category": "fruit",
     "description": "Rosemary, lemon and salt on the table",
     "slug": "lemon-and-salt",
-    "image": {
-      "url": "http://localhost:4000/images/9.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/9.jpg",
     "stock": 55,
     "price": 15.79,
     "currency": {
@@ -544,7 +496,6 @@
       "rounding": 0,
       "namePlural": "US dollars"
     },
-    "reviews": [],
     "rating": [
       {
         "name": "5",
@@ -576,8 +527,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -586,10 +536,7 @@
     "title": "Homemade bread",
     "category": "bakery",
     "description": "Homemade bread",
-    "image": {
-      "url": "http://localhost:4000/images/10.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/10.jpg",
     "slug": "homemade-bread",
     "stock": 64,
     "price": 17.48,
@@ -624,7 +571,6 @@
         "value": 563
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -634,8 +580,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -644,10 +589,7 @@
     "title": "Legums",
     "category": "vegetable",
     "description": "Cooked legums on the wooden table",
-    "image": {
-      "url": "http://localhost:4000/images/11.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/11.jpg",
     "slug": "legums",
     "stock": 35,
     "price": 14.77,
@@ -682,7 +624,6 @@
         "value": 175
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -692,8 +633,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -702,10 +642,7 @@
     "title": "Fresh tomato",
     "category": "vegetable",
     "description": "Fresh tomato juice with basil",
-    "image": {
-      "url": "http://localhost:4000/images/12.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/12.jpg",
     "stock": 77,
     "slug": "fresh-tomato",
     "price": 16.3,
@@ -740,7 +677,6 @@
         "value": 223
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -750,8 +686,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -760,10 +695,7 @@
     "title": "Healthy breakfast",
     "category": "fruit",
     "description": "Healthy breakfast set. rice cereal or porridge with berries and honey over rustic wood background",
-    "image": {
-      "url": "http://localhost:4000/images/13.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/13.jpg",
     "slug": "healthy-breakfast",
     "stock": 13,
     "price": 13.02,
@@ -798,7 +730,6 @@
         "value": 837
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -808,8 +739,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -818,10 +748,7 @@
     "title": "Green beans",
     "category": "vegetable",
     "description": "Raw organic green beans ready to eat",
-    "image": {
-      "url": "http://localhost:4000/images/14.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/14.jpg",
     "slug": "green-beans",
     "stock": 41,
     "price": 28.79,
@@ -856,7 +783,6 @@
         "value": 507
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -866,8 +792,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -876,10 +801,7 @@
     "title": "Baked stuffed portabello mushrooms",
     "category": "bakery",
     "description": "Homemade baked stuffed portabello mushrooms with spinach and cheese",
-    "image": {
-      "url": "http://localhost:4000/images/15.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/15.jpg",
     "slug": "baked-stuffed-portabello-mushrooms",
     "stock": 5,
     "price": 20.31,
@@ -914,7 +836,6 @@
         "value": 227
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -924,8 +845,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -934,10 +854,7 @@
     "title": "Strawberry jelly",
     "category": "fruit",
     "description": "Homemade organic strawberry jelly in a jar",
-    "image": {
-      "url": "http://localhost:4000/images/16.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/16.jpg",
     "stock": 6,
     "slug": "strawberry-jelly",
     "price": 14.18,
@@ -972,7 +889,6 @@
         "value": 188
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -982,8 +898,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -993,10 +908,7 @@
     "category": "fruit",
     "description": "Fresh pears juice on the wooden table",
     "slug": "pears-juice",
-    "image": {
-      "url": "http://localhost:4000/images/17.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/17.jpg",
     "stock": 17,
     "currency": {
       "name": "US Dollar",
@@ -1030,7 +942,6 @@
         "value": 647
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1040,8 +951,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1050,10 +960,7 @@
     "title": "Fresh pears",
     "category": "fruit",
     "description": "Sweet fresh pears on the wooden table",
-    "image": {
-      "url": "http://localhost:4000/images/18.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/18.jpg",
     "slug": "fresh-pears",
     "stock": 18,
     "price": 15.12,
@@ -1088,7 +995,6 @@
         "value": 871
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1098,8 +1004,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1108,10 +1013,7 @@
     "title": "Caprese salad",
     "category": "vegetable",
     "description": "Homemade healthy caprese salad with tomato mozzarella and basil",
-    "image": {
-      "url": "http://localhost:4000/images/19.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/19.jpg",
     "slug": "caprese-salad",
     "stock": 19,
     "price": 16.76,
@@ -1146,7 +1048,6 @@
         "value": 505
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1156,8 +1057,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1166,10 +1066,7 @@
     "title": "Oranges",
     "category": "fruit",
     "description": "Orange popsicle ice cream bars made from fresh oranges.  a refreshing summer treat.",
-    "image": {
-      "url": "http://localhost:4000/images/20.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/20.jpg",
     "stock": 2,
     "slug": "oranges",
     "price": 21.48,
@@ -1204,17 +1101,6 @@
         "value": 8
       }
     ],
-    "reviews": [
-      {
-        "name": "test21",
-        "photoUrl": "http://localhost:4000/images/Avatar-16.png",
-        "message": "Nice!!!",
-        "_id": {
-          "$oid": "6331ef3d890f9ed0feb58a47"
-        },
-        "userId": "632f4b56d9247dba3df502f5"
-      }
-    ],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1224,8 +1110,7 @@
       "$date": {
         "$numberLong": "1668338016907"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1234,10 +1119,7 @@
     "title": "Vegan food",
     "category": "vegetable",
     "description": "Concept of vegan food",
-    "image": {
-      "url": "http://localhost:4000/images/21.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/21.jpg",
     "stock": 21,
     "price": 29.66,
     "currency": {
@@ -1272,7 +1154,6 @@
         "value": 311
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1282,8 +1163,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1292,10 +1172,7 @@
     "title": "Breakfast with muesli",
     "category": "dairy",
     "description": "Concept of healthy breakfast with muesli",
-    "image": {
-      "url": "http://localhost:4000/images/22.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/22.jpg",
     "stock": 22,
     "slug": "breakfast-with-muesli",
     "price": 22.7,
@@ -1330,7 +1207,6 @@
         "value": 782
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1340,8 +1216,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1350,10 +1225,7 @@
     "title": "Honey",
     "category": "bakery",
     "description": "Honey and honeycell on the table",
-    "image": {
-      "url": "http://localhost:4000/images/23.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/23.jpg",
     "slug": "honey",
     "stock": 32,
     "price": 17.01,
@@ -1388,7 +1260,6 @@
         "value": 61
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1398,8 +1269,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1408,10 +1278,7 @@
     "title": "Breakfast with cottage",
     "category": "fruit",
     "description": "Healthy breakfast with cottage cheese and strawberry",
-    "image": {
-      "url": "http://localhost:4000/images/24.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/24.jpg",
     "slug": "breakfast-with-cottage",
     "stock": 24,
     "price": 14.05,
@@ -1446,7 +1313,6 @@
         "value": 172
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1456,8 +1322,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1466,10 +1331,7 @@
     "title": "Strawberry smoothie",
     "category": "fruit",
     "description": "Glass of red strawberry smoothie with chia seeds, served with retro cocktail tube, fresh mint and strawberries over dark background",
-    "image": {
-      "url": "http://localhost:4000/images/25.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/25.jpg",
     "slug": "strawberry-smoothie",
     "stock": 52,
     "price": 28.86,
@@ -1504,7 +1366,6 @@
       "rounding": 0,
       "namePlural": "US dollars"
     },
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1514,8 +1375,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1524,10 +1384,7 @@
     "title": "Strawberry and mint",
     "category": "fruit",
     "description": "Homemade muesli with strawberry and mint",
-    "image": {
-      "url": "http://localhost:4000/images/26.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/26.jpg",
     "slug": "strawberry-and-mint",
     "stock": 26,
     "price": 26.21,
@@ -1562,7 +1419,6 @@
         "value": 676
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1572,8 +1428,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1582,10 +1437,7 @@
     "title": "Ricotta",
     "category": "dairy",
     "description": "Ricotta with berry and mint",
-    "image": {
-      "url": "http://localhost:4000/images/27.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/27.jpg",
     "slug": "ricotta",
     "stock": 27,
     "price": 27.81,
@@ -1620,7 +1472,6 @@
         "value": 661
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1630,8 +1481,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1640,10 +1490,7 @@
     "title": "Cuban sandwiche",
     "category": "bakery",
     "description": "Homemade traditional cuban sandwiches with ham pork and cheese",
-    "image": {
-      "url": "http://localhost:4000/images/28.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/28.jpg",
     "stock": 28,
     "price": 18.5,
     "slug": "cuban-sandwiche",
@@ -1678,7 +1525,6 @@
         "value": 475
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1688,8 +1534,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1698,10 +1543,7 @@
     "title": "Granola",
     "category": "dairy",
     "description": "Glass jar with homemade granola and yogurt with nuts, raspberries and blackberries on wooden cutting board over white textile in day light",
-    "image": {
-      "url": "http://localhost:4000/images/29.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/29.jpg",
     "slug": "granola",
     "stock": 29,
     "price": 29.97,
@@ -1736,7 +1578,6 @@
         "value": 44
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1746,8 +1587,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1756,10 +1596,7 @@
     "title": "Smoothie with chia seeds",
     "category": "fruit",
     "description": "Glass of red strawberry smoothie with chia seeds, served with retro cocktail tube, fresh mint and strawberries over wooden table",
-    "image": {
-      "url": "http://localhost:4000/images/30.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/30.jpg",
     "stock": 30,
     "slug": "smoothie-with-chia-seeds",
     "price": 25.26,
@@ -1794,7 +1631,6 @@
         "value": 61
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1804,8 +1640,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1814,10 +1649,7 @@
     "title": "Yogurt",
     "category": "dairy",
     "description": "Homemade yogurt with raspberry and mint",
-    "image": {
-      "url": "http://localhost:4000/images/31.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/31.jpg",
     "slug": "yogurt",
     "stock": 5,
     "price": 27.61,
@@ -1852,7 +1684,6 @@
         "value": 983
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1862,8 +1693,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1872,10 +1702,7 @@
     "title": "Sandwich with salad",
     "category": "vegetable",
     "description": "Vegan sandwich with salad, tomato and radish",
-    "image": {
-      "url": "http://localhost:4000/images/32.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/32.jpg",
     "slug": "sandwich-with-salad",
     "stock": 23,
     "price": 22.48,
@@ -1910,7 +1737,6 @@
         "value": 44
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1920,8 +1746,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1931,10 +1756,7 @@
     "category": "fruit",
     "description": "Cherry with sugar on old table",
     "slug": "cherry",
-    "image": {
-      "url": "http://localhost:4000/images/33.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/33.jpg",
     "stock": 33,
     "price": 14.35,
     "currency": {
@@ -1968,7 +1790,6 @@
         "value": 588
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -1978,8 +1799,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -1988,10 +1808,7 @@
     "title": "Raw asparagus",
     "category": "vegetable",
     "description": "Raw fresh asparagus salad with cheese and dressing",
-    "image": {
-      "url": "http://localhost:4000/images/34.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/34.jpg",
     "slug": "raw-asparagus",
     "stock": 34,
     "price": 22.97,
@@ -2026,7 +1843,6 @@
         "value": 615
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2036,8 +1852,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2046,10 +1861,7 @@
     "title": "Corn",
     "category": "vegetable",
     "description": "Grilled corn on the cob with salt and butter",
-    "image": {
-      "url": "http://localhost:4000/images/35.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/35.jpg",
     "slug": "corn",
     "stock": 35,
     "price": 13.55,
@@ -2084,7 +1896,6 @@
         "value": 482
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2094,8 +1905,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2104,13 +1914,7 @@
     "title": "Vegan",
     "category": "vegan",
     "description": "Concept of healthy vegan eating",
-    "image": {
-      "name": "",
-      "url": "http://localhost:4000/images/36.jpg",
-      "_id": {
-        "$oid": "63389872d1f6323078fc06f3"
-      }
-    },
+    "image": "http://localhost:4000/images/36.jpg",
     "slug": "vegan",
     "stock": 36,
     "price": 28.96,
@@ -2148,7 +1952,6 @@
         "value": 651
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2158,8 +1961,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2168,10 +1970,7 @@
     "title": "Fresh blueberries",
     "category": "fruit",
     "description": "Healthy breakfast. berry crumble with fresh blueberries, raspberries, strawberries, almond, walnuts, pecans, yogurt, and mint in ceramic plates over white wooden surface, top view",
-    "image": {
-      "url": "http://localhost:4000/images/37.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/37.jpg",
     "stock": 32,
     "slug": "fresh-blueberries",
     "price": 21.01,
@@ -2206,7 +2005,6 @@
         "value": 403
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2216,8 +2014,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2226,10 +2023,7 @@
     "title": "Smashed avocado",
     "category": "fruit",
     "description": "Vegan sandwiches with smashed avocado, tomatoes and radish. top view",
-    "image": {
-      "url": "http://localhost:4000/images/38.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/38.jpg",
     "slug": "smashed-avocado",
     "stock": 38,
     "price": 25.88,
@@ -2264,7 +2058,6 @@
         "value": 897
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2274,8 +2067,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2284,10 +2076,7 @@
     "title": "Italian ciabatta",
     "category": "bakery",
     "description": "Italian ciabatta bread cut in slices on wooden chopping board with herbs, garlic and olives over dark grunge backdrop, top view",
-    "image": {
-      "url": "http://localhost:4000/images/39.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/39.jpg",
     "slug": "italian-ciabatta",
     "stock": 39,
     "price": 15.18,
@@ -2322,7 +2111,6 @@
         "value": 158
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2332,8 +2120,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2342,10 +2129,7 @@
     "title": "Rustic breakfast",
     "category": "dairy",
     "description": "Rustic healthy breakfast set. cooked buckwheat groats with milk and honey on dark grunge backdrop. top view, copy space",
-    "image": {
-      "url": "http://localhost:4000/images/40.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/40.jpg",
     "stock": 40,
     "slug": "rustic-breakfast",
     "price": 21.32,
@@ -2380,7 +2164,6 @@
         "value": 761
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2390,8 +2173,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2400,10 +2182,7 @@
     "title": "Sliced lemons",
     "category": "fruit",
     "description": "Heap of whole and sliced lemons and limes with mint in vintage metal grid box over old wooden table with turquoise wooden background. dark rustic style.",
-    "image": {
-      "url": "http://localhost:4000/images/41.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/41.jpg",
     "slug": "sliced-lemons",
     "stock": 14,
     "price": 27.14,
@@ -2438,7 +2217,6 @@
         "value": 907
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2448,8 +2226,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2458,10 +2235,7 @@
     "title": "Plums",
     "category": "fruit",
     "description": "Yellow and red sweet plums",
-    "image": {
-      "url": "http://localhost:4000/images/42.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/42.jpg",
     "slug": "plums",
     "stock": 24,
     "price": 19.18,
@@ -2496,7 +2270,6 @@
         "value": 550
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2506,8 +2279,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2516,10 +2288,7 @@
     "title": "French fries",
     "category": "bakery",
     "description": "Homemade oven baked french fries with ketchup",
-    "image": {
-      "url": "http://localhost:4000/images/43.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/43.jpg",
     "slug": "french-fries",
     "stock": 43,
     "price": 18.32,
@@ -2554,7 +2323,6 @@
         "value": 529
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2564,8 +2332,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2574,10 +2341,7 @@
     "title": "Strawberries",
     "category": "fruit",
     "description": "Healthy breakfast set. rice cereal or porridge with fresh strawberry, apricots, almond and honey over white rustic wood backdrop, top view, x00",
-    "image": {
-      "url": "http://localhost:4000/images/44.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/44.jpg",
     "slug": "strawberries",
     "stock": 44,
     "price": 15.13,
@@ -2612,7 +2376,6 @@
         "value": 860
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2622,8 +2385,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2632,10 +2394,7 @@
     "title": "Ground beef meat burger",
     "category": "meat",
     "description": "Raw ground beef meat burger steak cutlets with seasoning on vintage wooden boards, black background",
-    "image": {
-      "url": "http://localhost:4000/images/45.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/45.jpg",
     "slug": "ground-beef-meat-burger",
     "stock": 45,
     "price": 11.73,
@@ -2670,7 +2429,6 @@
         "value": 92
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2680,8 +2438,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2691,10 +2448,7 @@
     "category": "fruit",
     "description": "Organic tomatoes made with love",
     "slug": "tomatoes",
-    "image": {
-      "url": "http://localhost:4000/images/46.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/46.jpg",
     "stock": 64,
     "price": 26.03,
     "currency": {
@@ -2728,7 +2482,6 @@
         "value": 227
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2738,8 +2491,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2749,10 +2501,7 @@
     "category": "vegetable",
     "description": "Concept of vegan food with basil",
     "slug": "basil",
-    "image": {
-      "url": "http://localhost:4000/images/47.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/47.jpg",
     "stock": 47,
     "price": 15.19,
     "currency": {
@@ -2786,7 +2535,6 @@
         "value": 468
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2796,8 +2544,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2807,10 +2554,7 @@
     "category": "fruit",
     "slug": "fruits-bouquet",
     "description": "Abstract citrus fruits bouquet on blue background",
-    "image": {
-      "url": "http://localhost:4000/images/48.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/48.jpg",
     "stock": 48,
     "price": 18.18,
     "currency": {
@@ -2844,7 +2588,6 @@
         "value": 774
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2854,8 +2597,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2865,10 +2607,7 @@
     "category": "fruit",
     "slug": "peaches-on-branch",
     "description": "Peaches on branch with leaves and glasses with peach juice and limonade with ice cubes in aluminum tray over old metal table. dark rustic style. top view.",
-    "image": {
-      "url": "http://localhost:4000/images/49.jpg",
-      "name": ""
-    },
+    "image": "http://localhost:4000/images/49.jpg",
     "stock": 49,
     "price": 25.62,
     "currency": {
@@ -2902,7 +2641,6 @@
         "value": 746
       }
     ],
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665046691343"
@@ -2912,8 +2650,7 @@
       "$date": {
         "$numberLong": "1665046691343"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2923,13 +2660,7 @@
     "slug": "textfood",
     "category": "vegan",
     "description": "testing the image support",
-    "image": {
-      "name": "iBB5m-ant-man-and-the-wasp-3840x2160-artwork-4k-19690.jpg",
-      "url": "http://localhost:4000/images/iBB5m-ant-man-and-the-wasp-3840x2160-artwork-4k-19690.jpg",
-      "_id": {
-        "$oid": "6340cc44abd6d7f2a83f12ae"
-      }
-    },
+    "image": "http://localhost:4000/images/iBB5m-ant-man-and-the-wasp-3840x2160-artwork-4k-19690.jpg",
     "price": 12,
     "stock": 21,
     "rating": [
@@ -2966,7 +2697,6 @@
         "$oid": "6340cc44abd6d7f2a83f12af"
       }
     },
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665151077340"
@@ -2976,8 +2706,7 @@
       "$date": {
         "$numberLong": "1665190980446"
       }
-    },
-    "discount": null
+    }
   },
   {
     "_id": {
@@ -2987,13 +2716,7 @@
     "slug": "unknow",
     "category": "vegan",
     "description": "hello world",
-    "image": {
-      "name": "Aerj_-far_cry_3_2012_video_game-wallpaper-2560x1440.jpg",
-      "url": "http://localhost:4000/images/Aerj_-far_cry_3_2012_video_game-wallpaper-2560x1440.jpg",
-      "_id": {
-        "$oid": "634954ae23f29b95881ece1f"
-      }
-    },
+    "image": "http://localhost:4000/images/Aerj_-far_cry_3_2012_video_game-wallpaper-2560x1440.jpg",
     "price": 21,
     "stock": 0,
     "rating": [
@@ -3030,7 +2753,6 @@
         "$oid": "634954ae23f29b95881ece20"
       }
     },
-    "reviews": [],
     "createdAt": {
       "$date": {
         "$numberLong": "1665750190464"
@@ -3040,7 +2762,6 @@
       "$date": {
         "$numberLong": "1665750190464"
       }
-    },
-    "discount": null
+    }
   }
 ]

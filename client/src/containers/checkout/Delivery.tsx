@@ -8,17 +8,18 @@ import CardTemplate from "../../components/CardTemplate";
 import { selectShipping } from "../../redux/features/basketSlice";
 import { add } from "../../redux/features/dialogSlice";
 
-const Delivery = ({
-  deliveryMethod,
-  setDeliveryMethod,
-  setPickup,
-}: {
-  deliveryMethod: string;
-  setDeliveryMethod(value: string): void;
-  setPickup(value: string): void;
-}) => {
+interface Props {
+  deliveryMethod: "Door Delivery" | "Pickup Station";
+  setDeliveryMethod: React.Dispatch<
+    React.SetStateAction<"Door Delivery" | "Pickup Station">
+  >;
+  setPickup: React.Dispatch<React.SetStateAction<string | null>>;
+  onPickClick(): void;
+}
+const Delivery: React.FC<Props> = (props) => {
+  const { deliveryMethod, setDeliveryMethod, setPickup, onPickClick } = props;
   const dispatch = useDispatch();
-  const shippingFee = useSelector(selectShipping)
+  const shippingFee = useSelector(selectShipping);
 
   return (
     <Fragment>
@@ -50,16 +51,18 @@ const Delivery = ({
               <strong className="font-medium text-black dark:text-white">
                 Thursday 22 Sep
               </strong>{" "}
-              for <strong className="font-medium text-primary"> {shippingFee ? `$${shippingFee}` : "Free"}</strong>
+              for{" "}
+              <strong className="font-medium text-primary">
+                {" "}
+                {shippingFee ? `$${shippingFee}` : "Free"}
+              </strong>
             </p>
           </div>
         </div>
 
         <div
           className="flex w-[90%] items-start my-2 ml-[25px] cursor-pointer"
-          onClick={() =>
-            dispatch(add({ open: true, type: "delivery", data: null }))
-          }
+          onClick={onPickClick}
         >
           <div className="flex justify-center items-center mt-[3px]">
             {deliveryMethod === "Pickup Station" ? (
@@ -80,7 +83,8 @@ const Delivery = ({
               and{" "}
               <strong className="font-medium text-black dark:text-white">
                 Thursday 22 Sep
-              </strong>{" "} for <strong className="font-medium text-primary">Free</strong>
+              </strong>{" "}
+              for <strong className="font-medium text-primary">Free</strong>
             </p>
           </div>
         </div>

@@ -2,46 +2,58 @@ import { gql, useMutation } from "@apollo/client";
 import { Edit2 } from "iconsax-react";
 import React from "react";
 import { useSelector } from "react-redux";
+import { UploadResponse } from "../../../typing";
 import Avatar from "../../components/Avatar";
 import Button from "../../components/Button";
 import LoadingCard from "../../components/LoadingCard";
 import PopupTemplate from "../../components/PopupTemplate";
 import { ImageType } from "../../pages/account";
+import { UpdateUserMutation } from "../employee/EmployeeEdit";
 
-const UpdateMutation = gql`
-  mutation UpdateEmployeePhotoUrl($image: Upload!) {
-    updateEmployeePhotoUrl(image: $image) {
-      msg
+export const UploadMutation = gql`
+  mutation UploadFile($file: Upload!) {
+    uploadFile(file: $file) {
+      url
     }
   }
 `;
 
-const ImageCard = ({
-  setImage,
-  image,
-  func,
-}: {
-  setImage(value: ImageType): void;
+interface Props {
+  setImage: React.Dispatch<React.SetStateAction<ImageType>>;
   image: ImageType;
-  func: any;
-}) => {
+  func: () => void;
+}
+
+const ImageCard: React.FC<Props> = ({ setImage, image, func }) => {
   const { user } = useSelector((store: any) => store.user);
 
-  const [updateEmployeePhotoUrl, { loading }] = useMutation(UpdateMutation);
+  const [updateUser, { loading: userLoading }] =
+    useMutation(UpdateUserMutation);
+  const [uploadFile, { loading: uploadLoading }] =
+    useMutation<UploadResponse>(UploadMutation);
+
+  const loading = userLoading || uploadLoading;
 
   const close = () => setImage({ file: null, url: "" });
 
+  const upload = async () =>
+    new Promise<string>(async (resolve, reject) => {
+      await uploadFile({
+        variables: { file: image.file },
+        onCompleted: (data) => resolve(data.uploadFile.url),
+        onError: (err) => console.table(err),
+      });
+    });
+
   const handleSubmit = async () => {
-    await updateEmployeePhotoUrl({
-      variables: {
-        image: image.file,
-      },
-      onCompleted: () => {
+    const url = await upload();
+    if (!url) return;
+
+    await updateUser({
+      variables: { input: { photoUrl: url } },
+      onCompleted: (data) => {
         func?.();
-        setImage({
-          file: null,
-          url: "",
-        });
+        close();
       },
       onError: (err) => console.table(err),
     });

@@ -1,9 +1,10 @@
-import { ApolloQueryResult } from "@apollo/client";
+import type { ObservableQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { RefObject } from "react";
+import { FC, RefObject } from "react";
 import { useSelector } from "react-redux";
 import { Product } from "../../../typing";
 import InfiniteScroll from "../../components/InfiniteScroll";
+import and from "../../helper/and";
 import { Loader } from "../../pages/favorite";
 import { selectCatagory } from "../../redux/features/categorySlice";
 import Card from "./Card";
@@ -12,37 +13,34 @@ import Header from "./Header";
 type Props = {
   refetch: any;
   products: Product[];
-  fetchMore: any;
+  fetchMore: ObservableQuery["fetchMore"];
   containerRef: RefObject<HTMLDivElement>;
   totalItems: number;
+  updateFavorite: (id: string, args: boolean) => void;
 };
-const CardsContainer = ({
-  refetch,
-  products,
-  fetchMore,
-  containerRef,
-  totalItems,
-}: Props) => {
+
+const CardsContainer: FC<Props> = (props) => {
+  const {
+    products,
+    fetchMore,
+    containerRef,
+    totalItems,
+    updateFavorite,
+  } = props;
   const router = useRouter();
 
   const categories = useSelector(selectCatagory);
   const genre = router.query.genre?.toString();
+  const isPath = "/" === router.pathname;
 
-  const category = categories.find((category: { name: string }, i: number) => {
-    if (
-      category.name.toLowerCase() === "all" &&
-      "/" === router.pathname &&
-      !genre
-    ) {
+  const category = categories.find((category) => {
+    if (and(isPath, category.name.toLowerCase() === "all", !genre))
       return category;
-    }
+
     if (
-      "/" === router.pathname &&
-      genre &&
-      category.name.toLowerCase() === genre.toLowerCase()
-    ) {
+      and(isPath, genre, category.name.toLowerCase() === genre?.toLowerCase())
+    )
       return category;
-    }
   });
 
   const data = category
@@ -53,13 +51,8 @@ const CardsContainer = ({
 
   const handleFetchMore = () => {
     fetchMore({
-      variables: {
-        input: {
-          genre,
-          offset: products.length,
-          limit: 10,
-        },
-      },
+      variables: { input: { genre, offset: products.length, limit: 10 } },
+      
     });
   };
 
@@ -70,16 +63,16 @@ const CardsContainer = ({
         containerRef={containerRef}
         hasMore={products.length < totalItems}
         next={handleFetchMore}
-        className={` ${
-          data.length <= 3 ? " flex" : "flex flex-wrap justify-center"
-        } transition-all duration-300 ease w-full`}
+        className={` ml-2 ${
+          data.length <= 3 ? " flex " : "flex flex-wrap"
+        } transition-all duration-300 ease w-full flex-grow`}
         loader={<Loader />}
       >
         {data.map((item: any, index: number) => (
           <Card
             key={index}
             {...item}
-            refetchAll={() => refetch({ input: { genre } })}
+            updateFavorite={updateFavorite}
           />
         ))}
       </InfiniteScroll>

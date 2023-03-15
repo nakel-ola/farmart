@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "note.tst"  ],
+, "note.tst", "../apollo-server/src/helper/arrayMerge.ts"  ],
   "exclude": [
     "node_modules"
   ]

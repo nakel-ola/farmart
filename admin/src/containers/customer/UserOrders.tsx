@@ -5,14 +5,14 @@ import { useRouter } from "next/router";
 import { ChangeEvent, useState } from "react";
 import NumberFormat from "react-number-format";
 import { useDispatch } from "react-redux";
-import { GraphQLOrdersResponse, OrdersData, OrderType } from "../../../typing";
+import { GraphQLOrdersResponse, OrderType, OrdersData } from "../../../typing";
 import Pagination from "../../components/Pagination";
 import {
   Table,
   TableBody,
   TableContent,
   TableHead,
-  TableRow
+  TableRow,
 } from "../../components/tables";
 import Header from "../../components/tables/Header";
 import capitalizeFirstLetter from "../../helper/capitalizeFirstLetter";
@@ -24,27 +24,21 @@ import { add } from "../../redux/features/orderSlice";
 export const OrdersQuery = gql`
   query Orders($input: OrdersInput!) {
     orders(input: $input) {
-      __typename
-      ... on OrderData {
-        page
-        status
-        totalItems
-        results {
-          id
-          orderId
-          totalPrice
-          paymentMethod
-          deliveryMethod
-          createdAt
-          progress {
-            name
-            checked
-            updatedAt
-          }
+      page
+      status
+      totalItems
+      results {
+        id
+        orderId
+        totalPrice
+        paymentMethod
+        deliveryMethod
+        createdAt
+        progress {
+          name
+          checked
+          updatedAt
         }
-      }
-      ... on ErrorMsg {
-        error
       }
     }
   }
@@ -100,7 +94,12 @@ const UserOrders = () => {
           ) : null
         }
       >
-        <TableHead tableList={tableList} disableDivider={(data?.orders as OrdersData)?.results?.length! > 0 ? false : true} />
+        <TableHead
+          tableList={tableList}
+          disableDivider={
+            (data?.orders as OrdersData)?.results?.length! > 0 ? false : true
+          }
+        />
         {(data?.orders as OrdersData)?.results?.length! > 0 ? (
           <TableBody>
             {(data?.orders as OrdersData).results.map(

@@ -9,19 +9,19 @@ import {
   MouseEvent,
   useCallback,
   useEffect,
-  useState
+  useState,
 } from "react";
 import toast from "react-hot-toast";
 import NumberFormat from "react-number-format";
 import { GraphQLOrdersResponse, OrdersData } from "../../typing";
 import Pagination from "../components/Pagination";
 import {
+  Header,
   Table,
   TableBody,
   TableContent,
   TableHead,
   TableRow,
-  Header
 } from "../components/tables";
 import capitalizeFirstLetter from "../helper/capitalizeFirstLetter";
 import { statusColor } from "../helper/statusColor";
@@ -43,27 +43,21 @@ let limit = 10;
 export const OrdersQuery = gql`
   query Orders($input: OrdersInput!) {
     orders(input: $input) {
-      __typename
-      ... on OrderData {
-        page
-        status
-        totalItems
-        results {
-          id
-          orderId
-          totalPrice
-          paymentMethod
-          deliveryMethod
-          createdAt
-          progress {
-            name
-            checked
-            updatedAt
-          }
+      page
+      status
+      totalItems
+      results {
+        id
+        orderId
+        totalPrice
+        paymentMethod
+        deliveryMethod
+        createdAt
+        progress {
+          name
+          checked
+          updatedAt
         }
-      }
-      ... on ErrorMsg {
-        error
       }
     }
   }
@@ -72,43 +66,38 @@ export const OrdersQuery = gql`
 export const FilterById = gql`
   query FilterById($input: FilterByIdInput!) {
     filterById(input: $input) {
-      ... on OrderData {
-        page
+      page
+      status
+      totalItems
+      results {
+        id
+        userId
+        orderId
+        trackingId
+        paymentId
         status
-        totalItems
-        results {
-          id
-          userId
-          orderId
-          trackingId
-          paymentId
-          status
-          totalPrice
-          paymentMethod
-          deliveryMethod
-          createdAt
+        totalPrice
+        paymentMethod
+        deliveryMethod
+        createdAt
+        updatedAt
+        progress {
+          name
+          checked
           updatedAt
-          progress {
-            name
-            checked
-            updatedAt
-          }
-          address {
-            street
-            city
-            state
-            country
-            phoneNumber
-          }
-          products {
-            id
-            quantity
-            price
-          }
         }
-      }
-      ... on ErrorMsg {
-        error
+        address {
+          street
+          city
+          state
+          country
+          phoneNumber
+        }
+        products {
+          productId
+          quantity
+          price
+        }
       }
     }
   }
@@ -117,44 +106,38 @@ export const FilterById = gql`
 export const FilterByStatus = gql`
   query FilterByStatus($input: FilterByStatusInput!) {
     filterByStatus(input: $input) {
-      ... on OrderData {
-        page
+      page
+      status
+      totalItems
+      results {
+        id
+        userId
+        orderId
+        trackingId
+        paymentId
         status
-        totalItems
-        results {
-          id
-          userId
-          orderId
-          trackingId
-          paymentId
-          status
-          totalPrice
-          paymentMethod
-          deliveryMethod
-          createdAt
+        totalPrice
+        paymentMethod
+        deliveryMethod
+        createdAt
+        updatedAt
+        progress {
+          name
+          checked
           updatedAt
-          progress {
-            name
-            checked
-            updatedAt
-          }
-          address {
-            street
-            city
-            state
-            country
-            phoneNumber
-          }
-          products {
-            id
-            quantity
-            price
-          }
         }
-      }
-
-      ... on ErrorMsg {
-        error
+        address {
+          street
+          city
+          state
+          country
+          phoneNumber
+        }
+        products {
+          productId
+          quantity
+          price
+        }
       }
     }
   }
@@ -176,11 +159,7 @@ const Orders = () => {
       },
     },
     fetchPolicy: "network-only",
-    onCompleted: (data) => {
-      if (data.orders.__typename !== "ErrorMsg") {
-        setData(data);
-      }
-    },
+    onCompleted: (data) => setData(data),
     onError: (data) => console.table(data),
   });
 
@@ -200,45 +179,44 @@ const Orders = () => {
   };
 
   const handleSortClick = useCallback(
-    (e: MouseEvent<HTMLDivElement>, selected: string) => {
+    async (e: MouseEvent<HTMLDivElement>, selected: string) => {
       let status = selected.toLowerCase();
-      if (e) {
+      if (e)
         router.push(status === "all" ? "/orders" : `/orders?type=${status}`);
+
+      if (selected === active) return;
+
+      let toastId = toast.loading("Sorting......");
+      if (status === "all") {
+        refetch({ input: { page: 1, limit, status: null } });
+        toast.dismiss(toastId);
+      } else {
+        await filterByStatus({
+          fetchPolicy: "network-only",
+          variables: {
+            input: { page: 1, limit, status },
+          },
+          onCompleted: (data) => {
+            toast.dismiss(toastId);
+            setData({ orders: data.filterByStatus });
+          },
+          onError: (err: any) => {
+            toast.error(`No orders with the selected sort:${selected}`, {
+              id: toastId,
+            });
+            console.table(err);
+          },
+        });
+        toast.dismiss(toastId);
       }
-      if (selected !== active) {
-        let toastId = toast.loading("Sorting......");
-        if (status === "all") {
-          refetch({
-            input: { page: 1, limit, status: null },
-          });
-          toast.dismiss(toastId);
-        } else {
-          filterByStatus({
-            fetchPolicy: "network-only",
-            variables: {
-              input: { page: 1, limit, status },
-            },
-            onCompleted: (data) => {
-              toast.dismiss(toastId);
-              setData({ orders: data.filterByStatus });
-            },
-            onError: (err: any) => {
-              toast.error(`No orders with the selected sort:${selected}`, {
-                id: toastId,
-              });
-              console.table(err);
-            },
-          });
-        }
-        setActive(status);
-      }
+      setActive(status);
     },
     [filterByStatus, active, refetch, router]
   );
 
   const getData = useCallback(async () => {
     let e: any;
-    let selected = router.query?.type?.toString() ?? "All";
+    let selected = router.query?.type?.toString() ?? "all";
     handleSortClick(e, selected);
   }, [handleSortClick, router.query?.type]);
 
@@ -397,7 +375,6 @@ const Orders = () => {
             </div>
           </div>
         ) : null}
-        
       </div>
     </Layout>
   );

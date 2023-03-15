@@ -15,29 +15,26 @@ type FormType = {
 
 const validate = (form: FormType): boolean => {
   const { title, description } = form;
-  if (title && description) {
-    return false;
-  }
+  if (title && description) return false;
+
   return true;
 };
 
 const CreateQuery = gql`
   mutation CreateInbox($input: CreateInboxInput!) {
     createInbox(input: $input) {
-      msg
+      message
     }
   }
 `;
 
-const CreateInboxCard = ({
-  func,
-  customerId,
-}: {
-  func: any;
+interface Props {
+  func(): void;
   customerId: string;
-}) => {
-  const dispatch = useDispatch();
+  onClose(): void;
+}
 
+const CreateInboxCard: React.FC<Props> = ({ func, customerId, onClose }) => {
   const [form, setForm] = useState<FormType>({
     title: "",
     description: "",
@@ -49,8 +46,6 @@ const CreateInboxCard = ({
     const target = e.target;
     setForm({ ...form, [target.name]: target.value });
   };
-
-  const close = () => dispatch(remove({ type: "inbox" }));
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -64,14 +59,14 @@ const CreateInboxCard = ({
       },
       onCompleted: () => {
         func?.();
-        dispatch(remove({ type: "inbox" }));
+        onClose();
       },
       onError: (err) => console.table(err),
     });
   };
 
   return (
-    <PopupTemplate title="Create inbox" onOutsideClick={close}>
+    <PopupTemplate title="Create inbox" onOutsideClick={onClose}>
       {!loading ? (
         <form
           onSubmit={handleSubmit}
@@ -98,7 +93,7 @@ const CreateInboxCard = ({
             <Button
               type="button"
               className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white mx-2"
-              onClick={close}
+              onClick={onClose}
             >
               Cancel
             </Button>

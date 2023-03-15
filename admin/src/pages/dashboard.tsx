@@ -8,71 +8,47 @@ import {
   ProductSummaryType,
 } from "../../typing";
 import OrderOverview from "../containers/dashboard/OrderOverview";
-import Orders from "../containers/dashboard/Orders";
 import OrderSummary from "../containers/dashboard/OrderSummary";
+import Orders from "../containers/dashboard/Orders";
 import SummaryCard from "../containers/dashboard/SummaryCard";
 import Layout from "../layout/Layout";
 
 export const OrdersQuery = gql`
   query Orders($input: OrdersInput!) {
     orders(input: $input) {
-      __typename
-      ... on OrderData {
-        page
-        status
-        totalItems
-        results {
-          id
-          createdAt
-          totalPrice
-          progress {
-            name
-            checked
-            updatedAt
-          }
+      page
+      status
+      totalItems
+      results {
+        id
+        createdAt
+        totalPrice
+        progress {
+          name
+          checked
+          updatedAt
         }
-      }
-      ... on ErrorMsg {
-        error
       }
     }
 
     productsSummary {
-      ... on ProductSummary {
-        totalOrders
-        totalDelivered
-        totalStock
-        outOfStock
-      }
-
-      ... on ErrorMsg {
-        error
-      }
+      totalOrders
+      totalDelivered
+      totalStock
+      outOfStock
     }
 
     ordersSummary {
-      ... on OrderSummary {
-        pending
-        delivered
-        canceled
-      }
-
-      ... on ErrorMsg {
-        error
-      }
+      pending
+      delivered
+      canceled
     }
 
     ordersStatistics {
-      ... on OrderStatistics {
-        min
-        max
-        week
-        month
-      }
-
-      ... on ErrorMsg {
-        error
-      }
+      min
+      max
+      week
+      month
     }
   }
 `;
@@ -84,12 +60,11 @@ const Dashboard = () => {
   });
 
   const validate = (data: OrderSummaryType) => {
-    const { canceled,delivered,pending } = data;
-    if(canceled > 0 || pending > 0 || delivered > 0) {
-      return true
-    }
+    const { canceled, delivered, pending } = data;
+    if (canceled > 0 || pending > 0 || delivered > 0) return true;
+
     return false;
-  }
+  };
 
   return (
     <Layout>
@@ -100,7 +75,7 @@ const Dashboard = () => {
       <div className="grid place-items-center">
         {data ? (
           <>
-            {data.productsSummary.__typename !== "ErrorMsg" && (
+            {data.productsSummary && (
               <SummaryCard
                 data={
                   (data as { productsSummary: ProductSummaryType })
@@ -109,7 +84,7 @@ const Dashboard = () => {
               />
             )}
 
-            {data.ordersStatistics.__typename !== "ErrorMsg" && (
+            {data.ordersStatistics && (
               <OrderSummary
                 data={
                   (data as { ordersStatistics: OrderStatisticsType })
@@ -119,8 +94,10 @@ const Dashboard = () => {
             )}
 
             <div className="flex w-full md:w-[90%] flex-col md:flex-row justify-center items-center md:items-start md:justify-between mb-0 md:mb-8">
-              {data.ordersSummary.__typename !== "ErrorMsg" &&
-                validate((data as { ordersSummary: OrderSummaryType }).ordersSummary) && (
+              {data.ordersSummary &&
+                validate(
+                  (data as { ordersSummary: OrderSummaryType }).ordersSummary
+                ) && (
                   <OrderOverview
                     data={
                       (data as { ordersSummary: OrderSummaryType })
@@ -128,7 +105,7 @@ const Dashboard = () => {
                     }
                   />
                 )}
-              {data.orders.__typename !== "ErrorMsg" &&
+              {data.orders &&
                 (data?.orders as { results: OrderType[] }).results.length >
                   0 && (
                   <Orders
@@ -138,7 +115,7 @@ const Dashboard = () => {
             </div>
           </>
         ) : (
-          <div className=""></div>
+          <></>
         )}
       </div>
     </Layout>

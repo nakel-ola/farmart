@@ -1,30 +1,26 @@
 import { gql, useMutation } from "@apollo/client";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import ReactLoading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
+import { AddressType } from "../../../typing";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import PopupTemplate from "../../components/PopupTemplate";
+import setting from "../../data/setting";
+import and from "../../helper/and";
+import or from "../../helper/or";
 import { remove, selectDialog } from "../../redux/features/dialogSlice";
 import { Wrapper } from "../auth/SignUpCard";
-import ReactLoading from "react-loading";
-import setting from "../../data/setting";
-
+import clean from "../../helper/clean";
 
 type Props = {
   func: () => void;
+  onClose(): void;
+  address?: AddressType;
 };
 
 const validate = (data: FormType): boolean => {
-  const {
-    firstName,
-    lastName,
-    phoneNumber,
-    phoneNumber2,
-    info,
-    street,
-    state,
-    city,
-  } = data;
+  const { firstName, lastName, phoneNumber, street, state, city } = data;
 
   const name = firstName + " " + lastName;
   if (
@@ -39,20 +35,45 @@ const validate = (data: FormType): boolean => {
   return true;
 };
 
-const splitData = (form: any) => {
-  const { name, phoneNumber, phoneNumber2, info, street, state, city } = form;
-
-  let newName = name.split(" ");
-
-  return {
-    firstName: newName[0],
-    lastName: newName[1],
+const validateEdit = (data: FormType, prev: AddressType) => {
+  const {
+    firstName,
+    lastName,
     phoneNumber,
     phoneNumber2,
     info,
     street,
     state,
     city,
+  } = data;
+
+  const name = firstName + " " + lastName;
+
+  if (
+    or(
+      name !== prev.name,
+      phoneNumber !== prev.phoneNumber,
+      street !== prev.street,
+      state !== prev.state,
+      city !== prev.city,
+      info,
+      phoneNumber2
+    )
+  )
+    return false;
+
+  return true;
+};
+
+const splitData = (form: any) => {
+  const { name, ...others } = form;
+
+  let newName = name.split(" ");
+
+  return {
+    firstName: newName[0] ?? "",
+    lastName: newName[1] ?? "",
+    ...others,
   };
 };
 
@@ -70,27 +91,25 @@ type FormType = {
 const AddressMutation = gql`
   mutation CreateAddress($input: AddressInput!) {
     createAddress(input: $input) {
-      msg
+      message
     }
   }
 `;
 
-const AddressModifyMutation = gql`
-  mutation ModifyAddress($input: ModifyAddressInput!) {
-    modifyAddress(input: $input) {
-      msg
+const AddressUpdateMutation = gql`
+  mutation UpdateAddress($input: UpdateAddressInput!) {
+    updateAddress(input: $input) {
+      message
     }
   }
 `;
 
-const AddressForm = ({ func }: Props) => {
+const AddressForm: React.FC<Props> = (props) => {
+  const { func, onClose, address } = props;
   const formRef = useRef<HTMLFormElement>(null);
-  const { address } = useSelector(selectDialog);
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<FormType>(
-    address.data
-      ? splitData(address.data)
+    address
+      ? splitData(address)
       : {
           firstName: "",
           lastName: "",
@@ -103,83 +122,64 @@ const AddressForm = ({ func }: Props) => {
         }
   );
 
-  const [createAddress] = useMutation(AddressMutation, {
-    onCompleted: () => {
-      close()
-      setLoading(false);
-      func();
-    },
-    onError: (error) => {
-      console.table(error);
-    },
-  });
-  const [modifyAddress] = useMutation(AddressModifyMutation, {
-    onCompleted: () => {
-      close()
-      setLoading(false);
-      func();
-    },
-  });
+  const onCompleted = () => {
+    onClose();
+    func();
+  };
+
+  const [createAddress, { loading: createLoading }] = useMutation(
+    AddressMutation,
+    {
+      onCompleted,
+      onError: (error) => console.table(error),
+    }
+  );
+
+  const [updateAddress, { loading: updateLoading }] = useMutation(
+    AddressUpdateMutation,
+    { onCompleted, onError: (error) => console.table(error) }
+  );
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
     setForm({ ...form, [target.name]: target.value });
   };
 
-  const close = () => dispatch(remove({ type: "address" }));
-
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    setLoading(true);
+    const { firstName, lastName, ...other } = form;
 
-    const {
-      firstName,
-      lastName,
-      phoneNumber,
-      phoneNumber2,
-      info,
-      street,
-      state,
-      city,
-    } = form;
+    const input = clean({
+      name: firstName + " " + lastName,
+      ...other,
+      country: "Nigeria",
+      __typename: null
+    });
 
-    if (address.data) {
-      modifyAddress({
+    if (address) {
+      await updateAddress({
         variables: {
           input: {
-            id: address.data.id,
-            name: firstName + " " + lastName,
-            phoneNumber,
-            phoneNumber2,
-            info,
-            street,
-            state,
-            city,
-            country: "Nigeria",
+            id: address.id,
+            userId: address.userId,
+            default: address.default,
+            ...input,
           },
         },
       });
     } else {
-      createAddress({
-        variables: {
-          input: {
-            name: lastName + " " + firstName,
-            phoneNumber,
-            phoneNumber2,
-            info,
-            street,
-            state,
-            city,
-            country: "Nigeria",
-          },
-        },
-      });
+      await createAddress({ variables: { input } });
     }
   };
 
+  const loading = createLoading || updateLoading;
+
   return (
-    <PopupTemplate title="Create New Address" onOutsideClick={close}>
+    <PopupTemplate
+      title={address ? "Edit Address" : "Create New Address"}
+      onOutsideClick={onClose}
+    >
       <form
         ref={formRef}
         onSubmit={handleSubmit}
@@ -195,6 +195,7 @@ const AddressForm = ({ func }: Props) => {
             margin
             value={form.firstName}
             onChange={handleChange}
+            disabled={loading}
           />
           <InputCard
             title="Last name"
@@ -204,6 +205,7 @@ const AddressForm = ({ func }: Props) => {
             toggle
             value={form.lastName}
             onChange={handleChange}
+            disabled={loading}
           />
         </Wrapper>
 
@@ -212,11 +214,12 @@ const AddressForm = ({ func }: Props) => {
             title="Phone Number"
             id="phoneNumber"
             name="phoneNumber"
-            type="text"
+            type="number"
             toggle
             margin
             value={form.phoneNumber}
             onChange={handleChange}
+            disabled={loading}
           />
           <InputCard
             title="Phone Number 2"
@@ -227,6 +230,7 @@ const AddressForm = ({ func }: Props) => {
             toggle
             value={form.phoneNumber2}
             onChange={handleChange}
+            disabled={loading}
           />
         </Wrapper>
 
@@ -237,6 +241,7 @@ const AddressForm = ({ func }: Props) => {
           type="text"
           value={form.street}
           onChange={handleChange}
+          disabled={loading}
         />
         <InputCard
           title="Additional Information"
@@ -245,27 +250,30 @@ const AddressForm = ({ func }: Props) => {
           type="text"
           value={form.info}
           onChange={handleChange}
+          disabled={loading}
         />
 
         <Wrapper>
-          <InputCard
-            title="State"
-            id="state"
-            name="state"
-            type="text"
-            toggle
-            margin
-            value={form.state}
-            onChange={handleChange}
-          />
           <InputCard
             title="City"
             id="city"
             name="city"
             type="text"
             toggle
+            margin
             value={form.city}
             onChange={handleChange}
+            disabled={loading}
+          />
+          <InputCard
+            title="State"
+            id="state"
+            name="state"
+            type="text"
+            toggle
+            value={form.state}
+            onChange={handleChange}
+            disabled={loading}
           />
         </Wrapper>
 
@@ -277,16 +285,18 @@ const AddressForm = ({ func }: Props) => {
               <Button
                 type="button"
                 className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white"
-                onClick={close}
+                onClick={onClose}
               >
                 Cancel
               </Button>
               <Button
-                disabled={validate(form)}
+                disabled={
+                  address ? validateEdit(form, address) : validate(form)
+                }
                 type="submit"
                 className="bg-primary text-white"
               >
-                Save
+                {address ? "Update" : "Create"}
               </Button>
             </div>
           )}

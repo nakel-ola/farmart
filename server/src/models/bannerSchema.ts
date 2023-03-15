@@ -1,6 +1,9 @@
 import { model, Schema } from "mongoose";
+import type { BannerType } from "../../typing";
 
-const bannerSchema = new Schema(
+
+
+const bannerSchema = new Schema<BannerType>(
   {
     title: {
       type: String,
@@ -22,4 +25,4 @@ const bannerSchema = new Schema(
   { timestamps: true }
 );
 
-export default model("banners", bannerSchema);
+export default model<BannerType>("banners", bannerSchema);

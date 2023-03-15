@@ -1,4 +1,5 @@
-import { useApolloClient, useMutation, useQuery } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client";
+import { AnimatePresence } from "framer-motion";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -14,12 +15,11 @@ import AccountSettingCard from "../containers/profile/AccountSettingCard";
 import ImageCard from "../containers/profile/ImageCard";
 import PasswordCard from "../containers/profile/PasswordCard";
 import UserEdit from "../containers/profile/UserEdit";
+import capitalizeFirstLetter from "../helper/capitalizeFirstLetter";
 import { toBase64 } from "../helper/toBase64";
+import useUser from "../hooks/useUser";
 import Layouts from "../layout/Layouts";
-import { UserQuery } from "../layout/Wrapper";
-import { add, selectDialog } from "../redux/features/dialogSlice";
-import { login, logout, selectUser } from "../redux/features/userSlice";
-// import { UserQuery } from "./_app";
+import { logout, selectUser } from "../redux/features/userSlice";
 
 export type ImageType = {
   file: File | null;
@@ -30,21 +30,9 @@ const Profile: NextPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const user = useSelector(selectUser);
-  const dialog = useSelector(selectDialog);
   const [logOut] = useMutation(LogoutMutation);
   const client = useApolloClient();
-
-  const { data, refetch } = useQuery(UserQuery, {
-    fetchPolicy: "network-only",
-    onCompleted: (results) => {
-      if (results.user?.__typename !== "ErrorMsg") {
-        dispatch(login(results.user));
-      }
-    },
-    onError: (error) => console.table(error),
-  });
-
-  const newData = data && data.user;
+  const { getUser } = useUser(true);
 
   const [image, setImage] = useState<ImageType>({
     file: null,
@@ -52,29 +40,32 @@ const Profile: NextPage = () => {
   });
   const [loading, setLoading] = useState(false);
 
-  const userData = newData ?? user;
+  const [toggle, setToggle] = useState({
+    edit: false,
+    image: false,
+  });
 
   const items = [
     {
       name: "Full Name",
-      value: userData?.name!,
+      value: user?.name!,
     },
     {
       name: "Email Address",
-      value: userData?.email!,
+      value: user?.email!,
     },
     {
       name: "Gender",
-      value: userData?.gender! ?? "none",
+      value: user?.gender! ? capitalizeFirstLetter(user?.gender) : "none",
     },
     {
       name: "Phone Number",
-      value: userData?.phoneNumber! ?? "none",
+      value: user?.phoneNumber! ?? "none",
     },
     {
       name: "Birthday",
-      value: userData?.birthday ? new Date(userData?.birthday!).toDateString() : "none",
-    }
+      value: user?.birthday ? new Date(user?.birthday!).toDateString() : "none",
+    },
   ];
 
   const handleLogOut = async () => {
@@ -113,15 +104,7 @@ const Profile: NextPage = () => {
               photoUrl={user?.photoUrl}
               onAvatarChange={handleChange}
               showEditButton
-              onEditClick={() =>
-                dispatch(
-                  add({
-                    open: true,
-                    data: newData,
-                    type: "userEdit",
-                  })
-                )
-              }
+              onEditClick={() => setToggle({ ...toggle, edit: true })}
               showAvatarEditButton
             />
             <AccountSettingCard />
@@ -140,27 +123,30 @@ const Profile: NextPage = () => {
         )}
       </Layouts>
 
-      {loading && (
-        <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.6)] grid place-items-center z-10">
-          <div className="flex items-center justify-center flex-col">
-            <ReactLoading type="spinningBubbles" />
-            <p className="text-white text-[1.2rem] p-[8px]">
-              Updating Password
-            </p>
+      <AnimatePresence>
+        {loading && (
+          <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.6)] grid place-items-center z-10">
+            <div className="flex items-center justify-center flex-col">
+              <ReactLoading type="spinningBubbles" />
+              <p className="text-white text-[1.2rem] p-[8px]">
+                Updating Password
+              </p>
+            </div>
           </div>
-        </div>
-      )}
-      {image.url && (
-        <ImageCard
-          setImage={setImage}
-          image={image}
-          func={() => refetch({ userId: user?.id })}
-        />
-      )}
+        )}
 
-      {dialog.userEdit.open && (
-        <UserEdit func={() => refetch({ employeeId: user?.id })} />
-      )}
+        {image.url && (
+          <ImageCard setImage={setImage} image={image} func={() => getUser()} />
+        )}
+
+        {toggle.edit && user && (
+          <UserEdit
+            user={user}
+            func={() => getUser()}
+            onClose={() => setToggle({ ...toggle, edit: false })}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };

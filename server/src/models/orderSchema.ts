@@ -1,7 +1,13 @@
 import { Schema, model } from "mongoose";
-import { addressSchema } from "./userSchema";
+import type {
+  CouponType,
+  OrderProductType,
+  OrderProgressType,
+  OrderType,
+} from "../../typing";
+import { addressSchema } from "./addressSchema";
 
-const couponSchema = new Schema(
+const couponSchema = new Schema<CouponType & { id: string }>(
   {
     id: {
       type: String,
@@ -17,7 +23,7 @@ const couponSchema = new Schema(
     },
     description: {
       type: String,
-      required: false
+      required: false,
     },
     userId: {
       type: String,
@@ -35,9 +41,9 @@ const couponSchema = new Schema(
   { timestamps: true }
 );
 
-const productSchema = new Schema(
+const productSchema = new Schema<OrderProductType>(
   {
-    id: {
+    productId: {
       type: String,
       required: true,
     },
@@ -53,18 +59,21 @@ const productSchema = new Schema(
   { timestamps: true }
 );
 
-const progressSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
+const progressSchema = new Schema<OrderProgressType>(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    checked: {
+      type: Boolean,
+      required: true,
+    },
   },
-  checked: {
-    type: Boolean,
-    required: true,
-  }
-},{ timestamps: true });
+  { timestamps: true }
+);
 
-const orderSchema = new Schema(
+const orderSchema = new Schema<OrderType>(
   {
     userId: {
       type: String,
@@ -116,18 +125,18 @@ const orderSchema = new Schema(
     },
     shippingFee: {
       type: String,
-      required: false
+      required: false,
     },
     coupon: {
       type: couponSchema,
-      required: false
+      required: false,
     },
     phoneNumber: {
       type: String,
-      required: false
+      required: false,
     },
   },
   { timestamps: true }
 );
 
-export default model("orders", orderSchema);
+export default model<OrderType>("orders", orderSchema);

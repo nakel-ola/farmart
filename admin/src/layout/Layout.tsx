@@ -4,12 +4,9 @@ import React, {
   ReactNode,
   useState,
 } from "react";
-import { useSelector } from "react-redux";
 import MenuCard from "../components/MenuCard";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import CategoryCard from "../containers/products/CategoryCard";
-import { selectDialog } from "../redux/features/dialogSlice";
 
 interface LayoutProps {
   [key: string]: any;
@@ -18,8 +15,6 @@ interface LayoutProps {
 
 function Layout({ children, className }: LayoutProps, ref: any) {
   const [toggle, setToggle] = useState(false);
-
-  const dialog = useSelector(selectDialog);
 
   return (
     <div className="relative h-screen bg-white dark:bg-dark overflow-hidden transition-all duration-300 ease-in-out w-[100vw] 2xl:w-fit">
@@ -40,7 +35,6 @@ function Layout({ children, className }: LayoutProps, ref: any) {
           {children}
         </div>
       </main>
-      {dialog.category.open && <CategoryCard />}
     </div>
   );
 }

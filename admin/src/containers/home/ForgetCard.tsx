@@ -11,8 +11,8 @@ import { Wrapper } from "./SignUpCard";
 import TitleCard from "./TitleCard";
 
 export const ForgetMutation = gql`
-  mutation EmployeeForgetPassword($input: ForgetPasswordInput!) {
-    employeeForgetPassword(input: $input) {
+  mutation ForgetPassword($input: ForgetPasswordInput!) {
+    forgetPassword(input: $input) {
       validationToken
     }
   }

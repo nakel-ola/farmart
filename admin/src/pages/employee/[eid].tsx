@@ -1,89 +1,89 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 import ReactLoading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/Button";
-import Header from "../../components/Header";
+import DeleteCard from "../../components/DeleteCard";
 import UserInfo from "../../components/UserInfo";
 import EmployeeEdit from "../../containers/employee/EmployeeEdit";
 import setting from "../../data/setting";
+import { UserQuery } from "../../hooks/useUser";
 import Layout from "../../layout/Layout";
-import { add, selectDialog } from "../../redux/features/dialogSlice";
 import { selectUser } from "../../redux/features/userSlice";
 
-const EmployeeQuery = gql`
-  query employee($employeeId: ID) {
-    employee(employeeId: $employeeId) {
-      ... on Employee {
-        id
-        email
-        name
-        gender
-        birthday
-        photoUrl
-        phoneNumber
-        level
-        createdAt
-        updatedAt
-      }
-
-      ... on ErrorMsg {
-        error
-      }
+const DeleteMutation = gql`
+  mutation DeleteEmployee($id: ID!) {
+    deleteEmployee(id: $id) {
+      message
     }
   }
 `;
+
 const Employee = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
 
   let employeeId = router.query.eid;
-  const dialog = useSelector(selectDialog);
   const user = useSelector(selectUser);
+  const [toggle, setToggle] = useState({ edit: false, delete: false });
 
-  const { data, loading, refetch } = useQuery(EmployeeQuery, {
-    variables: { employeeId },
+  const { data, loading, refetch } = useQuery(UserQuery, {
+    variables: { uid: employeeId },
     onError: (err) => console.table(err),
   });
 
-  const newData = data && data.employee;
+  const [deleteEmployee, { loading: deleteLoading }] =
+    useMutation(DeleteMutation);
 
-  const items = [
-    {
-      name: "Full Name",
-      value: newData?.name,
-    },
-    {
-      name: "Email Address",
-      value: newData?.email,
-    },
-    {
-      name: "Gender",
-      value: newData?.gender ?? "none",
-    },
-    {
-      name: "Phone Number",
-      value: newData?.phoneNumber,
-    },
-    {
-      name: "Level",
-      value: newData?.level,
-    },
-    {
-      name: "Birthday",
-      value: newData?.birthday  ? new Date(newData?.birthday).toDateString() : "none",
-    },
-    {
-      name: "Created At",
-      value: new Date(newData?.createdAt).toDateString(),
-    },
-    {
-      name: "Last updated",
-      value: new Date(newData?.updatedAt).toDateString(),
-    },
-  ].filter(Boolean);
+  const newData = data && data.user;
+
+  const items = newData
+    ? [
+        {
+          name: "Full Name",
+          value: newData?.name,
+        },
+        {
+          name: "Email Address",
+          value: newData?.email,
+        },
+        {
+          name: "Gender",
+          value: newData?.gender ?? "none",
+        },
+        {
+          name: "Phone Number",
+          value: newData?.phoneNumber,
+        },
+        {
+          name: "Level",
+          value: newData?.level,
+        },
+        {
+          name: "Birthday",
+          value: newData?.birthday
+            ? new Date(newData?.birthday).toDateString()
+            : "none",
+        },
+        {
+          name: "Created At",
+          value: new Date(newData?.createdAt).toDateString(),
+        },
+        {
+          name: "Last updated",
+          value: new Date(newData?.updatedAt).toDateString(),
+        },
+      ]
+    : [];
+
+  const reset = () => setToggle({ edit: false, delete: false });
+
+  const handleDelete = async () => {
+    if (!newData || user?.level !== "Gold") return;
+    await deleteEmployee({ variables: { id: newData.id } });
+  };
 
   return (
     <>
@@ -97,7 +97,6 @@ const Employee = () => {
           </div>
         ) : (
           <>
-
             {newData && (
               <div className="w-full shrink-0 flex flex-col items-center justify-center m-0 md:m-[10px] md:pb-0 mt-2 lg:mt-10">
                 <UserInfo
@@ -105,19 +104,15 @@ const Employee = () => {
                   items={items}
                   photoUrl={newData.photoUrl}
                   showEditButton={user?.level === "Gold"}
-                  onEditClick={() =>
-                    dispatch(
-                      add({
-                        open: true,
-                        data: newData,
-                        type: "employeeEdit",
-                      })
-                    )
-                  }
+                  onEditClick={() => setToggle({ ...toggle, edit: true })}
                 />
+
                 {user?.level === "Gold" && (
                   <div className="w-[95%] md:w-[80%] grid place-items-center my-8">
-                    <Button className="text-red-600 bg-red-600/10 hover:scale-105 active:scale-95">
+                    <Button
+                      className="text-red-600 bg-red-600/10 hover:scale-105 active:scale-95"
+                      onClick={() => setToggle({ ...toggle, delete: true })}
+                    >
                       Delete
                     </Button>
                   </div>
@@ -128,9 +123,24 @@ const Employee = () => {
         )}
       </Layout>
 
-      {dialog.employeeEdit.open && (
-        <EmployeeEdit func={() => refetch({ employeeId })} />
-      )}
+      <AnimatePresence>
+        {toggle.edit && (
+          <EmployeeEdit
+            onClose={reset}
+            func={() => refetch({ uid: employeeId })}
+            user={newData}
+          />
+        )}
+
+        {toggle.delete && (
+          <DeleteCard
+            loading={deleteLoading}
+            message="Are you sure you want to delete employee ?"
+            onClose={reset}
+            onDelete={handleDelete}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };

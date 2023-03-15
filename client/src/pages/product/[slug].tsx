@@ -1,20 +1,18 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ReactLoading from "react-loading";
-import { useSelector } from "react-redux";
 import DescriptionCard from "../../containers/details/DescriptionCard";
 import Footer from "../../containers/details/Footer";
 import ImageCard from "../../containers/details/ImageCard";
 import LocationCard from "../../containers/details/LocationCard";
-import RatingCard from "../../containers/details/RatingCard";
 import ReviewCard from "../../containers/details/ReviewCard";
 import TitleCard from "../../containers/details/TitleCard";
 import setting from "../../data/setting";
 import reverseSlug from "../../helper/reverseSlug";
 import Layouts from "../../layout/Layouts";
-import { selectDialog } from "../../redux/features/dialogSlice";
+import { ProductQueryType } from "../../types/graphql.types";
 
 export const ProductQuery = gql`
   query Product($slug: String!) {
@@ -23,11 +21,10 @@ export const ProductQuery = gql`
       title
       category
       description
-      image {
-        url
-      }
+      image
       price
       stock
+      favorite
       rating {
         name
         value
@@ -43,33 +40,22 @@ export const ProductQuery = gql`
 function Details() {
   const router = useRouter();
 
-  const {
-    data: item,
-    loading,
-    refetch,
-  } = useQuery(ProductQuery, {
-    variables: { slug: router.query.slug },
-    onError: (err: any) => console.table(err),
-  });
+  const [getFavorite, { data: item, loading, refetch }] =
+    useLazyQuery<ProductQueryType>(ProductQuery);
 
   const data = item && item.product;
 
-  const [error, setError] = useState<string>("");
-  const [reload, setReload] = useState<boolean>(false);
-  const dialogState = useSelector(selectDialog);
-
-  const handleRefetch = () => {
-    setReload(true);
-    refetch({
-      slug: router.query.slug,
-    });
-  };
+  useEffect(() => {
+    if (loading && data) router.push("/_404");
+  }, [loading, router, data]);
 
   useEffect(() => {
-    if (loading && data) {
-      router.push("/_404");
-    }
-  }, [loading, router, data]);
+    if (!router.query.slug) return;
+    getFavorite({
+      variables: { slug: router.query.slug },
+      onError: (err: any) => console.table(err),
+    });
+  }, [getFavorite, router.query.slug]);
 
   return (
     <>
@@ -85,19 +71,21 @@ function Details() {
           data && (
             <div className="w-full shrink-0 flex flex-col items-center justify-center m-0 md:m-[10px] lg:mt-10 md:pb-0 pb-[60px]">
               <ImageCard
-                image={data?.image}
-                name={data?.name}
+                image={data.image}
+                title={data.title}
                 stock={data.stock}
               />
 
               <TitleCard
+                id={data.id}
                 category={data?.category}
                 price={data?.price}
                 currency={data?.currency}
-                data={data}
                 rating={data?.rating}
                 title={data?.title}
                 discount={data?.discount}
+                favorite={data?.favorite}
+                handleRefetch={() => refetch({ slug: router.query.slug })}
               />
 
               <LocationCard />
@@ -105,25 +93,16 @@ function Details() {
               <DescriptionCard description={data?.description} />
 
               <ReviewCard
-                productId={data.id as string}
+                productId={data.id}
                 rating={data?.rating}
-                setReload={setReload}
-                reload={reload}
+                refetch={() => refetch({ slug: router.query.slug })}
               />
 
-              {data.stock > 0 && <Footer {...data} setError={setError} />}
+              {data.stock > 0 && <Footer {...data} />}
             </div>
           )
         )}
       </Layouts>
-
-      {dialogState.review.open && (
-        <RatingCard
-          title={data?.title}
-          productId={data.id as string}
-          func={handleRefetch}
-        />
-      )}
     </>
   );
 }

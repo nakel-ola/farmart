@@ -1,5 +1,5 @@
-function clean(obj: any) {
-  for (var propName in obj) {
+function clean<T = any>(obj: any): T {
+  for (const propName in obj) {
     if (obj[propName] === null || obj[propName] === undefined) {
       delete obj[propName];
     }

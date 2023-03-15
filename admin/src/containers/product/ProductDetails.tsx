@@ -1,18 +1,22 @@
 import clsx from "clsx";
 import { Star1 } from "iconsax-react";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { ProductType } from "../../../typing";
 import CardTemplate from "../../components/CardTemplate";
 import { add } from "../../redux/features/dialogSlice";
+import { AnimatePresence } from "framer-motion";
+import Popup from "../products/Popup";
 
 type Props = {
   data: ProductType;
   canEdit: boolean;
+  refetch(slug: string): void;
 };
 
-const ProductDetails = ({ data, canEdit }: Props) => {
-  const dispatch = useDispatch();
+const ProductDetails = ({ data, canEdit,refetch }: Props) => {
+
+  const [toggle, setToggle] = useState(false);
 
   const items = [
     {
@@ -72,28 +76,40 @@ const ProductDetails = ({ data, canEdit }: Props) => {
   ];
 
   return (
-    <CardTemplate
-      title="General Infomation"
-      className="pb-2 mt-8"
-      showEditButton
-      onEditClick={() => dispatch(add({ open: true, data, type: "edit" }))}
-    >
+    <>
+      <CardTemplate
+        title="General Infomation"
+        className="pb-2 mt-8"
+        showEditButton={canEdit}
+        onEditClick={() => setToggle(true)}
+      >
+        {items.map((item, index: number) => (
+          <div key={index} className="py-2 pl-[25px] flex md:flex-row flex-col">
+            <strong className="text-base font-medium text-black dark:text-white flex-[0.3]">
+              {item.name}
+            </strong>
+            {typeof item.value !== "object" ? (
+              <p className="text-neutral-600 dark:text-neutral-400 md:pl-2 flex-1 mr-5">
+                {item.value}
+              </p>
+            ) : (
+              item.value
+            )}
+          </div>
+        ))}
+      </CardTemplate>
 
-      {items.map((item, index: number) => (
-        <div key={index} className="py-2 pl-[25px] flex md:flex-row flex-col">
-          <strong className="text-base font-medium text-black dark:text-white flex-[0.3]">
-            {item.name}
-          </strong>
-          {typeof item.value !== "object" ? (
-            <p className="text-neutral-600 dark:text-neutral-400 md:pl-2 flex-1 mr-5">
-              {item.value}
-            </p>
-          ) : (
-            item.value
-          )}
-        </div>
-      ))}
-    </CardTemplate>
+      <AnimatePresence>
+        {toggle && (
+          <Popup
+            onClose={() => setToggle(false)}
+            func={(slug: string) => refetch(slug)}
+            data={data}
+          />
+        )}
+      </AnimatePresence>
+
+    </>
   );
 };
 

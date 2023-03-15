@@ -4,7 +4,7 @@ import SidebarContent from "./SidebarContent";
 export const LogoutMutation = gql`
   mutation Logout {
     logout {
-      msg
+      message
     }
   }
 `;

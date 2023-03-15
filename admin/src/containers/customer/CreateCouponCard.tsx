@@ -1,12 +1,10 @@
 import { gql, useMutation } from "@apollo/client";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { useDispatch } from "react-redux";
 import { Discount, UserType } from "../../../typing";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import LoadingCard from "../../components/LoadingCard";
 import PopupTemplate from "../../components/PopupTemplate";
-import { remove } from "../../redux/features/dialogSlice";
 import DiscountCard from "./DiscountCard";
 
 type FormType = {
@@ -18,7 +16,7 @@ type FormType = {
 const CreateCoupon = gql`
   mutation CreateCoupon($input: CreateCouponInput!) {
     createCoupon(input: $input) {
-      msg
+      message
     }
   }
 `;
@@ -26,15 +24,17 @@ const CreateCoupon = gql`
 const validate = (form: FormType): boolean => {
   const { discount, expiresIn } = form;
 
-  if (discount && expiresIn) {
-    return false;
-  }
+  if (discount && expiresIn) return false;
   return true;
 };
 
-const CreateCouponCard = ({ func, data }: { func: any; data: UserType }) => {
+interface Props {
+  func(): void;
+  onCLose(): void;
+  data: UserType;
+}
 
-  const dispatch = useDispatch();
+const CreateCouponCard: React.FC<Props> = ({ func, data, onCLose }) => {
 
   const [form, setForm] = useState<FormType>({
     discount: null,
@@ -43,8 +43,6 @@ const CreateCouponCard = ({ func, data }: { func: any; data: UserType }) => {
   });
 
   const [createCoupon, { loading }] = useMutation(CreateCoupon);
-
-  const close = () => dispatch(remove({ type: "coupon" }));
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
@@ -66,14 +64,14 @@ const CreateCouponCard = ({ func, data }: { func: any; data: UserType }) => {
       },
       onCompleted: (d) => {
         func?.();
-        dispatch(remove({ type: "coupon" }));
+        onCLose()
       },
       onError: (err) => console.table(err),
     });
   };
 
   return (
-    <PopupTemplate title="Create coupon" onOutsideClick={close}>
+    <PopupTemplate title="Create coupon" onOutsideClick={onCLose}>
       {!loading ? (
         <form
           onSubmit={handleSubmit}
@@ -108,7 +106,7 @@ const CreateCouponCard = ({ func, data }: { func: any; data: UserType }) => {
             <Button
               type="button"
               className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white mx-2"
-              onClick={close}
+              onClick={onCLose}
             >
               Cancel
             </Button>
@@ -122,7 +120,7 @@ const CreateCouponCard = ({ func, data }: { func: any; data: UserType }) => {
           </div>
         </form>
       ) : (
-        <LoadingCard title="Creating coupon"/>
+        <LoadingCard title="Creating coupon" />
       )}
     </PopupTemplate>
   );

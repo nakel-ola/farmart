@@ -1,33 +1,32 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { EmployeeType } from "../../../typing";
+import { useSelector } from "react-redux";
+import { EmployeeType, UserType } from "../../../typing";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import InputDropdown from "../../components/InputDropdown";
 import LoadingCard from "../../components/LoadingCard";
 import PopupTemplate from "../../components/PopupTemplate";
-import { remove, selectDialog } from "../../redux/features/dialogSlice";
+import { selectUser } from "../../redux/features/userSlice";
 import { Wrapper } from "../products/Popup";
 
-const ModifyMutation = gql`
-  mutation EmployeeModifyUser($input: EmployeeUserInput!) {
-    employeeModifyUser(input: $input) {
-      msg
+export const UpdateUserMutation = gql`
+  mutation UpdateUser($input: UserInput!) {
+    updateUser(input: $input) {
+      message
     }
   }
 `;
-
 const splitData = (form: EmployeeType): FormType => {
   const { birthday, gender, name, level, phoneNumber } = form;
 
   return {
     firstName: name.split(" ")[1],
     lastName: name.split(" ")[0],
-    gender,
-    level,
-    birthday,
-    phoneNumber,
+    gender: gender ?? "",
+    level: level ?? "",
+    birthday: birthday ?? "",
+    phoneNumber: phoneNumber ?? "",
   };
 };
 
@@ -58,15 +57,19 @@ interface FormType {
   phoneNumber: string;
 }
 
-const EmployeeEdit = ({ func }: { func: any }) => {
-  const dispatch = useDispatch();
-  const { employeeEdit } = useSelector(selectDialog);
+interface Props {
+  user: UserType;
+  func(): void;
+  onClose(): void;
+  isAuth?: boolean;
+}
 
-  const [form, setForm] = useState<FormType>(splitData(employeeEdit.data));
+const EmployeeEdit: React.FC<Props> = (props) => {
+  const { func, onClose, user, isAuth = false } = props;
 
-  const [employeeModifyUser, { loading }] = useMutation(ModifyMutation);
+  const [form, setForm] = useState<FormType>(splitData(user));
 
-  const close = () => dispatch(remove({ type: "employeeEdit" }))
+  const [updateUser, { loading }] = useMutation(UpdateUserMutation);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
@@ -75,29 +78,30 @@ const EmployeeEdit = ({ func }: { func: any }) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await employeeModifyUser({
+
+    let name = form.firstName + " " + form.lastName;
+
+    await updateUser({
       variables: {
         input: {
-          employeeId: employeeEdit.data.id,
-          email: employeeEdit.data.email,
-          name: form.lastName + " " + form.firstName,
+          uid: isAuth ? null : user.id,
+          name: name.length > 5 ? name : null,
           gender: form.gender,
-          level: form.level,
           birthday: form.birthday,
           phoneNumber: form.phoneNumber,
+          level: form.level,
         },
       },
       onCompleted: (data) => {
-        console.log(data);
         func?.();
-        dispatch(remove({ type: "employeeEdit" }));
+        onClose();
       },
       onError: (err) => console.table(err),
     });
   };
 
   return (
-    <PopupTemplate title="Edit information" onOutsideClick={close}>
+    <PopupTemplate title="Edit information" onOutsideClick={onClose}>
       {!loading ? (
         <form
           onSubmit={handleSubmit}
@@ -171,20 +175,19 @@ const EmployeeEdit = ({ func }: { func: any }) => {
             <Button
               type="button"
               className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white mx-2"
-              onClick={close}
+              onClick={onClose}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={validate(form, employeeEdit.data)}
+              disabled={validate(form, user)}
               className="bg-primary text-white disabled:opacity-40 mx-2"
             >
               Save Change
             </Button>
           </div>
         </form>
-
       ) : (
         <LoadingCard title="Saving..." />
       )}

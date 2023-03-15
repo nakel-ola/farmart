@@ -4,26 +4,15 @@ import { Eye, EyeSlash } from "iconsax-react";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, ReactNode, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useDispatch } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import { Footer } from "../../pages/auth";
-import { login } from "../../redux/features/userSlice";
 import TitleCard from "./TitleCard";
 
 const RegisterMutation = gql`
   mutation Register($input: RegisterInput!) {
     register(input: $input) {
-      id
-      email
-      name
-      photoUrl
-      blocked
-      gender
-      birthday
-      phoneNumber
-      createdAt
-      updatedAt
+      message
     }
   }
 `;
@@ -54,8 +43,6 @@ type FormType = {
 
 const SignUpCard = (props: any) => {
   const { setLoading } = props;
-
-  const dispatch = useDispatch();
 
   const router = useRouter();
 
@@ -88,7 +75,6 @@ const SignUpCard = (props: any) => {
     await register({
       variables: { input: newForm },
       onCompleted: (data) => {
-        dispatch(login(data.register));
         toast.success("Account created successfully", { id: loginToast });
         router.replace("/profile");
       },

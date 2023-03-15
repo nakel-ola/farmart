@@ -1,11 +1,11 @@
-import { gql, NetworkStatus, useQuery } from "@apollo/client";
+import { NetworkStatus, gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { RefObject, useEffect, useState } from "react";
 import ReactLoading from "react-loading";
 import setting from "../../data/setting";
 import usePrevious from "../../hooks/usePrevious";
+import { ProductsQuerys } from "../../types/graphql.types";
 import CardsContainer from "./CardsContainer";
-
 
 const ProductQuery = gql`
   query Products($input: ProductsInput) {
@@ -16,12 +16,11 @@ const ProductQuery = gql`
         title
         category
         description
-        image {
-          url
-        }
+        image
         price
         slug
         stock
+        favorite
         rating {
           name
           value
@@ -35,31 +34,45 @@ const ProductQuery = gql`
   }
 `;
 
-const Cards = ({
-  containerRef,
-}: {
-  containerRef: any;
-}) => {
+interface Props {
+  containerRef: RefObject<HTMLDivElement>;
+}
+const Cards: React.FC<Props> = ({ containerRef }) => {
   const router = useRouter();
 
   const genre = router.query.genre;
 
   const prevGenre = usePrevious(genre);
 
-  const { data, refetch, fetchMore, networkStatus } = useQuery(ProductQuery, {
-    variables: { input: { genre, offset: 0, limit: 10 } },
-    notifyOnNetworkStatusChange: true,
-    onError: (err) => console.log(err),
-  });
+  const [data, setData] = useState<ProductsQuerys["products"] | null>(null);
 
-  const isFetchingMore = networkStatus === NetworkStatus.fetchMore;
+  const { refetch, fetchMore, networkStatus } = useQuery<ProductsQuerys>(
+    ProductQuery,
+    {
+      variables: { input: { genre, offset: 0, limit: 10 } },
+      notifyOnNetworkStatusChange: true,
+      onCompleted: (data) => setData(data.products),
+      onError: (err) => console.table(err),
+    }
+  );
+
+  const updateFavorite = (id: string, favorite: boolean) => {
+    if (!data) return;
+    let newProducts = [...data?.results];
+
+    const inx = newProducts.findIndex((p) => p.id === id);
+
+    if (inx === -1) return;
+
+    newProducts[inx] = { ...newProducts[inx], favorite };
+
+    setData({ ...data, results: newProducts });
+  };
 
   useEffect(() => {
-    if (prevGenre !== genre) {
-      refetch({
-        input: { genre, offset: 0, limit: 10 },
-      });
-    }
+    if (prevGenre === genre) return;
+
+    refetch({ input: { genre, offset: 0, limit: 10 } });
   }, [genre, prevGenre, refetch]);
 
   return networkStatus === NetworkStatus.loading ? (
@@ -67,13 +80,14 @@ const Cards = ({
       <ReactLoading type="spinningBubbles" color={setting.primary} />
     </div>
   ) : (
-    <div className="w-full grid place-items-center transition-all duration-300 ease">
+    <div className="w-full flex items-center transition-all duration-300 ease">
       <CardsContainer
-        products={data?.products.results ?? []}
-        totalItems={data?.products.totalItems}
+        products={data?.results ?? []}
+        totalItems={data?.totalItems ?? 0}
         refetch={refetch}
         fetchMore={fetchMore}
         containerRef={containerRef}
+        updateFavorite={updateFavorite}
       />
     </div>
   );

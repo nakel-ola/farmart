@@ -5,13 +5,10 @@
 /server/node_modules
 /.pnp
 .pnp.js
+/dump.rdb
 
 # testing
 /coverage
-
-# next.js
-/.next/
-/out/
 
 # production
 /build

@@ -1,12 +1,14 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { AnimatePresence } from "framer-motion";
 import { HeartSlash } from "iconsax-react";
 import type { NextPage } from "next";
 import Head from "next/head";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import ReactLoading from "react-loading";
 import { useSelector } from "react-redux";
 import { Product } from "../../typing";
 import Button from "../components/Button";
+import DeleteCard from "../components/DeleteCard";
 import Header from "../components/Header";
 import InfiniteScroll from "../components/InfiniteScroll";
 import LoginCard from "../components/LoginCard";
@@ -14,6 +16,7 @@ import Card from "../containers/home/Card";
 import { HtmlDivElement } from "../containers/home/Cards";
 import Layouts from "../layout/Layouts";
 import { selectUser } from "../redux/features/userSlice";
+import { FavoritesResponse, ProductsQuerys } from "../types/graphql.types";
 
 const FavoritesQuery = gql`
   query Favorites($input: FavoriteInput) {
@@ -22,11 +25,10 @@ const FavoritesQuery = gql`
       results {
         id
         title
-        image {
-          url
-        }
+        image
         price
         stock
+        favorite
         description
         discount
         currency {
@@ -40,18 +42,40 @@ const FavoritesQuery = gql`
 const RemoveAllMutation = gql`
   mutation RemoveAllFromFavorites {
     removeAllFromFavorites {
-      msg
+      message
     }
   }
 `;
 
 const Favorite: NextPage = () => {
   const user = useSelector(selectUser);
-  const { data, loading, refetch, fetchMore } = useQuery(FavoritesQuery, {
-    variables: { input: { offset: 0, limit: 10 } }
-  });
 
-  const [removeAll] = useMutation(RemoveAllMutation);
+  const [data, setData] = useState<FavoritesResponse["favorites"] | null>(null);
+  const [toggle, setToggle] = useState(false);
+
+  const { loading, refetch, fetchMore } = useQuery<FavoritesResponse>(
+    FavoritesQuery,
+    {
+      variables: { input: { offset: 0, limit: 10 } },
+      onCompleted: (data) => {
+        setData(data.favorites);
+      },
+      onError: (err) => console.table(err),
+    }
+  );
+
+  const onClose = () => setToggle(false);
+
+  const [removeAll, { loading: removeAllLoading }] = useMutation(
+    RemoveAllMutation,
+    {
+      onCompleted: () => {
+        refetch();
+        onClose();
+      },
+      onError: (err) => console.table(err),
+    }
+  );
 
   const containerRef = useRef<HtmlDivElement | any>();
 
@@ -59,57 +83,80 @@ const Favorite: NextPage = () => {
     fetchMore({
       variables: {
         input: {
-          offset: data?.favorites.results.length,
+          offset: data?.results.length,
         },
       },
     });
   };
 
-  return (
-    <Layouts ref={containerRef}>
-      <Head>
-        <title>Favorite</title>
-      </Head>
+  const updateFavorite = (id: string, args: boolean) => {
+    if (!data) return;
+    let newProducts = [...data?.results];
 
-      <Header
-        title="Saved Items"
-        subtitle={
-          user && data?.favorites.results.length >= 1 ? (
-            <p
-              onClick={() => {
-                removeAll();
-                refetch();
-              }}
-              className="text-blue-500 hover:underline cursor-pointer px-3 py-2"
-            >
-              Remove all
-            </p>
-          ) : (
-            <p className=""></p>
-          )
-        }
-      />
-      {user ? (
-        <div className="h-full grid place-items-center">
-          {!loading ? (
-            data?.favorites && (
-              <CardsContainer
-                data={data?.favorites.results}
-                containerRef={containerRef}
-                handleFetchMore={handleFetchMore}
-                totalItems={data?.favorites.totalItems}
-              />
+    const inx = newProducts.findIndex((p) => p.id === id);
+
+    if (inx === -1) return;
+
+    newProducts[inx].favorite = args;
+
+    setData({ ...data, results: newProducts });
+  };
+
+  return (
+    <>
+      <Layouts ref={containerRef}>
+        <Head>
+          <title>Favorite</title>
+        </Head>
+
+        <Header
+          title="Saved Items"
+          subtitle={
+            user && data && data.results.length >= 1 ? (
+              <button onClick={() => setToggle(true)}>
+                <p className="text-blue-500 hover:underline cursor-pointer px-3 py-2">
+                  Remove all
+                </p>
+              </button>
+            ) : (
+              <></>
             )
-          ) : (
-            <div className="w-full h-[80%] grid place-items-center">
-              <ReactLoading type="spinningBubbles" />
-            </div>
-          )}
-        </div>
-      ) : (
-        <LoginCard />
-      )}
-    </Layouts>
+          }
+        />
+        {user ? (
+          <div className="h-full flex items-center">
+            {!loading ? (
+              data && (
+                <CardsContainer
+                  data={data.results}
+                  containerRef={containerRef}
+                  handleFetchMore={handleFetchMore}
+                  totalItems={data.totalItems}
+                  updateFavorite={updateFavorite}
+                />
+              )
+            ) : (
+              <div className="w-full h-[80%] grid place-items-center">
+                <ReactLoading type="spinningBubbles" />
+              </div>
+            )}
+          </div>
+        ) : (
+          <LoginCard />
+        )}
+      </Layouts>
+
+      <AnimatePresence>
+        {toggle && (
+          <DeleteCard
+            loading={removeAllLoading}
+            message="Are you sure you want to delete all favorite ?"
+            onClose={onClose}
+            onDelete={removeAll}
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
@@ -128,29 +175,33 @@ type Props = {
   containerRef: any;
   totalItems: number;
   handleFetchMore: () => void;
+  updateFavorite: (id: string, args: boolean) => void;
 };
 
-const CardsContainer = ({
-  containerRef,
-  data,
-  totalItems,
-  handleFetchMore,
-}: Props) => {
+const CardsContainer = (props: Props) => {
+  const { containerRef, data, totalItems, handleFetchMore, updateFavorite } =
+    props;
   return (
-    <div className="my-[20px] w-[95%] pb-2">
+    <div className="my-[20px] w-[95%] h-full pb-2 ml-2">
       {data.length > 0 ? (
         <InfiniteScroll
           containerRef={containerRef}
           hasMore={data.length < totalItems}
           next={handleFetchMore}
-          className={`${
-            data.length <= 3 ? " flex mx-10" : "flex flex-wrap justify-center"
-          } transition-all duration-300 ease w-full`}
+          className={`${"flex flex-wrap "} transition-all duration-300 ease w-full`}
           loader={<Loader />}
         >
-          {data.map((item: Product, index: number) => (
-            <Card key={index} {...item} />
-          ))}
+          {data.map(
+            (item: Product, index: number) =>
+              item.favorite && (
+                <Card
+                  key={index}
+                  {...item}
+                  updateFavorite={updateFavorite}
+                  isFavouriteCard
+                />
+              )
+          )}
         </InfiniteScroll>
       ) : (
         <div className="grid my-10 place-items-center">

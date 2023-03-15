@@ -1,18 +1,17 @@
 import { gql, useQuery } from "@apollo/client";
-import { DirectboxNotif } from "iconsax-react";
+import { AnimatePresence } from "framer-motion";
+import { Book } from "iconsax-react";
 import Head from "next/head";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import ReactLoading from "react-loading";
+import type { AddressType } from "../../typing";
 import CardTemplate from "../components/CardTemplate";
 import Divider from "../components/Divider";
 import Header from "../components/Header";
 import AddressCard from "../containers/address/AddressCard";
 import AddressForm from "../containers/address/AddressForm";
 import Layouts from "../layout/Layouts";
-import { add, selectDialog } from "../redux/features/dialogSlice";
-import ReactLoading from "react-loading";
-
-
-
+import { AddressesResponse } from "../types/graphql.types";
 
 export const AddressesQuery = gql`
   query Addresses {
@@ -24,6 +23,7 @@ export const AddressesQuery = gql`
       state
       country
       info
+      userId
       phoneNumber
       phoneNumber2
       default
@@ -32,14 +32,14 @@ export const AddressesQuery = gql`
 `;
 
 const Address = () => {
-  const dispatch = useDispatch();
-  const dialog = useSelector(selectDialog);
+  const [toggle, setToggle] = useState<boolean | AddressType>(false);
 
-  const { data, refetch, loading } = useQuery(AddressesQuery, {
-    onError: (e: any) => {
-      console.log(e);
-    },
-  });
+  const { data, refetch, loading } = useQuery<AddressesResponse>(
+    AddressesQuery,
+    {
+      onError: (e: any) => console.table(e),
+    }
+  );
 
   return (
     <>
@@ -52,7 +52,7 @@ const Address = () => {
 
         {loading ? (
           <div className="w-full h-[80%] flex items-center justify-center">
-            <ReactLoading type='spinningBubbles' />
+            <ReactLoading type="spinningBubbles" />
           </div>
         ) : (
           <div className="w-full shrink-0 flex flex-col items-center justify-center mt-2">
@@ -60,33 +60,29 @@ const Address = () => {
               title="Address"
               showEditButton
               editTitle="Create"
-              onEditClick={() =>
-                dispatch(
-                  add({
-                    open: true,
-                    data: null,
-                    type: "address",
-                  })
-                )
-              }
+              onEditClick={() => setToggle(true)}
             >
-              {data?.addresses.length > 0 ? (
+              {data && data?.addresses.length > 0 ? (
                 <div className="">
-                  {data?.addresses.map((address: any, index: number) => (
+                  {data?.addresses.map((address, index: number) => (
                     <div key={index} className="ml-[15px]">
-                      <AddressCard {...address} refetch={refetch} />
+                      <AddressCard
+                        {...address}
+                        refetch={refetch}
+                        onEdit={() => setToggle(address)}
+                      />
                       {index !== data.addresses.length - 1 && <Divider />}
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center m-2 my-8">
-                  <DirectboxNotif
+                  <Book
                     size={100}
                     className="text-5xl text-neutral-700 dark:text-neutral-400"
                   />
                   <p className="text-neutral-700 dark:text-neutral-400 text-lg font-bold">
-                    No Inbox yet!
+                    No Address yet!
                   </p>
                 </div>
               )}
@@ -94,7 +90,15 @@ const Address = () => {
           </div>
         )}
       </Layouts>
-      {dialog.address.open && <AddressForm func={() => refetch()} />}
+      <AnimatePresence>
+        {toggle && (
+          <AddressForm
+            func={() => refetch()}
+            onClose={() => setToggle(false)}
+            address={(typeof toggle !== "boolean" && toggle) as AddressType}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };

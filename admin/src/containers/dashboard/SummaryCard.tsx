@@ -27,7 +27,7 @@ const SummaryCard = ({data} : {data: ProductSummaryType}) => {
       Icon: Truck,
       title: "Total Delivered",
       amount: data.totalDelivered,
-      link: "/orders?type=completed",
+      link: "/orders?type=delivered",
       color: "bg-blue-600",
     },
     {

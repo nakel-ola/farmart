@@ -2,14 +2,13 @@ import { Fade } from "@mui/material";
 import { ArrowDown2 } from "iconsax-react";
 import { useRef, useState } from "react";
 import { Discount } from "../../../typing";
+import InputField, { InputFieldProps } from "../../components/InputField";
 import discounts from "../../data/discount.json";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
-import InputField, { InputFieldProps } from "../../components/InputField";
-
 
 interface DiscountProps extends InputFieldProps {
   title: string;
-  discount: Discount | null
+  discount: Discount | null;
 }
 
 const DiscountCard = ({
@@ -59,7 +58,7 @@ const DiscountCard = ({
           <div
             className={`grid absolute left-0 w-full place-items-center transition-all duration-300 `}
           >
-            <div className="w-[98%] max-h-[200px] overflow-scroll bg-white dark:bg-dark shadow-md shadow-slate-300 dark:shadow-black/10 rounded-xl scrollbar-hide">
+            <div className="w-[80%] max-h-[200px] overflow-scroll bg-white dark:bg-dark shadow-md shadow-slate-300 dark:shadow-black/10 rounded-xl scrollbar-hide mt-2">
               {discounts.map((discount: Discount, index: number) => (
                 <div
                   key={index}

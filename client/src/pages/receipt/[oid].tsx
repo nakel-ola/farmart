@@ -28,53 +28,47 @@ const UpdateQuery = gql`
 const OrderQuery = gql`
   query Order($id: ID!) {
     order(id: $id) {
-      ... on Order {
-        id
-        orderId
-        trackingId
-        paymentId
-        status
-        totalPrice
-        address {
-          street
-          city
-          state
-          country
-          phoneNumber
-        }
-        paymentMethod
-        deliveryMethod
-        shippingFee
-        pickup
-        coupon {
-          id
-          email
-          discount
-          userId
-          code
-          expiresIn
-          description
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-        progress {
-          name
-          checked
-          updatedAt
-        }
-        products {
-          id
-          quantity
-          price
-        }
+      id
+      orderId
+      trackingId
+      paymentId
+      status
+      totalPrice
+      address {
+        street
+        city
+        state
+        country
         phoneNumber
       }
-
-      ... on ErrorMsg {
-        error
+      paymentMethod
+      deliveryMethod
+      shippingFee
+      pickup
+      coupon {
+        id
+        email
+        discount
+        userId
+        code
+        expiresIn
+        description
+        createdAt
+        updatedAt
       }
+      createdAt
+      updatedAt
+      progress {
+        name
+        checked
+        updatedAt
+      }
+      products {
+        id
+        quantity
+        price
+      }
+      phoneNumber
     }
   }
 `;
@@ -142,35 +136,43 @@ const Order = () => {
           />
         ),
       },
-      data?.deliveryMethod === "Pickup Station"
-        && data?.phoneNumber ? {
-        name: "Phone Number",
-        value: data?.deliveryMethod === "Pickup Station"
-        ? data?.phoneNumber : data?.address?.phoneNumber,
-      } : {
-        name: "Delivery Address",
-        value: data?.deliveryMethod === "Pickup Station"
-        ? data?.pickup :[
-          data?.address.street,
-          data?.address.city,
-          data?.address.state,
-          data?.address.country,
-        ].join(", "),
-      },
+      data?.deliveryMethod === "Pickup Station" && data?.phoneNumber
+        ? {
+            name: "Phone Number",
+            value:
+              data?.deliveryMethod === "Pickup Station"
+                ? data?.phoneNumber
+                : data?.address?.phoneNumber,
+          }
+        : {
+            name: "Delivery Address",
+            value:
+              data?.deliveryMethod === "Pickup Station"
+                ? data?.pickup
+                : [
+                    data?.address.street,
+                    data?.address.city,
+                    data?.address.state,
+                    data?.address.country,
+                  ].join(", "),
+          },
     ],
-    data?.deliveryMethod !== "Pickup Station"
-        && !data?.phoneNumber ? [
-      {
-        name: "Delivery Address",
-        value: data?.deliveryMethod === "Pickup Station"
-        ? data?.pickup :[
-          data?.address.street,
-          data?.address.city,
-          data?.address.state,
-          data?.address.country,
-        ].join(", "),
-      },
-    ] : [],
+    data?.deliveryMethod !== "Pickup Station" && !data?.phoneNumber
+      ? [
+          {
+            name: "Delivery Address",
+            value:
+              data?.deliveryMethod === "Pickup Station"
+                ? data?.pickup
+                : [
+                    data?.address.street,
+                    data?.address.city,
+                    data?.address.state,
+                    data?.address.country,
+                  ].join(", "),
+          },
+        ]
+      : [],
   ];
 
   const paymentItems: ItemDetails[][] = [

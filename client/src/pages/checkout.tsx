@@ -1,6 +1,5 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { loadStripe } from "@stripe/stripe-js";
-import axios from "axios";
+import { AnimatePresence } from "framer-motion";
 import { Book1, Wallet2 } from "iconsax-react";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -16,14 +15,9 @@ import Address from "../containers/checkout/Address";
 import AddressList from "../containers/checkout/AddressList";
 import Payment from "../containers/checkout/Payment";
 import Popup from "../containers/checkout/Popup";
-import Summary from "../containers/checkout/Summary";
+import clean from "../helper/clean";
 import Layouts from "../layout/Layouts";
-import {
-  getBasketTotal,
-  removeAll,
-  removeCoupon,
-} from "../redux/features/basketSlice";
-import { selectDialog } from "../redux/features/dialogSlice";
+import { getBasketTotal, removeAll } from "../redux/features/basketSlice";
 import { selectUser } from "../redux/features/userSlice";
 import { RootState } from "../redux/store";
 import { AddressesQuery } from "./address";
@@ -51,8 +45,12 @@ const Checkout: NextPage = () => {
   const { basket, coupon, shippingFee } = useSelector(
     (store: RootState) => store.basket
   );
+  const [toggle, setToggle] = useState({
+    createAddress: false,
+    addressList: false,
+    pickup: false,
+  });
 
-  const dialog = useSelector(selectDialog);
   const user = useSelector(selectUser);
 
   const { refetch } = useQuery(AddressesQuery, {
@@ -64,6 +62,9 @@ const Checkout: NextPage = () => {
     },
   });
 
+  const reset = () =>
+    setToggle({ createAddress: false, addressList: false, pickup: false });
+
   const [createOrder] = useMutation(OrderMutation);
 
   const handleAddress = () => {
@@ -74,35 +75,14 @@ const Checkout: NextPage = () => {
     const data = {
       totalPrice: `${Number(getBasketTotal(basket)).toFixed(2)}`,
       pickup,
-      address: !pickup
-        ? {
-            name: address!.name,
-            street: address!.street,
-            city: address!.city,
-            state: address!.state,
-            country: address!.country,
-            info: address!.info,
-            phoneNumber: address!.phoneNumber,
-            phoneNumber2: address!.phoneNumber2,
-          }
-        : null,
-      coupon: coupon
-        ? {
-            id: coupon.id,
-            email: coupon.email,
-            coupon: coupon.code,
-            discount: coupon.discount,
-            userId: coupon.userId,
-            description: coupon.description,
-            expiresIn: coupon.expiresIn,
-          }
-        : null,
+      address: !pickup ? clean({ ...address, __typename: null }) : null,
+      coupon: coupon ? clean({ ...coupon, __typename: null }) : null,
       paymentMethod: type,
       shippingFee: `${shippingFee}`,
       phoneNumber: pickup ? user?.phoneNumber : null,
       deliveryMethod,
       products: basket.map((b: Basket) => ({
-        id: b.id,
+        productId: b.id,
         quantity: b.quantity,
         price: `${b.price * b.quantity}`,
       })),
@@ -122,7 +102,10 @@ const Checkout: NextPage = () => {
     });
   };
 
-  // "Variable "$input" got invalid value { totalPrice: "226.69", pickup: null, address: { name: "John Doe", street: "32, Suberu lamidi harmony estate agege lagos", city: "Ota", state: "Ogun State", country: "Nigeria", info: null, phoneNumber: "+2349152663635", phoneNumber2: null }, coupon: null, paymentMethod: "Stripe", shippingFee: "2", phoneNumber: null, deliveryMethod: "Door Delivery", products: [[Object], [Object], [Object], [Object], [Object]], paymentId: "pi_3M9fFgGWZB98mBX81yNBFkfN" }; Field "paymentId" is not defined by type "OrderInput"."
+  const handleButtonClick = () => {
+    if (address) setToggle({ ...toggle, addressList: true });
+    if (!address) setToggle({ ...toggle, createAddress: true });
+  };
 
   return (
     <>
@@ -146,6 +129,8 @@ const Checkout: NextPage = () => {
                     setPickup={setPickup}
                     deliveryMethod={deliveryMethod}
                     setDeliveryMethod={setDeliveryMethod}
+                    onButtonClick={handleButtonClick}
+                    onPickClick={() => setToggle({ ...toggle, pickup: true })}
                   />
                 )}
                 {progress === "payment" && <Payment onNext={handleOrder} />}
@@ -159,19 +144,36 @@ const Checkout: NextPage = () => {
         )}
       </Layouts>
 
-      {dialog.selectAddress.open && (
-        <AddressList func={setAddress} defaultAddress={address} />
-      )}
-      {dialog.delivery.open && (
-        <Popup
-          setDeliveryMethod={setDeliveryMethod}
-          deliveryMethod={deliveryMethod}
-          pickup={pickup}
-          setPickup={setPickup}
-        />
-      )}
+      <AnimatePresence>
+        {toggle.addressList && (
+          <AddressList
+            key="address-list"
+            func={setAddress}
+            defaultAddress={address}
+            onClose={reset}
+            onCreate={() => setToggle({ ...toggle, createAddress: true })}
+          />
+        )}
 
-      {dialog.address.open && <AddressForm func={() => refetch()} />}
+        {toggle.pickup && (
+          <Popup
+            key="pickup"
+            setDeliveryMethod={setDeliveryMethod}
+            deliveryMethod={deliveryMethod}
+            pickup={pickup}
+            setPickup={setPickup}
+            onClose={reset}
+          />
+        )}
+
+        {toggle.createAddress && (
+          <AddressForm
+            key="create-address"
+            func={() => refetch()}
+            onClose={reset}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };

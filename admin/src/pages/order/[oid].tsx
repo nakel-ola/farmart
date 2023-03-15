@@ -19,53 +19,47 @@ import Layout from "../../layout/Layout";
 const OrderQuery = gql`
   query Order($id: ID!) {
     order(id: $id) {
-      ... on Order {
-        id
-        orderId
-        trackingId
-        paymentId
-        status
-        totalPrice
-        address {
-          street
-          city
-          state
-          country
-          phoneNumber
-        }
-        paymentMethod
-        deliveryMethod
-        shippingFee
-        pickup
-        coupon {
-          id
-          email
-          discount
-          userId
-          code
-          expiresIn
-          description
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
-        progress {
-          name
-          checked
-          updatedAt
-        }
-        products {
-          id
-          quantity
-          price
-        }
+      id
+      orderId
+      trackingId
+      paymentId
+      status
+      totalPrice
+      address {
+        street
+        city
+        state
+        country
         phoneNumber
       }
-
-      ... on ErrorMsg {
-        error
+      paymentMethod
+      deliveryMethod
+      shippingFee
+      pickup
+      coupon {
+        id
+        email
+        discount
+        userId
+        code
+        expiresIn
+        description
+        createdAt
+        updatedAt
       }
+      createdAt
+      updatedAt
+      progress {
+        name
+        checked
+        updatedAt
+      }
+      products {
+        productId
+        quantity
+        price
+      }
+      phoneNumber
     }
   }
 `;
@@ -80,12 +74,7 @@ const Order = () => {
   const [getOrder, { loading }] = useLazyQuery<{ order: OrderType }>(
     OrderQuery,
     {
-      variables: { id: orderId },
-      onCompleted: (d) => {
-        if (d.order.__typename !== "ErrorMsg") {
-          setData(d.order);
-        }
-      },
+      onCompleted: (d) => setData(d.order),
       onError: (err) => console.table(err),
       fetchPolicy: "network-only",
     }
@@ -186,7 +175,6 @@ const Order = () => {
       </Head>
 
       <div className="grid place-items-center">
-
         {data && (
           <>
             <DetailsTemplate title="Order Info" list={infoItems} />

@@ -1,6 +1,8 @@
 import { model, Schema } from "mongoose";
+import type { ValidateType } from "../../typing";
 
-const validateSchema = new Schema(
+
+const validateSchema = new Schema<ValidateType>(
   {
     name: {
       type: String,
@@ -23,4 +25,6 @@ const validateSchema = new Schema(
   { timestamps: true }
 );
 
-export default model("validate", validateSchema);
+const validate = model<ValidateType>("validate", validateSchema);
+
+export default validate;

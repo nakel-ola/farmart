@@ -28,15 +28,18 @@ export type ReviewType = {
 };
 export type Product = {
   id: string;
+  slug: string;
   title: string;
   category: string;
   description: string;
-  image: Image;
+  image: string;
   price: number;
   currency: Currency;
   stock: number;
+  favorite: boolean;
+  discount?: number;
   rating: Array<RatingType>;
-  review: Array<ReviewType>
+  review: Array<ReviewType>;
 };
 
 export interface Basket extends Product {
@@ -91,17 +94,6 @@ export type OrderType = {
   progress: Array<OrderProgress>;
 };
 
-export type AddressType = {
-  name: string;
-  phoneNumber: string;
-  street: string;
-  city: string;
-  state: string;
-  country: string;
-  default?: boolean;
-  info?: string;
-  phoneNumber2?: string;
-};
 export type InboxType = {
   id: string;
   title: string;
@@ -156,4 +148,19 @@ export type ValidateCodeType = {
   name: string;
   email: string;
   validationToken: string;
+};
+
+
+export type AddressType = {
+  id: string;
+  userId: string;
+  name: string;
+  street: string;
+  city: string;
+  state: string;
+  country: string;
+  info?: string;
+  phoneNumber: string;
+  phoneNumber2?: string;
+  default?: boolean;
 };

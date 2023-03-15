@@ -1,71 +1,52 @@
 import cookie from "cookie";
-import cookieParser from "cookie-parser";
-import type { Response } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import mongoose from "mongoose";
-import xss from "xss";
+import { signedCookie } from "cookie-parser";
+import type { Request } from "express";
+import { JwtPayload, verify } from "jsonwebtoken";
+import type { User } from "../../typing";
 import config from "../config";
-import type { Func, ReqBody } from "../typing";
-import type { ErrorMsg } from "../typing/custom";
-import { MemoryStore } from "./../index";
+import { redis } from "../context";
+import redisGet from "../helper/redisGet";
+import { userLoader } from "../loaders";
 
-const authenticated =
-  <T = any>(fn: Func) =>
-  async (
-    args: T,
-    req: ReqBody,
-    res: Response,
-    context: any,
-    info: any
-  ): Promise<Func<T> | ErrorMsg> => {
-    try {
-      let errorMsg = {
-        __typename: "ErrorMsg",
-        error: "You don't have permission",
-      };
+const authenticated = async (req: Request): Promise<User | null> => {
+  try {
+    if (!req.headers.cookie) return null;
 
-      if (req.headers.cookie) {
-        let parse = cookie.parse(req.headers.cookie);
+    const token = await getToken(req.headers.cookie!);
 
-        let admin = parse[config.admin_session_name] ?? "";
-        let client = parse[config.client_session_name] ?? "";
+    if (!token) return null;
 
-        if (req.admin && admin) {
-          const data = await getDb(admin, req.admin);
-          req.userId = data.id;
-          req.level = data.level;
-          return fn(args, req, res, context, info);
-        } else if (!req.admin && client) {
-          const data = await getDb(client, req.admin);
-          req.userId = data.id;
-          req.blocked = data.block;
-          return fn(args, req, res, context, info);
-        }
-      }
+    const decodedToken = verify(token, config.jwt_key!) as JwtPayload;
 
-      return errorMsg;
-    } catch (e) {
-      console.log(e);
-      throw new Error(e.message);
-    }
-  };
+    if (!decodedToken) return null;
 
-const getDb = (value: string, admin: boolean) =>
-  new Promise<JwtPayload>((resolve, reject) => {
-    var data = cookieParser.signedCookie(value, config.session_key);
+    let key = `auth-user:${decodedToken.sub}`;
 
-    MemoryStore.get(data as string, async (err, session) => {
-      if (err) reject(err?.message);
-      var decodedToken = jwt.verify(
-        xss(
-          admin ? (session as any)?.auth_admin : (session as any)?.auth ?? ""
-        ),
-        config.jwt_key
-      ) as JwtPayload;
-      if (!mongoose.Types.ObjectId.isValid(decodedToken?.id)) {
-        reject("User ID must be a valid");
-      }
-      resolve(decodedToken);
-    });
-  });
+    const redisUser = await redisGet<User>(key);
+
+    if (redisUser) return redisUser;
+
+    const user = await userLoader.load(decodedToken.sub!);
+
+    await redis.setex(key, 3600, JSON.stringify(user));
+    return user;
+  } catch (error) {
+    console.log(error);
+  }
+  return null;
+};
+
+const getToken = async (headerCookie: string) => {
+  const parser = cookie.parse(headerCookie);
+
+  const key = signedCookie(parser[config.session_name], config.session_key);
+  const redisKey = `${config.session_prefix}${key}`;
+
+  const token = await redisGet(redisKey);
+
+  if (!token) return null;
+
+  return token?.auth;
+};
+
 export default authenticated;

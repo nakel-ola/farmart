@@ -12,17 +12,9 @@ import TitleCard from "./TitleCard";
 
 
 const RegisterMutation = gql`
-  mutation EmployeeRegister($input: EmployeeRegisterInput!) {
-    employeeRegister(input: $input) {
-      id
-      email
-      name
-      photoUrl
-      gender
-      birthday
-      phoneNumber
-      createdAt
-      updatedAt
+  mutation Register($input: RegisterInput!) {
+    register(input: $input) {
+      message
     }
   }
 `;
@@ -94,9 +86,8 @@ const SignUpCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
     await register({
       variables: { input: newForm },
       onCompleted: (data) => {
-        dispatch(login(data.employeeRegister));
         toast.success("Account created successfully", { id: loginToast });
-        router.replace("/account");
+        router.replace("/dashboard");
       },
       onError: (error: any) => {
         setLoading(false);

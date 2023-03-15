@@ -1,14 +1,19 @@
 import { gql, useMutation } from "@apollo/client";
+import { useRouter } from "next/router";
 import React, {
   ChangeEvent,
   FormEvent,
   ReactNode,
   useEffect,
-  useState
+  useState,
 } from "react";
 import { toast } from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
-import { CreateProductForm, Image } from "../../../typing";
+import { useSelector } from "react-redux";
+import {
+  CreateProductForm,
+  ProductType,
+  UploadResponse,
+} from "../../../typing";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import InputDropdown from "../../components/InputDropdown";
@@ -16,21 +21,22 @@ import LoadingCard from "../../components/LoadingCard";
 import PopupTemplate from "../../components/PopupTemplate";
 import generateSlug from "../../helper/generateSlug";
 import { selectCatagory } from "../../redux/features/categorySlice";
-import { remove, selectDialog } from "../../redux/features/dialogSlice";
+import { UploadMutation } from "../account/ImageCard";
 import ImageCard from "./ImageCard";
 import Textarea from "./Textarea";
 
 const CreateProductMutation = gql`
   mutation CreateProduct($input: CreateProductInput!) {
     createProduct(input: $input) {
-      msg
+      message
     }
   }
 `;
-const ModifyProductMutation = gql`
-  mutation ModifyProduct($input: ModifyProductInput!) {
-    modifyProduct(input: $input) {
-      msg
+
+const UpdateProductMutation = gql`
+  mutation UpdateProduct($input: UpdateProductInput!) {
+    updateProduct(input: $input) {
+      message
     }
   }
 `;
@@ -53,29 +59,34 @@ const verify = (data: CreateProductForm): boolean => {
   return true;
 };
 
-const modifyVerify = (data: CreateProductForm, edit: any): boolean => {
+const modifyVerify = (data: CreateProductForm, prev: any): boolean => {
   const { title, price, discount, category, stock, image, description } = data;
 
   if (
-    title !== edit?.product?.title ||
-    Number(price) !== Number(edit?.product?.price) ||
-    category !== edit?.product?.category ||
-    description !== edit?.product?.description ||
-    Number(stock) !== Number(edit?.product?.stock) ||
-    discount !== edit?.product?.discount ||
-    image?.url !== edit?.product?.image?.url
-  ) {
+    title !== prev?.title ||
+    Number(price) !== Number(prev?.price) ||
+    category !== prev?.category ||
+    description !== prev?.description ||
+    Number(stock) !== Number(prev?.stock) ||
+    discount !== prev?.discount ||
+    image !== prev?.image
+  )
     return false;
-  }
 
   return true;
 };
 
-const Popup = ({ func }: { func?: (value?: any) => void }) => {
-  const { edit } = useSelector(selectDialog);
+interface Props {
+  func(slug?: string): void;
+  onClose(): void;
+  data?: any;
+}
+
+const toastId = "create-id";
+
+const Popup: React.FC<Props> = ({ func, onClose, data }) => {
+  const router = useRouter();
   const category = useSelector(selectCatagory);
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState<boolean>(false);
   const [form, setForm] = useState<CreateProductForm>({
     title: "",
     category: "",
@@ -86,94 +97,111 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
     stock: undefined,
   });
 
-  const [createProduct] = useMutation(CreateProductMutation);
+  const [createProduct, { loading: createLoading }] = useMutation(
+    CreateProductMutation
+  );
 
-  const [modifyProduct] = useMutation(ModifyProductMutation);
+  const [updateProduct, { loading: updateLoading }] = useMutation(
+    UpdateProductMutation
+  );
+
+  const [uploadFile, { loading: uploadLoading }] =
+    useMutation<UploadResponse>(UploadMutation);
+
+  const loading = createLoading || updateLoading || uploadLoading;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
     setForm({ ...form, [target.name]: target.value });
   };
 
+  const upload = async () =>
+    new Promise<string>(async (resolve, reject) => {
+      if (!form.image) return;
+      await uploadFile({
+        variables: { file: form.image },
+        onCompleted: (data) => resolve(data.uploadFile.url),
+        onError: (err) => reject(err),
+      });
+    });
+
   useEffect(() => {
-    if (edit?.data) setForm(edit?.data);
-  }, [edit?.data]);
+    if (data) setForm(data);
+  }, [data]);
 
-  const close = () => dispatch(remove({ type: "edit" }));
+  const onCompleted = (msg: string, slug?: string) => {
+    toast.success(msg, { id: toastId });
+    onClose();
+    func?.(slug);
+  };
 
-  const handleSubmit = (e: FormEvent) => {
+  const onError = (data: any, msg: string) => {
+    toast.error(msg, { id: toastId });
+    console.table(data);
+  };
+
+  const handleCreate = async () => {
+    const url = await upload();
+    if (!url) return;
+
+    await createProduct({
+      variables: {
+        input: {
+          title: form.title,
+          slug: generateSlug(form.title),
+          category: form.category.toLowerCase(),
+          description: form.description,
+          image: url,
+          price: Number(form.price?.split("$")[1]),
+          stock: Number(form.stock),
+          discount: form.discount,
+        },
+      },
+      onCompleted: () => onCompleted("Created Successfully"),
+      onError: (data) => onError(data, "There was an error creating product"),
+    });
+  };
+
+  const handleUpdate = async () => {
+    const url = typeof form?.image !== "string" ? await upload() : form.image;
+    const slug = generateSlug(form.title);
+
+    await updateProduct({
+      variables: {
+        input: {
+          id: data.id,
+          slug: generateSlug(form.title),
+          category: form.category,
+          description: form.description,
+          image: url,
+          price: Number(form.price),
+          stock: Number(form.stock),
+          discount: form.discount,
+          title: form.title,
+        },
+      },
+      onCompleted: () => onCompleted("Edited Successfully", slug),
+      onError: (data) => onError(data, "There was an error editing product"),
+    });
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    let loginToast = toast.loading("Loading......");
+    toast.loading("Loading......", { id: toastId });
 
-    const onCompleted = (msg: string) => {
-      toast.success(msg, { id: loginToast });
-      close();
-      setLoading(false);
-      func?.()
-    };
-
-    const onError = (data: any, msg: string) => {
-      toast.error(msg, {
-        id: loginToast,
-      });
-      console.table(data);
-      setLoading(false);
-    };
-
-
-
-    if (!edit?.data) {
-      createProduct({
-        variables: {
-          input: {
-            title: form.title,
-            slug: generateSlug(form.title),
-            category: form.category.toLowerCase(),
-            description: form.description,
-            image: form.image,
-            price: Number(form.price?.split("$")[1]),
-            stock: Number(form.stock),
-            discount: form.discount,
-          },
-        },
-        onCompleted: () => onCompleted("Created Successfully"),
-        onError: (data) => onError(data, "There was an error creating product"),
-      });
-    } else {
-      let isFile = form?.image?.url ? false : true;
-      modifyProduct({
-        variables: {
-          input: {
-            id: edit?.data.id,
-            slug: generateSlug(form.title),
-            category: form.category,
-            description: form.description,
-            image: isFile
-              ? null
-              : {
-                  name: form.image?.name,
-                  url: form.image?.url,
-                },
-            imageUpload: isFile ? form.image : null,
-            price: Number(form.price),
-            stock: Number(form.stock),
-            discount: form.discount,
-            title: form.title,
-          },
-        },
-        onCompleted: () => onCompleted("Edited Successfully"),
-        onError: (data) => onError(data, "There was an error editing product"),
-      });
-    }
+    if (!data) await handleCreate();
+    else await handleUpdate();
   };
 
   return (
-    <PopupTemplate title="Edit your product" onOutsideClick={close}>
+    <PopupTemplate
+      title={data ? "Edit your product" : "Create new product"}
+      onOutsideClick={onClose}
+    >
       {!loading ? (
         <form
           onSubmit={handleSubmit}
-          className="pb-[10px] grid place-items-center"
+          className="pb-[25px] grid place-items-center"
         >
           <InputCard
             title="Name"
@@ -232,9 +260,7 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
           <ImageCard
             title="Image"
             image={form.image}
-            onChange={(result: Image) => {
-              setForm({ ...form, image: result });
-            }}
+            onChange={(file: File) => setForm({ ...form, image: file })}
           />
           <Textarea
             title="Description"
@@ -248,21 +274,21 @@ const Popup = ({ func }: { func?: (value?: any) => void }) => {
             <Button
               type="button"
               className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white mx-2"
-              onClick={close}
+              onClick={onClose}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={edit?.data ? modifyVerify(form, edit) : verify(form)}
+              disabled={data ? modifyVerify(form, data) : verify(form)}
               className="bg-primary text-white mx-2"
             >
-              {edit?.data ? "Save Change" : "Create"}
+              {data ? "Save Change" : "Create"}
             </Button>
           </div>
         </form>
       ) : (
-        <LoadingCard title={edit?.data ? "Saving product" : "Creating product"} />
+        <LoadingCard title={data ? "Saving product" : "Creating product"} />
       )}
     </PopupTemplate>
   );

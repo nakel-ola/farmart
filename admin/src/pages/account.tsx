@@ -1,54 +1,29 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
+import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import React, { ChangeEvent, useState } from "react";
 import ReactLoading from "react-loading";
-import { useDispatch, useSelector } from "react-redux";
-import DeleteCard from "../components/DeleteCard";
-import Header from "../components/Header";
+import { useSelector } from "react-redux";
 import UserInfo from "../components/UserInfo";
-import CreateInviteCard from "../containers/account/CreateInviteCard";
 import ImageCard from "../containers/account/ImageCard";
 import InviteCard from "../containers/account/InviteCard";
 import PasswordCard from "../containers/account/PasswordCard";
 import EmployeeEdit from "../containers/employee/EmployeeEdit";
 import setting from "../data/setting";
+import capitalizeFirstLetter from "../helper/capitalizeFirstLetter";
 import { toBase64 } from "../helper/toBase64";
+import useUser from "../hooks/useUser";
 import Layout from "../layout/Layout";
-import { add, selectDialog } from "../redux/features/dialogSlice";
 import { selectUser } from "../redux/features/userSlice";
 
-const UserQuery = gql`
-  query Employee {
-    employee {
-      ... on Employee {
-        id
-        email
-        name
-        photoUrl
-        level
-        gender
-        birthday
-        phoneNumber
-        createdAt
-        updatedAt
-      }
-
-      ... on ErrorMsg {
-        error
-      }
-    }
+const EmployeeInvitesQuery = gql`
+  query EmployeeInvites {
     employeeInvites {
-      ... on EmployeeInvite {
-        id
-        email
-        status
-        level
-        createdAt
-      }
-
-      ... on ErrorMsg {
-        error
-      }
+      id
+      email
+      status
+      level
+      createdAt
     }
   }
 `;
@@ -58,13 +33,6 @@ export type ImageType = {
   url: string | ArrayBuffer;
 };
 
-const DeleteInvite = gql`
-  mutation DeleteEmployeeInvite($id: ID!) {
-    deleteEmployeeInvite(id: $id) {
-      msg
-    }
-  }
-`;
 
 const Account = () => {
   const user = useSelector(selectUser);
@@ -73,55 +41,46 @@ const Account = () => {
     url: "",
   });
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
-  const dialog = useSelector(selectDialog);
+  const [toggle, setToggle] = useState({
+    edit: false,
+    image: false,
+  });
+  const { getUser } = useUser(true);
 
-  const {
-    data,
-    loading: userLoading,
-    refetch,
-  } = useQuery(UserQuery, {
+  const { data, loading: userLoading, refetch } = useQuery(EmployeeInvitesQuery, {
     onError: (error) => console.table(error),
   });
 
-  const [deleteEmployeeInvite, { loading: deleteLoading }] = useMutation(DeleteInvite);
-
-  const newData = data && data.employee;
-
-  const items = [
-    {
-      name: "Full Name",
-      value: newData?.name,
-    },
-    {
-      name: "Email Address",
-      value: newData?.email,
-    },
-    {
-      name: "Gender",
-      value: newData?.gender,
-    },
-    {
-      name: "Phone Number",
-      value: newData?.phoneNumber,
-    },
-    {
-      name: "Level",
-      value: newData?.level,
-    },
-    newData?.birthday && {
-      name: "Birthday",
-      value: new Date(newData?.birthday).toDateString(),
-    },
-    {
-      name: "Created At",
-      value: new Date(newData?.createdAt).toDateString(),
-    },
-    {
-      name: "Last updated",
-      value: new Date(newData?.updatedAt).toDateString(),
-    },
-  ].filter(Boolean);
+  const items = user
+    ? [
+        {
+          name: "Full Name",
+          value: user?.name,
+        },
+        {
+          name: "Email Address",
+          value: user?.email,
+        },
+        {
+          name: "Gender",
+          value: user?.gender! ? capitalizeFirstLetter(user?.gender) : "none",
+        },
+        {
+          name: "Phone Number",
+          value: user?.phoneNumber,
+        },
+        {
+          name: "Level",
+          value: user?.level,
+        },
+        {
+          name: "Birthday",
+          value: user?.birthday
+            ? new Date(user?.birthday!).toDateString()
+            : "none",
+        },
+      ]
+    : [];
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -131,21 +90,11 @@ const Account = () => {
     }
   };
 
-  const handleDelete = async () => {
-    await deleteEmployeeInvite({
-      variables: { id: dialog.delete.data.id },
-      onCompleted: () => {
-        refetch({ employeeId: user?.id });
-      },
-      onError: (err) => console.table(err),
-    });
-  };
-
   return (
     <>
       <Layout>
         <Head>
-          <title>Profile</title>
+          <title>Account</title>
         </Head>
 
         {userLoading ? (
@@ -154,30 +103,21 @@ const Account = () => {
           </div>
         ) : (
           <>
-
-            {newData && (
+            {user && (
               <div className="w-full shrink-0 flex flex-col items-center justify-center m-0 md:m-[10px] mt-2 lg:mt-10">
                 <UserInfo
                   title="My Infomation"
-                  items={items}
-                  photoUrl={newData.photoUrl}
+                  items={items!}
+                  photoUrl={user.photoUrl}
                   onAvatarChange={handleChange}
-                  onEditClick={() =>
-                    dispatch(
-                      add({
-                        open: true,
-                        data: newData,
-                        type: "employeeEdit",
-                      })
-                    )
-                  }
+                  onEditClick={() => setToggle({ ...toggle, edit: true })}
                   showAvatarEditButton
                 />
 
                 {user?.level === "Gold" ? (
                   <InviteCard
                     data={data.employeeInvites}
-                    func={() => refetch({ employeeId: user?.id })}
+                    func={() => refetch()}
                   />
                 ) : (
                   <div className="mt-8"></div>
@@ -190,32 +130,31 @@ const Account = () => {
         )}
       </Layout>
 
-      {loading && (
-        <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.6)] grid place-items-center z-[9999999]">
-          <div className="flex items-center justify-center flex-col">
-            <ReactLoading type="spinningBubbles" />
-            <p className="text-white text-[1.2rem] p-[8px]">
-              Updating Password
-            </p>
+      <AnimatePresence>
+        {loading && (
+          <div className="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.6)] grid place-items-center z-[9999999]">
+            <div className="flex items-center justify-center flex-col">
+              <ReactLoading type="spinningBubbles" />
+              <p className="text-white text-[1.2rem] p-[8px]">
+                Updating Password
+              </p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {dialog.employeeEdit.open && (
-        <EmployeeEdit func={() => refetch({ employeeId: user?.id })} />
-      )}
-      {dialog.invite.open && (
-        <CreateInviteCard func={() => refetch({ employeeId: user?.id })} />
-      )}
-      {dialog.delete.open && <DeleteCard func={handleDelete} loading={deleteLoading} />}
+        {toggle.edit && (
+          <EmployeeEdit
+            user={user!}
+            func={() => getUser()}
+            onClose={() => setToggle({ ...toggle, edit: false })}
+            isAuth
+          />
+        )}
 
-      {image.url && (
-        <ImageCard
-          setImage={setImage}
-          image={image}
-          func={() => refetch({ employeeId: user?.id })}
-        />
-      )}
+        {image.url && (
+          <ImageCard setImage={setImage} image={image} func={() => getUser()} />
+        )}
+      </AnimatePresence>
     </>
   );
 };

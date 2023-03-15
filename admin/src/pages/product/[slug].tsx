@@ -1,9 +1,11 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ReactLoading from "react-loading";
 import { useDispatch, useSelector } from "react-redux";
+import { ProductType } from "../../../typing";
 import Button from "../../components/Button";
 import DeleteCard from "../../components/DeleteCard";
 import ImageCard from "../../containers/product/ImageCard";
@@ -24,10 +26,7 @@ export const ProductQuery = gql`
       category
       description
       slug
-      image {
-        name
-        url
-      }
+      image
       currency {
         name
         code
@@ -52,23 +51,24 @@ export const ProductQuery = gql`
 const ProductDeleteMutation = gql`
   mutation DeleteProduct($id: ID!) {
     deleteProduct(id: $id) {
-      msg
+      message
     }
   }
 `;
 
 const Product = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
 
   const dialog = useSelector(selectDialog);
   const user = useSelector(selectUser);
+
+  const [toggle, setToggle] = useState(false);
 
   const {
     data: item,
     loading,
     refetch,
-  } = useQuery(ProductQuery, {
+  } = useQuery<{ product: ProductType }>(ProductQuery, {
     variables: { slug: router.query.slug },
     onError: (err: any) => console.table(err),
   });
@@ -78,23 +78,22 @@ const Product = () => {
   let canEdit = user?.level === "Gold" || user?.level === "Silver";
 
   useEffect(() => {
-    if (loading && data) {
-      router.push("/_404");
-    }
+    if (loading && data) router.push("/_404");
   }, [loading, data, router]);
 
-  const [deleteProduct, { loading: deleteLoading }] = useMutation(ProductDeleteMutation, {
-    onCompleted: (data) => console.log(data),
-    onError: (data) => console.table(data),
-  });
+  const [deleteProduct, { loading: deleteLoading }] = useMutation(
+    ProductDeleteMutation,
+    {
+      onError: (data) => console.table(data),
+    }
+  );
 
   const handleDelete = async () => {
     await deleteProduct({
-      variables: { id: dialog.delete.data?.id },
+      variables: { id: data?.id },
       onCompleted: () => router.back(),
     });
   };
-
   return (
     <>
       <Layout>
@@ -107,12 +106,15 @@ const Product = () => {
           </div>
         ) : (
           <>
-
             {data && (
               <div className="w-full shrink-0 flex flex-col items-center justify-center m-0 md:m-[10px] md:pb-0 ">
-                <ImageCard image={data?.image} name={data?.name} />
+                <ImageCard image={data?.image} name={data.title} />
 
-                <ProductDetails data={data} canEdit={canEdit} />
+                <ProductDetails
+                  data={data}
+                  canEdit={canEdit}
+                  refetch={(slug: string) => refetch({ slug })}
+                />
 
                 <ReviewCard productId={data.id} canEdit={canEdit} />
 
@@ -120,18 +122,7 @@ const Product = () => {
                   <div className="w-[95%] md:w-[80%] grid place-items-center mb-8">
                     <Button
                       className="text-red-600 bg-red-600/10"
-                      onClick={() =>
-                        dispatch(
-                          add({
-                            open: true,
-                            data: {
-                              id: data.id,
-                              message: "Are u sure you want to delete ?",
-                            },
-                            type: "delete",
-                          })
-                        )
-                      }
+                      onClick={() => setToggle(true)}
                     >
                       Delete
                     </Button>
@@ -142,11 +133,16 @@ const Product = () => {
           </>
         )}
       </Layout>
-      {dialog.edit.open && (
-        <Popup func={() => refetch({ slug: router.query.slug })} />
-      )}
-
-      {dialog.delete.open && <DeleteCard func={handleDelete} loading={deleteLoading} />}
+      <AnimatePresence>
+        {toggle && (
+          <DeleteCard
+            message="Are you sure you want to delete product ?"
+            onClose={() => setToggle(false)}
+            onDelete={handleDelete}
+            loading={deleteLoading}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };

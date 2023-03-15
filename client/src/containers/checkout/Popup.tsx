@@ -1,34 +1,31 @@
-import { useDispatch } from "react-redux";
 import PopupTemplate from "../../components/PopupTemplate";
 import Items from "../../data/address.json";
-import { remove } from "../../redux/features/dialogSlice";
 
-const Popup = ({
-  setDeliveryMethod,
-  pickup,
-  setPickup,
-}: {
-  setDeliveryMethod: any;
-  deliveryMethod: any;
-  setPickup: any;
-  pickup: any;
-}) => {
-  const dispatch = useDispatch();
-  const close = () => dispatch(remove({ type: "delivery" }));
+interface Props {
+  setDeliveryMethod: React.Dispatch<
+    React.SetStateAction<"Door Delivery" | "Pickup Station">
+  >;
+  deliveryMethod: "Door Delivery" | "Pickup Station";
+  setPickup: React.Dispatch<React.SetStateAction<string | null>>;
+  pickup: string | null;
+  onClose(): void;
+}
+const Popup: React.FC<Props> = (props) => {
+  const { setDeliveryMethod, pickup, setPickup, onClose } = props;
 
   const handleClick = (name: string) => {
     setDeliveryMethod("Pickup Station");
     setPickup(name);
-    close()
+    onClose();
   };
 
   return (
-    <PopupTemplate title="Select Area" onOutsideClick={close}>
+    <PopupTemplate title="Select Area" onOutsideClick={onClose}>
       <div className="h-[85vh] overflow-x-hidden overflow-y-scroll scrollbar-style">
         {Items.map(({ name, zip }, inx) => (
           <div
-            className="flex items-center justify-between px-[10px] m-[5px] cursor-pointer"
-            key={name + inx}
+            className="flex items-center justify-between px-[10px] py-2 m-[5px] cursor-pointer hover:bg-slate-100 dark:hover:bg-neutral-800 rounded-lg"
+            key={inx}
             onClick={() => handleClick(`${name} - ${zip}`)}
           >
             <p className="font-[1rem] text-[#212121] dark:text-white">

@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { motion } from "framer-motion";
 import { ReactNode, useRef } from "react";
 import useOnClickOutside from "../hooks/useOnClickOutside";
 
@@ -29,9 +30,18 @@ const PopupTemplate = (props: PopupTemplateProps) => {
   const ref = useRef<HTMLDivElement>(null);
   useOnClickOutside(ref, () => onOutsideClick?.());
   return (
-    <div className="fixed top-0 w-full h-full bg-black/50 grid place-items-center z-10">
-      <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed top-0 left-0 w-full h-full bg-black/50 grid place-items-center z-10"
+    >
+      <motion.div
         ref={ref}
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        transition={{ duration: 0.12 }}
         className={clsx(
           "w-[90%] md:w-[350px] bg-white dark:bg-dark rounded-lg shadow overflow-hidden",
           position === "center" ? "" : "",
@@ -67,8 +77,8 @@ const PopupTemplate = (props: PopupTemplateProps) => {
         >
           {children}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

@@ -1,26 +1,32 @@
-import { Bag2, Book1 } from "iconsax-react";
-import { Fragment, useState } from "react";
-import { useDispatch } from "react-redux";
+import { Book1 } from "iconsax-react";
+import { Fragment } from "react";
+import { AddressType } from "../../../typing";
 import Button from "../../components/Button";
 import CardTemplate from "../../components/CardTemplate";
-import { add } from "../../redux/features/dialogSlice";
 import AddressCard from "./AddressCard";
 import Delivery from "./Delivery";
 
-const Address = ({
-  onNext,
-  address,
-  deliveryMethod,
-  setDeliveryMethod,
-  setPickup,
-}: {
-  address: any;
-  deliveryMethod: any;
-  setPickup: (value: string | null) => void;
-  setDeliveryMethod: (value: any) => void;
-  onNext: (value: any) => void;
-}) => {
-  const dispatch = useDispatch();
+interface Props {
+  address: AddressType | null;
+  deliveryMethod: "Door Delivery" | "Pickup Station";
+  setPickup: React.Dispatch<React.SetStateAction<string | null>>;
+  setDeliveryMethod: React.Dispatch<
+    React.SetStateAction<"Door Delivery" | "Pickup Station">
+  >;
+  onNext: () => void;
+  onButtonClick: () => void;
+  onPickClick(): void;
+}
+const Address: React.FC<Props> = (props) => {
+  const {
+    onNext,
+    address,
+    deliveryMethod,
+    setDeliveryMethod,
+    setPickup,
+    onButtonClick,
+    onPickClick
+  } = props;
 
   return (
     <Fragment>
@@ -28,16 +34,8 @@ const Address = ({
         className="my-4"
         title="Shipping Address"
         showEditButton
-        editTitle="Change"
-        onEditClick={() =>
-          dispatch(
-            add({
-              type: "selectAddress",
-              open: true,
-              data: null,
-            })
-          )
-        }
+        editTitle={address ? "Change address" : "Create an address"}
+        onEditClick={onButtonClick}
       >
         {address && <AddressCard {...address} />}
 
@@ -55,13 +53,17 @@ const Address = ({
           </div>
         )}
       </CardTemplate>
+
       <Delivery
         setPickup={setPickup}
         deliveryMethod={deliveryMethod}
         setDeliveryMethod={setDeliveryMethod}
+        onPickClick={onPickClick}
       />
       <div className="w-full grid place-items-center mb-4">
-        <Button disabled={!deliveryMethod || !address} onClick={() => onNext(address)}>Next</Button>
+        <Button disabled={!deliveryMethod || !address} onClick={onNext}>
+          Next
+        </Button>
       </div>
     </Fragment>
   );

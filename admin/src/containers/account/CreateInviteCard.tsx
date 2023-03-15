@@ -1,12 +1,10 @@
 import { gql, useMutation } from "@apollo/client";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { useDispatch } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import InputDropdown from "../../components/InputDropdown";
 import LoadingCard from "../../components/LoadingCard";
 import PopupTemplate from "../../components/PopupTemplate";
-import { remove } from "../../redux/features/dialogSlice";
 import { emailRegex } from "../home/LogInCard";
 
 type FormType = {
@@ -17,7 +15,7 @@ type FormType = {
 const CreateInvite = gql`
   mutation CreateEmployeeInvite($input: CreateEmployeeInviteInput!) {
     createEmployeeInvite(input: $input) {
-      msg
+      message
     }
   }
 `;
@@ -25,15 +23,17 @@ const CreateInvite = gql`
 const validate = (form: FormType): boolean => {
   const { email, level } = form;
 
-  if (email.match(emailRegex) && (level === "Gold" || "Sliver" || "Bronze")) {
-    return false;
-  }
+  if (email.match(emailRegex) && (level === "Gold" || "Silver" || "Bronze")) return false;
+  
 
   return true;
 };
 
-const CreateInviteCard = ({ func }: { func: any }) => {
-  const dispatch = useDispatch();
+interface Props {
+  func(): void;
+  onClose(): void;
+}
+const CreateInviteCard: React.FC<Props> = ({ func,onClose }) => {
 
   const [form, setForm] = useState<FormType>({
     email: "",
@@ -42,22 +42,20 @@ const CreateInviteCard = ({ func }: { func: any }) => {
 
   const [createEmployeeInvite, { loading }] = useMutation(CreateInvite);
 
-  const close = () => dispatch(remove({ type: "invite" }));
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     await createEmployeeInvite({
       variables: { input: form },
       onCompleted: (data) => {
-        console.log(data);
         func?.();
-        close();
+        onClose();
       },
+      onError: (err) => console.table(err)
     });
   };
 
   return (
-    <PopupTemplate title="Create Invite" onOutsideClick={close}>
+    <PopupTemplate title="Create Invite" onOutsideClick={onClose}>
       {!loading ? (
         <form
           onSubmit={handleSubmit}
@@ -75,10 +73,10 @@ const CreateInviteCard = ({ func }: { func: any }) => {
           />
 
           <InputDropdown
-            list={["Gold", "Sliver", "Bronze"]}
+            list={["Gold", "Silver", "Bronze"]}
             title="Level"
-            id="email"
-            name="email"
+            id="level"
+            name="level"
             type="text"
             value={form.level}
             onChange={(value: string) => setForm({ ...form, level: value })}
@@ -88,7 +86,7 @@ const CreateInviteCard = ({ func }: { func: any }) => {
             <Button
               type="button"
               className="bg-slate-100 dark:bg-neutral-800 text-black dark:text-white mx-2"
-              onClick={close}
+              onClick={onClose}
             >
               Cancel
             </Button>

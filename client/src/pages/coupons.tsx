@@ -3,15 +3,15 @@ import { TicketDiscount } from "iconsax-react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { IoQrCode } from "react-icons/io5";
+import ReactLoading from "react-loading";
 import { useSelector } from "react-redux";
 import { Coupon } from "../../typing";
 import Button from "../components/Button";
+import EmptyCard from "../components/EmptyCard";
 import Header from "../components/Header";
 import LoginCard from "../components/LoginCard";
 import Layouts from "../layout/Layouts";
 import { selectUser } from "../redux/features/userSlice";
-import ReactLoading from "react-loading";
-
 
 const CouponQuery = gql`
   query Coupons {
@@ -54,25 +54,11 @@ const Coupons = () => {
               ))}
             </div>
           ) : (
-            <div className="grid place-items-center h-[80%]">
-              <div className="flex flex-col items-center justify-center">
-                <div className="w-[100px] h-[100px] rounded-full bg-teal-500/10 flex items-center justify-center">
-                  <TicketDiscount
-                    size={100}
-                    className="text-5xl text-neutral-700 dark:text-neutral-400"
-                  />
-                </div>
-                <p className="font-medium text-lg p-2">
-                  You currently have no available Coupon
-                </p>
-                <p className="p-2">
-                  All your avaliable coupon will be displayed here
-                </p>
-                <Button onClick={() => router.push("/")}>
-                  Continue Shopping
-                </Button>
-              </div>
-            </div>
+            <EmptyCard
+              Icon={TicketDiscount}
+              title="You currently have no available Coupon"
+              subtitle="All your avaliable coupon will be displayed here"
+            />
           )
         ) : (
           <LoginCard />

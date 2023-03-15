@@ -7,19 +7,13 @@ import capitalizeFirstLetter from "../../helper/capitalizeFirstLetter";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import MenuCard from "./MenuCard";
 
-const Header = ({ categories }: { categories: string[] }) => {
+type Props = { categories: string[] };
+
+const Header: React.FC<Props> = ({ categories }) => {
   const router = useRouter();
 
   let genre = router.query.genre?.toString();
 
-  const handleClick = (e: any, item: string) => {
-    let genre = item.toLowerCase();
-    if (genre === "all") {
-      router.push(`/`);
-    } else {
-      router.push(`/?genre=${genre}`);
-    }
-  };
   return (
     <div className="w-full flex items-center justify-between px-[15px] py-[10px] h-[45px] mb-2">
       <p className="text-xl text-black dark:text-white font-[500] md:pl-4">
@@ -47,13 +41,9 @@ const SortCard = (props: SortProps) => {
   useOnClickOutside(ref, () => setOpen(false));
 
   const handleClick = (e: any, item: string) => {
-    setOpen(false)
+    setOpen(false);
     let genre = item.toLowerCase();
-    if (genre === "all") {
-      router.push(`/`);
-    } else {
-      router.push(`/?genre=${genre}`);
-    }
+    router.push(genre === "all" ? `/` : `/?genre=${genre}`);
   };
 
   return (

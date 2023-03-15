@@ -13,18 +13,9 @@ import { login } from "../../redux/features/userSlice";
 import TitleCard from "./TitleCard";
 
 const LoginMutation = gql`
-  mutation EmployeeLogin($input: LoginInput!) {
-    employeeLogin(input: $input) {
-      id
-      email
-      name
-      gender
-      birthday
-      phoneNumber
-      photoUrl
-      createdAt
-      updatedAt
-      level
+  mutation Login($input: LoginInput!) {
+    login(input: $input) {
+      message
     }
   }
 `;
@@ -84,7 +75,6 @@ const LogInCard = (props: { setLoading(value: boolean): void }) => {
     await loginUser({
       variables: { input: form },
       onCompleted: (data) => {
-        dispatch(login(data.employeeLogin));
         toast.success("Login Successfully", { id: loginToast });
         router.replace("/dashboard");
       },

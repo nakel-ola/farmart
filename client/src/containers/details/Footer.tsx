@@ -4,7 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Product } from "../../../typing";
 import { add, remove, selectBasket } from "../../redux/features/basketSlice";
 
-function Footer({ id, ...other }: Product) {
+
+interface Props extends Product {
+  
+}
+const Footer: React.FC<Props> = ({ id, ...other }) => {
   const dispatch = useDispatch();
 
   const basket = useSelector(selectBasket);
@@ -75,6 +79,6 @@ function Footer({ id, ...other }: Product) {
       </div>
     </div>
   );
-}
+};
 
 export default Footer;

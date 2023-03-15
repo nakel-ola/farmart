@@ -14,17 +14,11 @@ type EmailerType = {
   from: string;
   to: string;
   subject: string;
-  text: string;
+  text?: string;
   html: string;
 };
-let emailer = async ({ from, to, subject, text, html }: EmailerType) => {
-  await transporter.sendMail({
-    from, // sender address
-    to, // list of receivers
-    subject, // Subject line
-    text, // plain text body
-    html, // html body
-  });
+let emailer = async (args: EmailerType) => {
+  await transporter.sendMail({ ...args });
 };
 
 export default emailer;

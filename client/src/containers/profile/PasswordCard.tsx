@@ -11,7 +11,7 @@ import { login } from "../../redux/features/userSlice";
 const UpdatePassword = gql`
   mutation UpdatePassword($input: UpdatePasswordInput!) {
     updatePassword(input: $input) {
-      token
+      message
     }
   }
 `;
@@ -28,13 +28,10 @@ const PasswordCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
 
   const { oldPassword, newPassword } = form;
 
-  const dispatch = useDispatch();
-
   const { user } = useSelector((store: any) => store.user);
 
   const [updatePassword] = useMutation(UpdatePassword, {
     onCompleted: (data) => {
-      dispatch(login({ token: data.updatePassword.token }));
       setForm({ oldPassword: "", newPassword: "" });
       setLoading(false);
     },
@@ -60,21 +57,12 @@ const PasswordCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
       return;
     }
 
-    updatePassword({
-      variables: {
-        input: {
-          ...form,
-          email: user.email,
-        },
-      },
-    });
+    updatePassword({ variables: { input: form } });
   };
 
   return (
     <CardTemplate title="Change Password" className="my-4">
-
       <div className="pl-[25px] md:w-[60%] w-[80%] ">
-        
         <div className="my-2">
           <p className="font-medium pl-1 text-black dark:text-white">
             Old Password

@@ -12,8 +12,6 @@ function Card(props: Basket) {
 
   const dispatch = useDispatch();
 
-  const currencyConvert = (num: number) => `${Math.floor(Number(num * 210))}`;
-
   const truncate = (text: string, num: number) =>
     text.length > num ? text.substring(0, num - 1) + "..." : text;
 
@@ -55,10 +53,10 @@ function Card(props: Basket) {
   };
 
   return (
-    <div className="flex mx-[5px] my-[10px] bg-white dark:bg-dark rounded-lg relative">
+    <div className="flex mx-3 my-[10px] bg-white dark:bg-dark rounded-lg relative">
       <div className="overflow-hidden rounded-lg shrink-0 m-[3px]">
         <img
-          src={image?.url}
+          src={image}
           alt=""
           className="h-20 w-24 rounded-md object-cover  hover:scale-110 transition-all duration-300 ease"
         />

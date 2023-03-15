@@ -5,11 +5,12 @@
     "moduleResolution": "node",
     "target": "es6",
     "esModuleInterop": true,
+    "strict": true,
     "resolveJsonModule": true,
     "sourceMap": false,
     "importsNotUsedAsValues": "error",
     "outDir": "dist",
-    "noEmitOnError": false,
+    "noEmitOnError": false
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]

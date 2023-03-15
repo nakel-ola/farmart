@@ -9,10 +9,12 @@ type Props = {
   data: Product[];
   containerRef: any;
   totalItems: number;
-  handleFetchMore: () => void;
+  handleFetchMore(): void;
+  updateFavorite(id: string, favorite: boolean): void
 };
 
-const Cards = ({ containerRef, data, totalItems, handleFetchMore }: Props) => {
+const Cards = (props: Props) => {
+  const { containerRef, data, totalItems, handleFetchMore,updateFavorite } = props;
   return (
     <div className="mb-[40px] w-[95%] pb-2 ">
       {data.length > 0 ? (
@@ -26,7 +28,7 @@ const Cards = ({ containerRef, data, totalItems, handleFetchMore }: Props) => {
           loader={<Loader />}
         >
           {data.map((item: Product, index: number) => (
-            <Card key={index} {...item} />
+            <Card key={index} {...item} updateFavorite={updateFavorite} />
           ))}
         </InfiniteScroll>
       ) : (

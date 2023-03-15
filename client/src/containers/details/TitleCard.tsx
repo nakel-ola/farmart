@@ -1,73 +1,59 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Heart, Star1 } from "iconsax-react";
-import { useRouter } from "next/router";
 import React from "react";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { Currency, RatingType } from "../../../typing";
 import calculateRating from "../../helper/calculateRating";
-import {
-  AddToFavorites,
-  FavoriteQuery,
-  RemoveFromFavorites,
-} from "../home/Card";
+import { selectUser } from "../../redux/features/userSlice";
+import { AddToFavorites, RemoveFromFavorites } from "../home/Card";
 
 type Props = {
+  id: string;
   title: string;
   price: number;
   category: string;
   rating: Array<RatingType>;
-  data: boolean;
   currency: Currency;
-  discount: string | null;
+  discount?: number;
+  favorite: boolean;
+  handleRefetch(): void;
 };
 
-const TitleCard = ({
-  title,
-  category,
-  price,
-  rating,
-  data,
-  currency,
-  discount,
-}: Props) => {
-  const router = useRouter();
+const TitleCard: React.FC<Props> = (props) => {
+  const {
+    title,
+    category,
+    price,
+    rating,
+    currency,
+    discount,
+    favorite,
+    id,
+    handleRefetch,
+  } = props;
 
   // --- Capitalising first letter --- //
   const capitalizeFirstLetter = (string: string) =>
     string?.charAt(0).toUpperCase() + string?.slice(1);
 
-  const { user } = useSelector((store: any) => store.user);
-
-  const { data: items, refetch } = useQuery(FavoriteQuery, {
-    variables: { id: router.query.id },
-  });
-
-  const selected = data && items?.favorite?.id === router.query.id;
+  const user = useSelector(selectUser);
 
   const [addToFavorites] = useMutation(AddToFavorites, {
-    onError: (e) => {
-      console.error(e);
-    },
+    onError: (e) => console.table(e),
   });
 
   const [removeFromFavorites] = useMutation(RemoveFromFavorites, {
-    onError: (e) => {
-      console.error(e);
-    },
+    onError: (e) => console.table(e),
   });
 
   const handleFavorite = () => {
-    if (user) {
-      if (selected) {
-        removeFromFavorites({ variables: { id: router.query.id } });
-      } else {
-        addToFavorites({ variables: { id: router.query.id } });
-      }
-      refetch({ id: router.query.id });
-    } else {
-      toast.success("LogIn to save item");
-    }
+    if (!user) return toast.success("LogIn to save item");
+
+    if (favorite) removeFromFavorites({ variables: { id } });
+    else addToFavorites({ variables: { id } });
+
+    handleRefetch();
   };
 
   let newRating = calculateRating(rating);
@@ -81,7 +67,10 @@ const TitleCard = ({
 
         {discount && (
           <div className="w-[40px] h-[25px] rounded-lg mx-[5px] bg-red-600/10 flex items-center justify-center ">
-            <p className="text-red-600 font-semibold text-base"> -{discount}%</p>
+            <p className="text-red-600 font-semibold text-base">
+              {" "}
+              -{discount}%
+            </p>
           </div>
         )}
       </div>
@@ -128,7 +117,7 @@ const TitleCard = ({
           >
             <Heart
               size={25}
-              variant={selected ? "Bold" : "Outline"}
+              variant={favorite ? "Bold" : "Outline"}
               className="text-[#212121] dark:text-neutral-300 text-[25px]"
             />
           </button>

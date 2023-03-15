@@ -4,12 +4,12 @@ import Avatar from "./Avatar";
 import CardTemplate from "./CardTemplate";
 import { Divider } from "./Divider";
 
-type Item = {
+export type UserItem = {
   name: string;
   value: string;
 };
 type Props = {
-  items: Item[];
+  items: UserItem[];
   title: string;
   showEditButton?: boolean;
   showAvatar?: boolean;
@@ -67,7 +67,7 @@ function UserInfo(props: Props) {
         </div>
       )}
 
-      {items.map((item: Item, index: number) => (
+      {items.map((item: UserItem, index: number) => (
         <Fragment key={index}>
           <div className="py-[5px] pl-[25px] cursor-pointer flex-1">
             <strong className="text-base font-medium text-black dark:text-white">
