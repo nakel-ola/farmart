@@ -1,6 +1,6 @@
 import type { Context, Level, MsgType, ResolverFn } from "../../../../typing";
 import clean from "../../../helper/clean";
-import getdel from "../../../helper/getDel";
+import getdel from "../../../helper/getdel";
 
 interface Args {
   input: {

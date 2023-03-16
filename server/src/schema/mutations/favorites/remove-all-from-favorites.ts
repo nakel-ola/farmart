@@ -1,5 +1,5 @@
 import type { MsgType, ResolverFn } from "../../../../typing";
-import getdel from "../../../helper/getDel";
+import getdel from "../../../helper/getdel";
 
 const removeAllFromFavorites: ResolverFn<any, Promise<MsgType>> = async (
   _,

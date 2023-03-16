@@ -1,6 +1,6 @@
 import type { ResolverFn } from "../../../../typing";
-import getdel from "../../../helper/getDel";
-import redisGet from "../../../helper/redisGet";
+import getdel from "../../../helper/getdel";
+
 
 interface Args {
   id: string;

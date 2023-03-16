@@ -1,5 +1,5 @@
 import type { MsgType, ResolverFn } from "../../../../typing";
-import getdel from "../../../helper/getDel";
+import getdel from "../../../helper/getdel";
 
 interface Args {
   input: {

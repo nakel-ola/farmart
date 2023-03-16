@@ -1,6 +1,6 @@
 import type { MsgType, ResolverFn } from "../../../../typing";
 import currencies from "../../../data/currencies.json";
-import getdel from "../../../helper/getDel";
+import getdel from "../../../helper/getdel";
 
 interface Args {
   input: {

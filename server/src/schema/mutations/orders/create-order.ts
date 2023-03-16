@@ -6,7 +6,7 @@ import type {
 } from "../../../../typing";
 import calculateDiscount from "../../../helper/calculateDiscount";
 import clean from "../../../helper/clean";
-import getdel from "../../../helper/getDel";
+import getdel from "../../../helper/getdel";
 import { nanoid } from "../../../helper/nanoid";
 import db from "../../../models";
 
