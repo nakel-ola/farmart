@@ -9,15 +9,15 @@ type Callback = (
 var corsOptionsDelegate = function (req: CorsRequest, callback: Callback) {
   try {
     var corsOptions;
-    const allowports = [config.client_url!, config.admin_url!];
-    const origin = req.headers.origin;
-    const isAllow = allowports.find((port) => port === origin);
+    const allowedOrigins = [config.client_url!, config.admin_url!];
+    const origin = req.headers.origin!;
+    const isAllow = allowedOrigins.includes(origin);
 
     if (isAllow) {
       (req as any).admin = origin === config.admin_url;
 
       corsOptions = {
-        origin: allowports,
+        origin: allowedOrigins,
         credentials: true,
         methods: "GET, POST",
         optionsSuccessStatus: 200,
