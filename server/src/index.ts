@@ -6,6 +6,7 @@ import RedisStore from "connect-redis";
 import cookieParser from "cookie-parser";
 import express from "express";
 import session from "express-session";
+import { writeFileSync } from "fs";
 import type { GraphQLSchema } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { graphqlUploadExpress } from "graphql-upload-minimal";
@@ -17,7 +18,6 @@ import context, { redis } from "./context";
 import cors from "./middleware/cors";
 import permissions from "./permissions";
 import { resolvers, typeDefs } from "./schema";
-
 /** @ts-ignore */
 const redisStore = new RedisStore({
   /** @ts-ignore */

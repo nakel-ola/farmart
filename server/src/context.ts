@@ -1,11 +1,16 @@
 import type { Request, Response } from "express";
 import Redis from "ioredis";
 import type { Context } from "../typing";
+import config from "./config";
 import { addressLoader, productLoader, userLoader } from "./loaders";
 import authenticated from "./middleware/authenticated";
 import db from "./models";
 
-const redis = new Redis();
+const redis = new Redis({
+  host: config.redis_host!,
+  port: config.redis_port!,
+  password: config.redis_password!,
+});
 
 interface Props {
   res: Response;

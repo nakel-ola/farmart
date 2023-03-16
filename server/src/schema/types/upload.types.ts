@@ -6,8 +6,6 @@ const uploadTypes = gql`
   }
   extend type Mutation {
     uploadFile(file: Upload!): UploadType!
-    uploadFiles(files: [Upload!]!): [UploadType!]!
-    uploadBlob(blob: Upload): UploadType!
   }
 `;
 export default uploadTypes;

@@ -56,12 +56,6 @@ export type User = HydratedDocument<Omit<UserType, "password">>;
 export type Address = HydratedDocument<AddressType>;
 export type Product = HydratedDocument<ProductType>;
 
-export type ValidateType = {
-  name: string;
-  email: string;
-  validationToken: string;
-  expiresIn: Date;
-};
 
 export type CurrencyType = {
   name: string;
@@ -169,7 +163,6 @@ export type InviteType = {
 
 export type DBType = {
   users: Model<UserType>;
-  validate: Model<ValidateType>;
   products: Model<ProductType>;
   banners: Model<BannerType>;
   favorites: Model<FavoriteType>;

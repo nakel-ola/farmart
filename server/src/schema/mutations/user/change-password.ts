@@ -25,7 +25,7 @@ const changePassword: ResolverFn<Args, Promise<MsgType>> = async (
   try {
     const { email, password, name, token } = args.input;
 
-    const { db, req } = ctx;
+    const { db, req, redis } = ctx;
 
     const user = await ctx.db.users.findOne(
       { email },
@@ -56,7 +56,7 @@ const changePassword: ResolverFn<Args, Promise<MsgType>> = async (
 
     (req.session as any).auth = jwtToken;
 
-    await db.validate.deleteOne({ email, name });
+    await redis.del(key)
 
     await emailer({
       from: config.email_from,

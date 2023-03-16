@@ -16,6 +16,9 @@ const config = {
   storage_bucket_name: process.env.STORAGE_BUCKET_NAME,
   storage_credentials_path: process.env.STORAGE_CREDENTIALS_PATH,
   stmp_email: process.env.STMP_EMAIL,
+  redis_host: process.env.REDIS_HOST,
+  redis_port: Number(process.env.REDIS_PORT),
+  redis_password: process.env.REDIS_PASSWORD,
   stmp_password: process.env.STMP_PASSWORD,
   email_from: '"Farmart Team" noreply@farmart.com',
   app_name: "Farmart",
@@ -24,6 +27,7 @@ const config = {
 
   session_name: "farmart_auth",
   session_prefix: "farmart:",
+
 };
 
 export default config;

@@ -8,13 +8,11 @@ import invites from "./inviteSchema";
 import orders from "./orderSchema";
 import products from "./productSchema";
 import users from "./userSchema";
-import validate from "./validateSchema";
 import addresses from "./addressSchema";
 import reviews from "./reviewSchema";
 
 const db: DBType = {
   users,
-  validate,
   products,
   banners,
   favorites,
