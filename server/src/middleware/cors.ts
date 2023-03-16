@@ -13,6 +13,8 @@ var corsOptionsDelegate = function (req: CorsRequest, callback: Callback) {
     const origin = req.headers.origin!;
     const isAllow = allowedOrigins.includes(origin);
 
+    console.log(origin)
+
     if (isAllow) {
       (req as any).admin = origin === config.admin_url;
 
@@ -32,4 +34,4 @@ var corsOptionsDelegate = function (req: CorsRequest, callback: Callback) {
   callback(null, corsOptions); // callback expects two parameters: error and options
 };
 
-export default cors((req, res) => {});
+export default cors(corsOptionsDelegate);
