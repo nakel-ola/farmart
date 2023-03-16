@@ -16,6 +16,7 @@ import path from "path";
 import config from "./config";
 import context, { redis } from "./context";
 import cors from "./middleware/cors";
+import originMiddleware from "./middleware/originMiddleware";
 import permissions from "./permissions";
 import { resolvers, typeDefs } from "./schema";
 /** @ts-ignore */
@@ -34,6 +35,7 @@ async function bootstrap() {
   app.use(cors);
   app.use(express.static(path.resolve(__dirname, "../public")));
   app.use(cookieParser());
+  app.use(originMiddleware);
 
   let production = false;
 

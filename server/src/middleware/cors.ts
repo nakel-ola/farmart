@@ -1,25 +1,27 @@
-import cors, { CorsRequest } from "cors";
+import cors, { CorsRequest,CorsOptions } from "cors";
 import config from "../config";
 
 type Callback = (
   err: Error | null,
-  options?: cors.CorsOptions | undefined
+  options?: CorsOptions | undefined
 ) => void;
 
 var corsOptionsDelegate = function (req: CorsRequest, callback: Callback) {
   try {
     var corsOptions;
-    const allowports = [config.client_url, config.admin_url];
-    const isAllow = allowports.find((port) => port === req.headers.origin);
+    const allowports = [config.client_url!, config.admin_url!];
+    const origin = req.headers.origin;
+    const isAllow = allowports.find((port) => port === origin);
 
     if (isAllow) {
-      (req as any).admin = req.headers.origin === config.admin_url;
+      (req as any).admin = origin === config.admin_url;
 
       corsOptions = {
-        origin: req.headers.origin,
+        origin: allowports,
         credentials: true,
         methods: "GET, POST",
         optionsSuccessStatus: 200,
+
       };
     } else {
       corsOptions = { origin: false };
@@ -30,4 +32,4 @@ var corsOptionsDelegate = function (req: CorsRequest, callback: Callback) {
   callback(null, corsOptions); // callback expects two parameters: error and options
 };
 
-export default cors(corsOptionsDelegate);
+export default cors((req, res) => {});
