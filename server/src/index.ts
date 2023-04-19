@@ -19,6 +19,8 @@ import cors from "./middleware/cors";
 import originMiddleware from "./middleware/originMiddleware";
 import permissions from "./permissions";
 import { resolvers, typeDefs } from "./schema";
+
+
 /** @ts-ignore */
 const redisStore = new RedisStore({
   /** @ts-ignore */
