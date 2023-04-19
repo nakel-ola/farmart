@@ -57,7 +57,6 @@ const TitleCard: React.FC<Props> = (props) => {
   };
 
   let newRating = calculateRating(rating);
-  console.log(newRating);
 
   return (
     <div className="w-[95%] md:w-[80%] mt-[10px] bg-white dark:bg-dark dark:shadow-black/30 pb-[12px] p-[5px] pt-[12px] shadow-sm rounded-lg pl-[23px]">
