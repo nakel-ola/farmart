@@ -51,7 +51,10 @@ const Cards: React.FC<Props> = ({ containerRef }) => {
     {
       variables: { input: { genre, offset: 0, limit: 10 } },
       notifyOnNetworkStatusChange: true,
-      onCompleted: (data) => setData(data.products),
+      onCompleted: (data) => {
+        console.log(data);
+        setData(data.products);
+      },
       onError: (err) => console.table(err),
     }
   );

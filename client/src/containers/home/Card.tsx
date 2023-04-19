@@ -180,11 +180,7 @@ const Card: React.FC<Props> = (props) => {
           </div>
 
           <div className="flex items-center justify-between mr-1">
-            {stock === 0 ? (
-              <div className="flex pl-[5px] my-[5px] ">
-                <p className="text-red-600 font-medium">Out of stock</p>
-              </div>
-            ) : (
+            {stock > 0 ? (
               <div className="flex pl-[5px] my-[5px]">
                 {product?.quantity && (
                   <button
@@ -211,6 +207,10 @@ const Card: React.FC<Props> = (props) => {
                 >
                   <Add size={25} className="text-white" />
                 </button>
+              </div>
+            ) : (
+              <div className="flex pl-[5px] my-[5px] ">
+                <p className="text-red-600 font-medium">Out of stock</p>
               </div>
             )}
 

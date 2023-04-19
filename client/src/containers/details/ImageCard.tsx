@@ -15,7 +15,7 @@ const ImageCard: React.FC<Props> = ({ image, title, stock }) => {
         className="relative h-full w-full object-cover md:rounded-lg md:hover:scale-125 transition-all duration-300 ease"
       />
 
-      {stock === 0 && (
+      {stock <= 0 && (
         <div className="absolute bottom-0 bg-red-600 w-full text-center">
           <p className="text-white text-xl">Out of stock</p>
         </div>
