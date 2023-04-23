@@ -50,11 +50,11 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const path_1 = __importDefault(require("path"));
 const config_1 = __importDefault(require("./config"));
 const context_1 = __importStar(require("./context"));
-const cors_1 = __importDefault(require("./middleware/cors"));
+// import cors from "./middleware/cors";
 // import originMiddleware from "./middleware/originMiddleware";
+const cors_1 = __importDefault(require("cors"));
 const permissions_1 = __importDefault(require("./permissions"));
 const schema_2 = require("./schema");
-// import cors from "cors";
 /** @ts-ignore */
 const redisStore = new connect_redis_1.default({
     /** @ts-ignore */
@@ -67,7 +67,7 @@ function bootstrap() {
         const app = (0, express_1.default)();
         app.use(express_1.default.json({ limit: "50mb" }));
         app.use(express_1.default.urlencoded({ limit: "50mb", extended: false }));
-        app.use(cors_1.default);
+        app.use((0, cors_1.default)({ origin: "*" }));
         app.use(express_1.default.static(path_1.default.resolve(__dirname, "../public")));
         app.use((0, cookie_parser_1.default)());
         // app.use(originMiddleware);

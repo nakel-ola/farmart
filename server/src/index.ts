@@ -15,12 +15,11 @@ import mongoose from "mongoose";
 import path from "path";
 import config from "./config";
 import context, { redis } from "./context";
-import cors from "./middleware/cors";
+// import cors from "./middleware/cors";
 // import originMiddleware from "./middleware/originMiddleware";
+import cors from "cors";
 import permissions from "./permissions";
 import { resolvers, typeDefs } from "./schema";
-// import cors from "cors";
-
 
 /** @ts-ignore */
 const redisStore = new RedisStore({
@@ -35,7 +34,7 @@ async function bootstrap() {
 
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: false }));
-  app.use(cors);
+  app.use(cors({ origin: "*" }));
   app.use(express.static(path.resolve(__dirname, "../public")));
   app.use(cookieParser());
   // app.use(originMiddleware);
