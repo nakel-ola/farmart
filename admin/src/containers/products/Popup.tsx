@@ -121,7 +121,10 @@ const Popup: React.FC<Props> = ({ func, onClose, data }) => {
       await uploadFile({
         variables: { file: form.image },
         onCompleted: (data) => resolve(data.uploadFile.url),
-        onError: (err) => reject(err),
+        onError: (err) => {
+          console.table(err);
+          reject(err);
+        }
       });
     });
 
