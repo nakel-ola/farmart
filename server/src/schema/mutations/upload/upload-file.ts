@@ -6,11 +6,28 @@ import config from "../../../config";
 
 const serviceKey = path.join(config.storage_credentials_path!);
 
-const storage = new Storage({
-  keyFilename: serviceKey,
-  projectId: config.storage_project_id,
-});
+const data = JSON.parse(config.storage_credentials!);
 
+const storage = new Storage({
+  // keyFilename: serviceKey,
+  projectId: config.storage_project_id,
+  credentials: require(config.storage_credentials_path!),
+
+  // credentials: {
+  // client_email: data["client_email"],
+  // client_id: data["client_id"],
+  // private_key: data["private_key"],
+  // token_url: data["token_url"],
+  // type: "service_account",
+
+  // private_key_id: "xxxx",
+
+  // auth_uri: "https://accounts.google.com/o/oauth2/auth",
+  // token_uri: "https://oauth2.googleapis.com/token",
+  // auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+  // client_x509_cert_url: "xxx",
+  // },
+});
 
 const bucket = storage.bucket(config.storage_bucket_name!);
 
