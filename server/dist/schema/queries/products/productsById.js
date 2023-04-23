@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-require("../../../helper/clear_id");
 const formatJson_1 = __importDefault(require("../../../helper/formatJson"));
 const redisGet_1 = __importDefault(require("../../../helper/redisGet"));
 const productsById = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {

@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const formatJson_1 = __importDefault(require("../../../helper/formatJson"));
 const redisGet_1 = __importDefault(require("../../../helper/redisGet"));
-require("../../../helper/redisKeys");
 const address = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { db, user } = ctx;

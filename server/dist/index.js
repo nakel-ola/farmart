@@ -43,7 +43,6 @@ const connect_redis_1 = __importDefault(require("connect-redis"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const express_1 = __importDefault(require("express"));
 const express_session_1 = __importDefault(require("express-session"));
-require("fs");
 const graphql_middleware_1 = require("graphql-middleware");
 const graphql_upload_minimal_1 = require("graphql-upload-minimal");
 const http_1 = __importDefault(require("http"));
@@ -52,7 +51,6 @@ const path_1 = __importDefault(require("path"));
 const config_1 = __importDefault(require("./config"));
 const context_1 = __importStar(require("./context"));
 const cors_1 = __importDefault(require("./middleware/cors"));
-const originMiddleware_1 = __importDefault(require("./middleware/originMiddleware"));
 const permissions_1 = __importDefault(require("./permissions"));
 const schema_2 = require("./schema");
 /** @ts-ignore */
@@ -70,7 +68,7 @@ function bootstrap() {
         app.use(cors_1.default);
         app.use(express_1.default.static(path_1.default.resolve(__dirname, "../public")));
         app.use((0, cookie_parser_1.default)());
-        app.use(originMiddleware_1.default);
+        // app.use(originMiddleware);
         let production = false;
         if (app.get("env") === "production") {
             app.set("trust proxy", 1); // trust first proxy

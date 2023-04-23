@@ -13,8 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = __importDefault(require("../../../config"));
-require("../../../data/emailData");
-require("../../../helper/emailer");
 const nanoid_1 = require("../../../helper/nanoid");
 const createEmployeeInvite = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
     try {
