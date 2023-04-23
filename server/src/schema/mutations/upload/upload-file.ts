@@ -4,7 +4,7 @@ import path from "path";
 import { format } from "util";
 import config from "../../../config";
 
-const serviceKey = path.join(__dirname, config.storage_credentials_path!);
+const serviceKey = path.join(config.storage_credentials_path!);
 
 const storage = new Storage({
   keyFilename: serviceKey,
