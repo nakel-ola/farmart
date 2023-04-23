@@ -25,7 +25,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const calculateDiscount_1 = __importDefault(require("../../../helper/calculateDiscount"));
 const clean_1 = __importDefault(require("../../../helper/clean"));
-const getDel_1 = __importDefault(require("../../../helper/getDel"));
+const getdel_1 = __importDefault(require("../../../helper/getdel"));
 const nanoid_1 = require("../../../helper/nanoid");
 const models_1 = __importDefault(require("../../../models"));
 const createOrder = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
@@ -47,7 +47,7 @@ const createOrder = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function
         if (coupon)
             yield deleteCoupon(coupon.id);
         // getting cache data from redis if available
-        yield (0, getDel_1.default)([
+        yield (0, getdel_1.default)([
             `filterById:${userId}*`,
             `filterByStatus:${userId}*`,
             `order:${userId}*`,

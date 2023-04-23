@@ -12,13 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const getDel_1 = __importDefault(require("../../../helper/getDel"));
+const getdel_1 = __importDefault(require("../../../helper/getdel"));
 const deleteAddress = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { db, user } = ctx;
         const userId = user === null || user === void 0 ? void 0 : user._id.toString();
         yield db.addresses.deleteOne({ _id: args.id, userId });
-        yield (0, getDel_1.default)([`addresses:${userId}*`, `*address:${userId}*`]);
+        yield (0, getdel_1.default)([`addresses:${userId}*`, `*address:${userId}*`]);
         return { message: "Address deleted successfully" };
     }
     catch (error) {

@@ -17,6 +17,7 @@ const config = {
     storage_project_id: process.env.STORAGE_PROJECT_ID,
     storage_bucket_name: process.env.STORAGE_BUCKET_NAME,
     storage_credentials_path: process.env.STORAGE_CREDENTIALS_PATH,
+    storage_credentials: process.env.STORAGE_CREDENTIALS,
     stmp_email: process.env.STMP_EMAIL,
     redis_host: process.env.REDIS_HOST,
     redis_port: Number(process.env.REDIS_PORT),

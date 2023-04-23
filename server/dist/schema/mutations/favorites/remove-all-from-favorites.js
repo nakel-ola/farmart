@@ -12,14 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const getDel_1 = __importDefault(require("../../../helper/getDel"));
+const getdel_1 = __importDefault(require("../../../helper/getdel"));
 const removeAllFromFavorites = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { db, user, redis } = ctx;
         const userId = user === null || user === void 0 ? void 0 : user._id.toString();
         yield db.favorites.updateOne({ userId }, { data: [] });
         // getting cache data from redis if available
-        yield (0, getDel_1.default)([
+        yield (0, getdel_1.default)([
             `favorite:${userId}*`,
             `favorites:${userId}*`,
             `products:${userId}*`,

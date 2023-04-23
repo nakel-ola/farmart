@@ -12,8 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const getDel_1 = __importDefault(require("../../../helper/getDel"));
-require("../../../helper/redisGet");
+const getdel_1 = __importDefault(require("../../../helper/getdel"));
 const updateProgress = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id, name } = args.input;
@@ -24,7 +23,7 @@ const updateProgress = (_, args, ctx) => __awaiter(void 0, void 0, void 0, funct
             $set: { "progress.$.name": name, "progress.$.checked": true },
         });
         // getting cache data from redis if available
-        yield (0, getDel_1.default)([
+        yield (0, getdel_1.default)([
             `filterById:${userId}*`,
             `filterByStatus:${userId}*`,
             `order:${userId}*`,

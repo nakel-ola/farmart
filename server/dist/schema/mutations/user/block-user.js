@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const getDel_1 = __importDefault(require("../../../helper/getDel"));
+const getdel_1 = __importDefault(require("../../../helper/getdel"));
 const blockUser = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, blocked, customerId } = args.input;
@@ -22,7 +22,7 @@ const blockUser = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* 
         const user = yield db.users.updateOne({ _id: customerId, email }, { blocked });
         if (!user)
             throw new Error("Something went wrong");
-        yield (0, getDel_1.default)([`user:${customerId}`, `auth-user:${customerId}`]);
+        yield (0, getdel_1.default)([`user:${customerId}`, `auth-user:${customerId}`]);
         return { message: "User Blocked successfully" };
     }
     catch (error) {

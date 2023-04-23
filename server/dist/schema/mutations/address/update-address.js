@@ -24,14 +24,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const clean_1 = __importDefault(require("../../../helper/clean"));
-const getDel_1 = __importDefault(require("../../../helper/getDel"));
+const getdel_1 = __importDefault(require("../../../helper/getdel"));
 const updateAddress = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const _a = args.input, { id } = _a, others = __rest(_a, ["id"]);
         const { db, user } = ctx;
         const userId = user === null || user === void 0 ? void 0 : user._id.toString();
         yield db.addresses.updateOne({ userId, _id: id }, (0, clean_1.default)(others));
-        yield (0, getDel_1.default)([`addresses:${userId}*`, `*address:${userId}*`]);
+        yield (0, getdel_1.default)([`addresses:${userId}*`, `*address:${userId}*`]);
         return { message: "Address updated successfully" };
     }
     catch (error) {

@@ -24,7 +24,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const clean_1 = __importDefault(require("../../../helper/clean"));
-const getDel_1 = __importDefault(require("../../../helper/getDel"));
+const getdel_1 = __importDefault(require("../../../helper/getdel"));
 const updateUser = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const _a = args.input, { uid } = _a, others = __rest(_a, ["uid"]);
@@ -36,7 +36,7 @@ const updateUser = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function*
         const updatedUser = yield db.users.updateOne({ _id: userId }, data);
         if (!updatedUser)
             throw new Error("Something went wrong");
-        yield (0, getDel_1.default)([`user:${userId}`, `auth-user:${userId}`]);
+        yield (0, getdel_1.default)([`user:${userId}`, `auth-user:${userId}`]);
         return { message: "Successfully updated" };
     }
     catch (error) {

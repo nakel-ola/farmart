@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const getDel_1 = __importDefault(require("../../../helper/getDel"));
+const getdel_1 = __importDefault(require("../../../helper/getdel"));
 const createAddress = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { db, user } = ctx;
@@ -20,7 +20,7 @@ const createAddress = (_, args, ctx) => __awaiter(void 0, void 0, void 0, functi
         const address = yield db.addresses.create(Object.assign(Object.assign({}, args.input), { userId, default: false }));
         if (!address)
             throw new Error("Something went wrong");
-        yield (0, getDel_1.default)([`addresses:${userId}*`, `address:${userId}*`]);
+        yield (0, getdel_1.default)([`addresses:${userId}*`, `address:${userId}*`]);
         return { message: "Successfully added address" };
     }
     catch (error) {

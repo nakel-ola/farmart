@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const getDel_1 = __importDefault(require("../../../helper/getDel"));
+const getdel_1 = __importDefault(require("../../../helper/getdel"));
 const deleteProduct = (_, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { db, redis } = ctx;
@@ -21,7 +21,7 @@ const deleteProduct = (_, args, ctx) => __awaiter(void 0, void 0, void 0, functi
         if (!data || !review)
             throw new Error("Something went wrong");
         // getting cache data from redis if available
-        yield (0, getDel_1.default)([
+        yield (0, getdel_1.default)([
             `products*`,
             "product-summary",
             "product*",
