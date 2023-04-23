@@ -1,28 +1,25 @@
-import cors, { CorsRequest,CorsOptions } from "cors";
+import cors, { CorsOptions, CorsRequest } from "cors";
 import config from "../config";
 
-type Callback = (
-  err: Error | null,
-  options?: CorsOptions | undefined
-) => void;
+type Callback = (err: Error | null, options?: CorsOptions | undefined) => void;
 
 var corsOptionsDelegate = function (req: CorsRequest, callback: Callback) {
   try {
-    var corsOptions;
+    var corsOptions: CorsOptions;
     const allowedOrigins = [config.client_url!, config.admin_url!];
     const origin = req.headers.origin!;
 
-    console.log(req.headers.origin);
     const isAllow = allowedOrigins.includes(origin);
 
     if (isAllow) {
       (req as any).admin = origin === config.admin_url;
 
       corsOptions = {
-        origin: allowedOrigins,
+        origin: origin,
         credentials: true,
         methods: "GET, POST",
         optionsSuccessStatus: 200,
+        
       };
     } else {
       corsOptions = { origin: false };
