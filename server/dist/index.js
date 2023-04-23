@@ -51,8 +51,10 @@ const path_1 = __importDefault(require("path"));
 const config_1 = __importDefault(require("./config"));
 const context_1 = __importStar(require("./context"));
 const cors_1 = __importDefault(require("./middleware/cors"));
+// import originMiddleware from "./middleware/originMiddleware";
 const permissions_1 = __importDefault(require("./permissions"));
 const schema_2 = require("./schema");
+// import cors from "cors";
 /** @ts-ignore */
 const redisStore = new connect_redis_1.default({
     /** @ts-ignore */

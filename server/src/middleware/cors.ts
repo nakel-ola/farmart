@@ -15,11 +15,8 @@ var corsOptionsDelegate = function (req: CorsRequest, callback: Callback) {
       (req as any).admin = origin === config.admin_url;
 
       corsOptions = {
-        origin: origin,
+        origin: true,
         credentials: true,
-        methods: "GET, POST",
-        optionsSuccessStatus: 200,
-        
       };
     } else {
       corsOptions = { origin: false };

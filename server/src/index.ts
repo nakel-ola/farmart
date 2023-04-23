@@ -16,9 +16,10 @@ import path from "path";
 import config from "./config";
 import context, { redis } from "./context";
 import cors from "./middleware/cors";
-import originMiddleware from "./middleware/originMiddleware";
+// import originMiddleware from "./middleware/originMiddleware";
 import permissions from "./permissions";
 import { resolvers, typeDefs } from "./schema";
+// import cors from "cors";
 
 
 /** @ts-ignore */
