@@ -11,6 +11,7 @@ import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 const BannerQuery = gql`
   query Banners {
     banners {
+      id
       image
       title
       description
@@ -88,13 +89,13 @@ interface ImageCardProps extends BannerType {
 }
 
 const ImageCard = (props: ImageCardProps) => {
-  const { image, i, active, description, title,link,setActive } = props;
+  const { image, i, active, description, title, link, setActive } = props;
 
   const ref = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
 
-  const entry = useIntersectionObserver(ref, { threshold: 1});
+  const entry = useIntersectionObserver(ref, { threshold: 1 });
 
   const isVisible = !!entry?.isIntersecting;
 
@@ -109,10 +110,10 @@ const ImageCard = (props: ImageCardProps) => {
   }, [i, active]);
 
   useEffect(() => {
-    if(isVisible) {
-      setActive(i)
+    if (isVisible) {
+      setActive(i);
     }
-  },[isVisible,setActive,i])
+  }, [isVisible, setActive, i]);
 
   return (
     <div
@@ -133,13 +134,15 @@ const ImageCard = (props: ImageCardProps) => {
           </p>
         </div>
 
-        <button className="w-fit bg-white px-2 py-1 rounded-lg hover:scale-105 active:scale-95 font-medium text-black" onClick={() => link && router.push(link)}>
+        <button
+          className="w-fit bg-white px-2 py-1 rounded-lg hover:scale-105 active:scale-95 font-medium text-black"
+          onClick={() => link && router.push(link)}
+        >
           Shop Now
         </button>
       </article>
     </div>
   );
 };
-
 
 export default Banners;
