@@ -37,7 +37,7 @@ async function bootstrap() {
   app.use(cors);
   app.use(express.static(path.resolve(__dirname, "../public")));
   app.use(cookieParser());
-  app.use(originMiddleware);
+  // app.use(originMiddleware);
 
   let production = false;
 

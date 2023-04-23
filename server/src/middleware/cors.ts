@@ -13,8 +13,6 @@ var corsOptionsDelegate = function (req: CorsRequest, callback: Callback) {
     const origin = req.headers.origin!;
     const isAllow = allowedOrigins.includes(origin);
 
-    console.log(origin)
-
     if (isAllow) {
       (req as any).admin = origin === config.admin_url;
 
@@ -23,7 +21,6 @@ var corsOptionsDelegate = function (req: CorsRequest, callback: Callback) {
         credentials: true,
         methods: "GET, POST",
         optionsSuccessStatus: 200,
-
       };
     } else {
       corsOptions = { origin: false };
