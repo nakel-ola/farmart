@@ -38,6 +38,7 @@ export const upload = async (args: FileUpload) =>
           .createWriteStream({ gzip: true, resumable: false })
       )
       .on("error", (err: any) => {
+        console.log(err);
         reject(err);
       })
       .on("finish", async () => {
