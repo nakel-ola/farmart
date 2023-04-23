@@ -11,6 +11,8 @@ var corsOptionsDelegate = function (req: CorsRequest, callback: Callback) {
     var corsOptions;
     const allowedOrigins = [config.client_url!, config.admin_url!];
     const origin = req.headers.origin!;
+
+    console.log(req.headers.origin);
     const isAllow = allowedOrigins.includes(origin);
 
     if (isAllow) {
