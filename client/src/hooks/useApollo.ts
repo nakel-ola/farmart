@@ -13,7 +13,6 @@ const httpLink = createUploadLink({
     "Apollo-Require-Preflight": "true",
     // "Access-Control-Allow-Origin": "https://farmart.vercel.app",
   },
-  fetchOptions: { credentials: true },
 });
 
 const cache = new InMemoryCache({
