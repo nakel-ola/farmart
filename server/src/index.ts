@@ -39,6 +39,15 @@ async function bootstrap() {
   app.use(cookieParser());
   // app.use(originMiddleware);
 
+  app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", req.headers.origin!);
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    next();
+  });
+
   let production = false;
 
   if (app.get("env") === "production") {
