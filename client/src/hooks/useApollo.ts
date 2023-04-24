@@ -10,10 +10,10 @@ const httpLink = createUploadLink({
   uri: process.env.SERVER_URL,
   credentials: "include",
   headers: {
-    // "Apollo-Require-Preflight": "true",
+    "Apollo-Require-Preflight": "true",
     // "Access-Control-Allow-Origin": "https://farmart.vercel.app",
   },
-  fetchOptions: { credentials: true,  },
+  fetchOptions: { credentials: true },
 });
 
 const cache = new InMemoryCache({
