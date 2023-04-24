@@ -8,9 +8,9 @@ let apolloClient: any;
 
 const httpLink = createUploadLink({
   uri: process.env.SERVER_URL,
-  credentials: "include",
-  headers: { "Apollo-Require-Preflight": "true", "Access-Control-Allow-Origin": "https://farmart.vercel.app", },
-  fetchOptions: { credentials: "include" },
+  // credentials: "include",
+  headers: { "Apollo-Require-Preflight": "true" },
+  // fetchOptions: { credentials: "include" },
 });
 
 const cache = new InMemoryCache({
