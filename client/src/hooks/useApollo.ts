@@ -8,10 +8,10 @@ let apolloClient: any;
 
 const httpLink = createUploadLink({
   uri: process.env.SERVER_URL,
-  // credentials: "include",
+  credentials: "include",
   headers: {
-    "Apollo-Require-Preflight": "true",
-    "Access-Control-Allow-Origin": "https://farmart.vercel.app",
+    // "Apollo-Require-Preflight": "true",
+    // "Access-Control-Allow-Origin": "https://farmart.vercel.app",
   },
   fetchOptions: { credentials: true,  },
 });
