@@ -10,7 +10,7 @@ const httpLink = createUploadLink({
   uri: process.env.SERVER_URL,
   // credentials: "include",
   headers: { "Apollo-Require-Preflight": "true" },
-  // fetchOptions: { credentials: "include" },
+  fetchOptions: { credentials: "include",  },
 });
 
 const cache = new InMemoryCache({
