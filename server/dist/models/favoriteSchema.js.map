@@ -1,0 +1,1 @@
+{"version":3,"file":"favoriteSchema.js","sourceRoot":"","sources":["../../src/models/favoriteSchema.ts"],"names":[],"mappings":";;AAAA,uCAAyC;AAIzC,MAAM,cAAc,GAAG,IAAI,iBAAM,CAAe;IAC9C,MAAM,EAAE;QACN,IAAI,EAAE,MAAM;QACZ,QAAQ,EAAE,IAAI;KACf;IACD,IAAI,EAAE;QACJ,IAAI,EAAE,CAAC,MAAM,CAAC;QACd,QAAQ,EAAE,IAAI;KACf;CACF,CAAC,CAAC;AAEH,kBAAe,IAAA,gBAAK,EAAe,WAAW,EAAE,cAAc,CAAC,CAAC"}
