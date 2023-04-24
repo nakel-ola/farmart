@@ -15,9 +15,9 @@ import mongoose from "mongoose";
 import path from "path";
 import config from "./config";
 import context, { redis } from "./context";
-// import cors from "./middleware/cors";
+import cors from "./middleware/cors";
 // import originMiddleware from "./middleware/originMiddleware";
-import cors from "cors";
+// import cors from "cors";
 import permissions from "./permissions";
 import { resolvers, typeDefs } from "./schema";
 
@@ -34,7 +34,7 @@ async function bootstrap() {
 
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: false }));
-  app.use(cors({ origin: "https://farmart.vercel.app/" }));
+  app.use(cors);
   app.use(express.static(path.resolve(__dirname, "../public")));
   app.use(cookieParser());
   // app.use(originMiddleware);
