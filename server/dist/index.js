@@ -50,9 +50,9 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const path_1 = __importDefault(require("path"));
 const config_1 = __importDefault(require("./config"));
 const context_1 = __importStar(require("./context"));
-// import cors from "./middleware/cors";
+const cors_1 = __importDefault(require("./middleware/cors"));
 // import originMiddleware from "./middleware/originMiddleware";
-const cors_1 = __importDefault(require("cors"));
+// import cors, { CorsOptions } from "cors";
 const permissions_1 = __importDefault(require("./permissions"));
 const schema_2 = require("./schema");
 /** @ts-ignore */
@@ -65,24 +65,21 @@ const redisStore = new connect_redis_1.default({
 function bootstrap() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = (0, express_1.default)();
-        var whitelist = [config_1.default.client_url, config_1.default.admin_url];
-        var corsOptions = {
-            origin: function (origin, callback) {
-                const index = whitelist.indexOf(origin !== null && origin !== void 0 ? origin : "");
-                if (index !== -1)
-                    callback(null, true
-                    // "https://farmart.vercel.app, https://farmart-admin.vercel.app"
-                    );
-                else
-                    callback(new Error("Not allowed by CORS"));
-            },
-            credentials: true,
-        };
+        // var whitelist = [config.client_url, config.admin_url];
+        // var corsOptions: CorsOptions = {
+        //   origin: function (origin, callback) {
+        //     const index = whitelist.indexOf(origin ?? "");
+        //     if (index !== -1) callback(null, true);
+        //     else callback(new Error("Not allowed by CORS"));
+        //   },
+        //   credentials: true,
+        // };
         app.use(express_1.default.json({ limit: "50mb" }));
         app.use(express_1.default.urlencoded({ limit: "50mb", extended: false }));
-        app.use((0, cors_1.default)(corsOptions));
+        // app.use(cors(corsOptions));
         app.use(express_1.default.static(path_1.default.resolve(__dirname, "../public")));
         app.use((0, cookie_parser_1.default)());
+        app.use(cors_1.default);
         app.use((req, res, next) => {
             res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
             res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

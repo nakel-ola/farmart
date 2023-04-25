@@ -15,9 +15,9 @@ import mongoose from "mongoose";
 import path from "path";
 import config from "./config";
 import context, { redis } from "./context";
-// import cors from "./middleware/cors";
+import cors from "./middleware/cors";
 // import originMiddleware from "./middleware/originMiddleware";
-import cors, { CorsOptions } from "cors";
+// import cors, { CorsOptions } from "cors";
 import permissions from "./permissions";
 import { resolvers, typeDefs } from "./schema";
 
@@ -32,27 +32,23 @@ const redisStore = new RedisStore({
 async function bootstrap() {
   const app = express();
 
-  var whitelist = [config.client_url, config.admin_url];
+  // var whitelist = [config.client_url, config.admin_url];
 
-  var corsOptions: CorsOptions = {
-    origin: function (origin, callback) {
-      const index = whitelist.indexOf(origin ?? "");
-      if (index !== -1)
-        callback(
-          null,
-          true
-          // "https://farmart.vercel.app, https://farmart-admin.vercel.app"
-        );
-      else callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-  };
+  // var corsOptions: CorsOptions = {
+  //   origin: function (origin, callback) {
+  //     const index = whitelist.indexOf(origin ?? "");
+  //     if (index !== -1) callback(null, true);
+  //     else callback(new Error("Not allowed by CORS"));
+  //   },
+  //   credentials: true,
+  // };
 
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: false }));
-  app.use(cors(corsOptions));
+  // app.use(cors(corsOptions));
   app.use(express.static(path.resolve(__dirname, "../public")));
   app.use(cookieParser());
+  app.use(cors)
 
   app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", req.headers.origin!);
