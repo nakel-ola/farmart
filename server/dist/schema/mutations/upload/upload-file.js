@@ -14,13 +14,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.upload = void 0;
 const storage_1 = require("@google-cloud/storage");
-const path_1 = __importDefault(require("path"));
 const util_1 = require("util");
 const config_1 = __importDefault(require("../../../config"));
-const serviceKey = path_1.default.join(__dirname, config_1.default.storage_credentials_path);
+// import cred from "../../../data/farmart-8bdb8-firebase-adminsdk-dy37a-08706b1478.json";
+// const serviceKey = path.join(__dirname, config.storage_credentials_path!);
 const storage = new storage_1.Storage({
-    keyFilename: serviceKey,
+    // keyFilename: serviceKey,
     projectId: config_1.default.storage_project_id,
+    credentials: require("../../../data/farmart-8bdb8-firebase-adminsdk-dy37a-08706b1478.json"),
 });
 const bucket = storage.bucket(config_1.default.storage_bucket_name);
 const uploadFile = (_, args) => __awaiter(void 0, void 0, void 0, function* () {

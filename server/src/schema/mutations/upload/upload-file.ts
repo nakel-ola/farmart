@@ -3,13 +3,14 @@ import type { FileUpload } from "graphql-upload-minimal";
 import path from "path";
 import { format } from "util";
 import config from "../../../config";
+// import cred from "../../../data/farmart-8bdb8-firebase-adminsdk-dy37a-08706b1478.json";
 
-const serviceKey = path.join(__dirname, config.storage_credentials_path!);
+// const serviceKey = path.join(__dirname, config.storage_credentials_path!);
 
 const storage = new Storage({
-  keyFilename: serviceKey,
+  // keyFilename: serviceKey,
   projectId: config.storage_project_id,
-  
+  credentials: require("../../../data/farmart-8bdb8-firebase-adminsdk-dy37a-08706b1478.json"),
 });
 
 const bucket = storage.bucket(config.storage_bucket_name!);
