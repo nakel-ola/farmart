@@ -4,13 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf dist && tsc",
-    "ts.check": "tsc --project tsconfig.json",
-    "add-build": "git add dist",
+    "build": "tsc --project tsconfig.json && rimraf dist && tsc",
     "start": "nodemon ./dist/index.js",
-    "dev": "nodemon ./src/index.ts",
-
-    "build-commit": "tsc --project tsconfig.json && rimraf dist && tsc"
+    "dev": "nodemon ./src/index.ts"
   },
   "keywords": [],
   "author": "",

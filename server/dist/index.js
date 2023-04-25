@@ -70,7 +70,7 @@ function bootstrap() {
             origin: function (origin, callback) {
                 const index = whitelist.indexOf(origin !== null && origin !== void 0 ? origin : "");
                 if (index)
-                    callback(null, whitelist[index]);
+                    callback(null, "https://farmart.vercel.app");
                 else
                     callback(new Error("Not allowed by CORS"));
             },
