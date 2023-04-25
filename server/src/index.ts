@@ -15,9 +15,9 @@ import mongoose from "mongoose";
 import path from "path";
 import config from "./config";
 import context, { redis } from "./context";
-import cors from "./middleware/cors";
+// import cors from "./middleware/cors";
 // import originMiddleware from "./middleware/originMiddleware";
-// import cors, { CorsOptions } from "cors";
+import cors, { CorsOptions } from "cors";
 import permissions from "./permissions";
 import { resolvers, typeDefs } from "./schema";
 
@@ -28,6 +28,20 @@ const redisStore = new RedisStore({
   prefix: config.session_prefix,
   ttl: 60 * 60 * 24 * 7,
 });
+
+var corsOptionsDelegate = function (req: any, callback: any) {
+  var corsOptions;
+  var whitelist = [config.client_url, config.admin_url];
+
+  if (whitelist.indexOf(req.header("Origin")) !== -1) {
+    (req as any).admin = req.header("Origin") === config.admin_url;
+
+    corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
+  } else {
+    corsOptions = { origin: false }; // disable CORS for this request
+  }
+  callback(null, corsOptions); // callback expects two parameters: error and options
+};
 
 async function bootstrap() {
   const app = express();
@@ -45,10 +59,10 @@ async function bootstrap() {
 
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: false }));
-  // app.use(cors(corsOptions));
+  app.use(cors(corsOptionsDelegate));
   app.use(express.static(path.resolve(__dirname, "../public")));
   app.use(cookieParser());
-  app.use(cors)
+  // app.use(cors)
 
   app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", req.headers.origin!);
