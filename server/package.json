@@ -8,7 +8,9 @@
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add dist",
     "start": "nodemon ./dist/index.js",
-    "dev": "nodemon ./src/index.ts"
+    "dev": "nodemon ./src/index.ts",
+
+    "build-commit": "tsc --project tsconfig.json && rimraf dist && tsc"
   },
   "keywords": [],
   "author": "",

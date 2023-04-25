@@ -36,11 +36,9 @@ async function bootstrap() {
 
   var corsOptions: CorsOptions = {
     origin: function (origin, callback) {
-      if (whitelist.indexOf(origin ?? "") !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
+      const index = whitelist.indexOf(origin ?? "");
+      if (index) callback(null, whitelist[index]);
+      else callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   };

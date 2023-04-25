@@ -65,12 +65,28 @@ const redisStore = new connect_redis_1.default({
 function bootstrap() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = (0, express_1.default)();
+        var whitelist = [config_1.default.client_url, config_1.default.admin_url];
+        var corsOptions = {
+            origin: function (origin, callback) {
+                const index = whitelist.indexOf(origin !== null && origin !== void 0 ? origin : "");
+                if (index)
+                    callback(null, whitelist[index]);
+                else
+                    callback(new Error("Not allowed by CORS"));
+            },
+            credentials: true,
+        };
         app.use(express_1.default.json({ limit: "50mb" }));
         app.use(express_1.default.urlencoded({ limit: "50mb", extended: false }));
-        app.use((0, cors_1.default)({ origin: "*" }));
+        app.use((0, cors_1.default)(corsOptions));
         app.use(express_1.default.static(path_1.default.resolve(__dirname, "../public")));
         app.use((0, cookie_parser_1.default)());
         // app.use(originMiddleware);
+        app.use((req, res, next) => {
+            res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
+            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            next();
+        });
         let production = false;
         if (app.get("env") === "production") {
             app.set("trust proxy", 1); // trust first proxy

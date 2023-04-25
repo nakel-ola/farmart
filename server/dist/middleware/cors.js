@@ -14,8 +14,8 @@ var corsOptionsDelegate = function (req, callback) {
         if (isAllow) {
             req.admin = origin === config_1.default.admin_url;
             corsOptions = {
-                origin: true,
-                credentials: true,
+                origin: origin,
+                // credentials: true,
             };
         }
         else {
