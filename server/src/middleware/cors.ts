@@ -16,7 +16,7 @@ var corsOptionsDelegate = function (req: CorsRequest, callback: Callback) {
 
       corsOptions = {
         origin: origin,
-        credentials: true,
+        // credentials: true,
       };
     } else {
       corsOptions = { origin: false };
