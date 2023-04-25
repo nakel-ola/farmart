@@ -15,8 +15,6 @@ import mongoose from "mongoose";
 import path from "path";
 import config from "./config";
 import context, { redis } from "./context";
-// import cors from "./middleware/cors";
-// import originMiddleware from "./middleware/originMiddleware";
 import cors, { CorsOptions } from "cors";
 import permissions from "./permissions";
 import { resolvers, typeDefs } from "./schema";
@@ -29,42 +27,30 @@ const redisStore = new RedisStore({
   ttl: 60 * 60 * 24 * 7,
 });
 
-var corsOptionsDelegate = function (req: any, callback: any) {
-  var corsOptions;
-  var whitelist = [config.client_url, config.admin_url];
-
-  if (whitelist.indexOf(req.header("Origin")) !== -1) {
-    (req as any).admin = req.header("Origin") === config.admin_url;
-
-    corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
-  } else {
-    corsOptions = { origin: false }; // disable CORS for this request
-  }
-  callback(null, corsOptions); // callback expects two parameters: error and options
-};
+var whitelist = [config.client_url, config.admin_url];
 
 async function bootstrap() {
   const app = express();
 
-  // var whitelist = [config.client_url, config.admin_url];
-
-  // var corsOptions: CorsOptions = {
-  //   origin: function (origin, callback) {
-  //     const index = whitelist.indexOf(origin ?? "");
-  //     if (index !== -1) callback(null, true);
-  //     else callback(new Error("Not allowed by CORS"));
-  //   },
-  //   credentials: true,
-  // };
+  var corsOptions: CorsOptions = {
+    origin: function (origin, callback) {
+      const index = whitelist.indexOf(origin ?? "");
+      if (index !== -1) callback(null, true);
+      else callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  };
 
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: false }));
-  app.use(cors(corsOptionsDelegate));
+  app.use(cors(corsOptions));
   app.use(express.static(path.resolve(__dirname, "../public")));
   app.use(cookieParser());
-  // app.use(cors)
-
   app.use((req, res, next) => {
+    if (req.headers.origin === config.admin_url) {
+      (req as any).admin = true;
+    }
+
     res.setHeader("Access-Control-Allow-Origin", req.headers.origin!);
     res.header(
       "Access-Control-Allow-Headers",
