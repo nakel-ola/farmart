@@ -15,9 +15,9 @@ import mongoose from "mongoose";
 import path from "path";
 import config from "./config";
 import context, { redis } from "./context";
-import cors from "./middleware/cors";
+// import cors from "./middleware/cors";
 // import originMiddleware from "./middleware/originMiddleware";
-// import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import permissions from "./permissions";
 import { resolvers, typeDefs } from "./schema";
 
@@ -32,9 +32,22 @@ const redisStore = new RedisStore({
 async function bootstrap() {
   const app = express();
 
+  var whitelist = [config.client_url, config.admin_url];
+
+  var corsOptions: CorsOptions = {
+    origin: function (origin, callback) {
+      if (whitelist.indexOf(origin ?? "") !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  };
+
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: false }));
-  app.use(cors);
+  app.use(cors(corsOptions));
   app.use(express.static(path.resolve(__dirname, "../public")));
   app.use(cookieParser());
   // app.use(originMiddleware);
