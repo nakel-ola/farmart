@@ -69,8 +69,10 @@ function bootstrap() {
         var corsOptions = {
             origin: function (origin, callback) {
                 const index = whitelist.indexOf(origin !== null && origin !== void 0 ? origin : "");
-                if (index)
-                    callback(null, "https://farmart.vercel.app, https://farmart-admin.vercel.app");
+                if (index !== -1)
+                    callback(null, true
+                    // "https://farmart.vercel.app, https://farmart-admin.vercel.app"
+                    );
                 else
                     callback(new Error("Not allowed by CORS"));
             },
@@ -81,7 +83,6 @@ function bootstrap() {
         app.use((0, cors_1.default)(corsOptions));
         app.use(express_1.default.static(path_1.default.resolve(__dirname, "../public")));
         app.use((0, cookie_parser_1.default)());
-        // app.use(originMiddleware);
         app.use((req, res, next) => {
             res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
             res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

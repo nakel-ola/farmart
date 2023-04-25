@@ -37,10 +37,11 @@ async function bootstrap() {
   var corsOptions: CorsOptions = {
     origin: function (origin, callback) {
       const index = whitelist.indexOf(origin ?? "");
-      if (index)
+      if (index !== -1)
         callback(
           null,
-          "https://farmart.vercel.app, https://farmart-admin.vercel.app"
+          true
+          // "https://farmart.vercel.app, https://farmart-admin.vercel.app"
         );
       else callback(new Error("Not allowed by CORS"));
     },
@@ -52,7 +53,6 @@ async function bootstrap() {
   app.use(cors(corsOptions));
   app.use(express.static(path.resolve(__dirname, "../public")));
   app.use(cookieParser());
-  // app.use(originMiddleware);
 
   app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", req.headers.origin!);
