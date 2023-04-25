@@ -37,7 +37,11 @@ async function bootstrap() {
   var corsOptions: CorsOptions = {
     origin: function (origin, callback) {
       const index = whitelist.indexOf(origin ?? "");
-      if (index) callback(null, "https://farmart.vercel.app");
+      if (index)
+        callback(
+          null,
+          "https://farmart.vercel.app, https://farmart-admin.vercel.app"
+        );
       else callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
