@@ -4,6 +4,7 @@ import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHt
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import RedisStore from "connect-redis";
 import cookieParser from "cookie-parser";
+import cors, { CorsOptions } from "cors";
 import express from "express";
 import session from "express-session";
 import { writeFileSync } from "fs";
@@ -15,7 +16,6 @@ import mongoose from "mongoose";
 import path from "path";
 import config from "./config";
 import context, { redis } from "./context";
-import cors, { CorsOptions } from "cors";
 import permissions from "./permissions";
 import { resolvers, typeDefs } from "./schema";
 
