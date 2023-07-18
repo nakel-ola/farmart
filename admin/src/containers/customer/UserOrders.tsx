@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { ShoppingCart } from "iconsax-react";
 import { useRouter } from "next/router";
 import { ChangeEvent, useState } from "react";
-import NumberFormat from "react-number-format";
+import {NumericFormat} from "react-number-format";
 import { useDispatch } from "react-redux";
 import { GraphQLOrdersResponse, OrderType, OrdersData } from "../../../typing";
 import Pagination from "../../components/Pagination";
@@ -132,7 +132,7 @@ const UserOrders = () => {
                       </p>
                     </TableContent>
                     <TableContent>
-                      <NumberFormat
+                      <NumericFormat
                         thousandSeparator
                         displayType="text"
                         value={Number(props.totalPrice).toFixed(2)}
