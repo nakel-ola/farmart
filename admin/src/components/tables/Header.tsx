@@ -16,6 +16,7 @@ import {
 } from "react";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import Button from "../Button";
+import { twMerge } from "tailwind-merge";
 
 type Props = {
   sortList?: string[];
@@ -56,7 +57,7 @@ const Header = (props: Props) => {
 
   return (
     <div
-      className={clsx(
+      className={twMerge(
         "py-[5px] md:w-full flex items-center justify-between",
         width
       )}

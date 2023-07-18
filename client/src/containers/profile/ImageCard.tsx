@@ -1,15 +1,14 @@
 import { gql, useMutation } from "@apollo/client";
 import { Edit2 } from "iconsax-react";
 import React, { useRef } from "react";
-import { useSelector } from "react-redux";
 import Avatar from "../../components/Avatar";
 import Button from "../../components/Button";
 import LoadingCard from "../../components/LoadingCard";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import { ImageType } from "../../pages/profile";
-import { selectUser } from "../../redux/features/userSlice";
 import { UploadResponse } from "../../types/graphql.types";
 import { UpdateUserMutation } from "./UserEdit";
+import { useSession } from "next-auth/react";
 
 const UploadMutation = gql`
   mutation UploadFile($file: Upload!) {
@@ -26,7 +25,9 @@ interface Props {
 }
 
 const ImageCard: React.FC<Props> = ({ setImage, image, func }) => {
-  const user = useSelector(selectUser);
+
+  const { data } = useSession();
+  const user = data?.user;
   const ref = useRef<HTMLDivElement>(null);
 
   const [updateUser, { loading: userLoading }] =

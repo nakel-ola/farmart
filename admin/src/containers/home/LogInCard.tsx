@@ -1,24 +1,14 @@
 /* importing required files and packages */
-import { gql, useApolloClient, useMutation } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import { Eye, EyeSlash, InfoCircle } from "iconsax-react";
 import { JwtPayload } from "jsonwebtoken";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
-import { Footer } from "../../pages";
-import { login } from "../../redux/features/userSlice";
 import TitleCard from "./TitleCard";
-
-const LoginMutation = gql`
-  mutation Login($input: LoginInput!) {
-    login(input: $input) {
-      message
-    }
-  }
-`;
 
 export interface JwtUserType extends JwtPayload {
   birthday: Date;
@@ -38,9 +28,7 @@ export var emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 const validate = (form: FormProps): boolean => {
   const { email, password } = form;
 
-  if (email.match(emailRegex) && password.length >= 8) {
-    return false;
-  }
+  if (email.match(emailRegex) && password.length >= 8) return false;
 
   return true;
 };
@@ -53,8 +41,6 @@ type FormProps = {
 const LogInCard = (props: { setLoading(value: boolean): void }) => {
   const { setLoading } = props;
 
-  const dispatch = useDispatch();
-
   const router = useRouter();
 
   const client = useApolloClient();
@@ -63,8 +49,6 @@ const LogInCard = (props: { setLoading(value: boolean): void }) => {
 
   const [toggle, setToggle] = useState(false);
 
-  const [loginUser] = useMutation(LoginMutation);
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     let loginToast = toast.loading("Loading......");
@@ -72,22 +56,21 @@ const LogInCard = (props: { setLoading(value: boolean): void }) => {
     setLoading(true);
 
     await client.resetStore();
-    await loginUser({
-      variables: { input: form },
-      onCompleted: (data) => {
-        toast.success("Login Successfully", { id: loginToast });
-        router.replace("/dashboard");
-      },
-      onError: (err: any) => {
-        setLoading(false);
-        toast.error("Email or Password incorrect", { id: loginToast });
-        console.table(err);
-      },
-    });
+
+    await signIn("login", { redirect: false, ...form }).then(
+      ({ ok, error }: any) => {
+        if (ok) {
+          toast.success("Login Successfully", { id: loginToast });
+          router.replace("/dashboard");
+        } else {
+          setLoading(false);
+          toast.error("Email or Password incorrect", { id: loginToast });
+          console.table(error);
+        }
+      }
+    );
     setLoading(false);
   };
-
- 
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const target = e.target;

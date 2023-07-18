@@ -1,13 +1,11 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import { useSelector } from "react-redux";
 import { EmployeeType, UserType } from "../../../typing";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import InputDropdown from "../../components/InputDropdown";
 import LoadingCard from "../../components/LoadingCard";
 import PopupTemplate from "../../components/PopupTemplate";
-import { selectUser } from "../../redux/features/userSlice";
 import { Wrapper } from "../products/Popup";
 
 export const UpdateUserMutation = gql`

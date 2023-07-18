@@ -1,11 +1,12 @@
 import { useApolloClient, useMutation } from "@apollo/client";
 import { AnimatePresence } from "framer-motion";
 import type { NextPage } from "next";
+import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, useState } from "react";
 import ReactLoading from "react-loading";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Button from "../components/Button";
 import Header from "../components/Header";
 import LoginCard from "../components/LoginCard";
@@ -19,7 +20,7 @@ import capitalizeFirstLetter from "../helper/capitalizeFirstLetter";
 import { toBase64 } from "../helper/toBase64";
 import useUser from "../hooks/useUser";
 import Layouts from "../layout/Layouts";
-import { logout, selectUser } from "../redux/features/userSlice";
+import { logout } from "../redux/features/userSlice";
 
 export type ImageType = {
   file: File | null;
@@ -27,9 +28,10 @@ export type ImageType = {
 };
 
 const Profile: NextPage = () => {
+  const { data } = useSession();
   const dispatch = useDispatch();
   const router = useRouter();
-  const user = useSelector(selectUser);
+  const user = data?.user;
   const [logOut] = useMutation(LogoutMutation);
   const client = useApolloClient();
   const { getUser } = useUser(true);
@@ -69,14 +71,15 @@ const Profile: NextPage = () => {
   ];
 
   const handleLogOut = async () => {
-    await logOut({
-      onCompleted: () => {
+    await signOut({ redirect: false }).then(({ ok, error }: any) => {
+      if (ok) {
         client.resetStore().then(() => {
           dispatch(logout());
           router.push("/");
         });
-      },
-      onError: (er) => console.table(er),
+      } else {
+        console.log(error);
+      }
     });
   };
 

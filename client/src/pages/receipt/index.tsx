@@ -7,7 +7,6 @@ import { useRouter } from "next/router";
 import { ChangeEvent, useState } from "react";
 import ReactLoading from "react-loading";
 import { NumericFormat as NumberFormat } from "react-number-format";
-import { useSelector } from "react-redux";
 import { GraphQLOrdersResponse, OrdersData } from "../../../typing";
 import LoginCard from "../../components/LoginCard";
 import Pagination from "../../components/Pagination";
@@ -25,7 +24,7 @@ import roundUp from "../../helper/roundUp";
 import { statusColor } from "../../helper/statusColor";
 import truncate from "../../helper/truncate";
 import Layouts from "../../layout/Layouts";
-import { selectUser } from "../../redux/features/userSlice";
+import { useSession } from "next-auth/react";
 
 export const OrdersQuery = gql`
   query Orders($input: OrdersInput!) {
@@ -64,7 +63,8 @@ let limit = 10;
 
 const Receipt: NextPage = () => {
   const router = useRouter();
-  const user = useSelector(selectUser);
+  const { data: sessionData } = useSession()
+  const user = sessionData?.user;
   const [page, setPage] = useState(1);
 
   const [data, setData] = useState<GraphQLOrdersResponse>();

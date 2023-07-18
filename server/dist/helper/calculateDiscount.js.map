@@ -1,1 +1,0 @@
-{"version":3,"file":"calculateDiscount.js","sourceRoot":"","sources":["../../src/helper/calculateDiscount.ts"],"names":[],"mappings":";;AAAA,MAAM,iBAAiB,GAAG,CAAC,KAAa,EAAE,QAAgB,EAAE,EAAE;IAC5D,MAAM,aAAa,GAAG,KAAK,GAAG,CAAC,QAAS,GAAG,GAAG,CAAC,CAAC;IAEhD,MAAM,KAAK,GAAG,KAAK,GAAG,aAAa,CAAC;IAEpC,OAAO,KAAK,CAAC,OAAO,CAAC,CAAC,CAAC,CAAC;AAC1B,CAAC,CAAC;AAEF,kBAAe,iBAAiB,CAAC"}

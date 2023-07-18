@@ -43,7 +43,7 @@ const AddressCard = (props: Props) => {
       refetch();
       onClose();
     },
-    onError: (error) => console.error(error),
+    onError: (error) => console.table(error),
   });
 
   return (

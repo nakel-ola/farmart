@@ -18,9 +18,9 @@ import Popup from "../containers/checkout/Popup";
 import clean from "../helper/clean";
 import Layouts from "../layout/Layouts";
 import { getBasketTotal, removeAll } from "../redux/features/basketSlice";
-import { selectUser } from "../redux/features/userSlice";
 import { RootState } from "../redux/store";
 import { AddressesQuery } from "./address";
+import { useSession } from "next-auth/react";
 
 const OrderMutation = gql`
   mutation CreateOrder($input: OrderInput!) {
@@ -36,6 +36,7 @@ const OrderMutation = gql`
 const Checkout: NextPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { data } = useSession()
   const [progress, setProgress] = useState<string>("address");
   const [deliveryMethod, setDeliveryMethod] = useState<
     "Door Delivery" | "Pickup Station"
@@ -51,7 +52,7 @@ const Checkout: NextPage = () => {
     pickup: false,
   });
 
-  const user = useSelector(selectUser);
+  const user = data?.user;
 
   const { refetch } = useQuery(AddressesQuery, {
     onCompleted: (data) => {
@@ -82,7 +83,7 @@ const Checkout: NextPage = () => {
       phoneNumber: pickup ? user?.phoneNumber : null,
       deliveryMethod,
       products: basket.map((b: Basket) => ({
-        productId: b.id,
+        id: b.id,
         quantity: b.quantity,
         price: `${b.price * b.quantity}`,
       })),
@@ -106,6 +107,7 @@ const Checkout: NextPage = () => {
     if (address) setToggle({ ...toggle, addressList: true });
     if (!address) setToggle({ ...toggle, createAddress: true });
   };
+  
 
   return (
     <>

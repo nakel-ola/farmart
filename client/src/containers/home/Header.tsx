@@ -1,8 +1,8 @@
+import clsx from "clsx";
 import { AnimatePresence } from "framer-motion";
-import { ArrowDown2, ArrowUp2 } from "iconsax-react";
+import { ArrowDown2 } from "iconsax-react";
 import { useRouter } from "next/router";
 import React, { useRef, useState } from "react";
-import Button from "../../components/Button";
 import capitalizeFirstLetter from "../../helper/capitalizeFirstLetter";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
 import MenuCard from "./MenuCard";
@@ -15,7 +15,7 @@ const Header: React.FC<Props> = ({ categories }) => {
   let genre = router.query.genre?.toString();
 
   return (
-    <div className="w-full flex items-center justify-between px-[15px] py-[10px] h-[45px] mb-2">
+    <div className="w-full flex items-center justify-between px-[4px] py-[10px] h-[45px] mb-2">
       <p className="text-xl text-black dark:text-white font-[500] md:pl-4">
         {genre ? capitalizeFirstLetter(genre) : "All"}
       </p>
@@ -48,17 +48,19 @@ const SortCard = (props: SortProps) => {
 
   return (
     <div ref={ref} className="relative">
-      <Button
-        className="relative text-neutral-600 dark:text-neutral-300 flex items-center my-auto bg-white dark:bg-dark rounded-full mr-[10px] ml-auto md:ml-0 p-[3px]"
+      <button
+        className="relative text-neutral-600 dark:text-neutral-300 flex items-center my-auto bg-white dark:bg-dark rounded-full mr-[10px] ml-auto md:ml-0 p-[3px] px-3 py-1.5"
         onClick={() => setOpen(!open)}
       >
         Category
-        {open ? (
-          <ArrowUp2 size={20} className="text-black dark:text-white mx-2" />
-        ) : (
-          <ArrowDown2 size={20} className="text-black dark:text-white mx-2" />
-        )}
-      </Button>
+        <ArrowDown2
+          size={20}
+          className={clsx(
+            "text-black dark:text-white ml-2",
+            open ? "rotate-180" : ""
+          )}
+        />
+      </button>
 
       <AnimatePresence>
         {open && <MenuCard sortList={sortList} onClick={handleClick} />}

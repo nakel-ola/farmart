@@ -37,12 +37,12 @@ const couponInput = inputRule()((yup) =>
   })
 );
 
-const couponsQuery = {
+const queries = {
   verifyCoupon: and(verifyCouponInput, isAuthenticated),
   coupons: and(couponInput, isAuthenticated),
 };
 
-const couponsMutation = {
+const mutations = {
   deleteCoupon: and(
     isDashboard,
     deleteCouponInput,
@@ -59,4 +59,4 @@ const couponsMutation = {
   ),
 };
 
-export { couponsQuery, couponsMutation };
+export default { queries, mutations };

@@ -1,4 +1,5 @@
 import type { ObservableQuery } from "@apollo/client";
+import clsx from "clsx";
 import { useRouter } from "next/router";
 import { FC, RefObject } from "react";
 import { useSelector } from "react-redux";
@@ -20,13 +21,8 @@ type Props = {
 };
 
 const CardsContainer: FC<Props> = (props) => {
-  const {
-    products,
-    fetchMore,
-    containerRef,
-    totalItems,
-    updateFavorite,
-  } = props;
+  const { products, fetchMore, containerRef, totalItems, updateFavorite } =
+    props;
   const router = useRouter();
 
   const categories = useSelector(selectCatagory);
@@ -52,28 +48,23 @@ const CardsContainer: FC<Props> = (props) => {
   const handleFetchMore = () => {
     fetchMore({
       variables: { input: { genre, offset: products.length, limit: 10 } },
-      
     });
   };
 
   return (
-    <div className="mb-8 w-[95%]">
+    <div className="mb-8 w-[calc(100%-20px)] mx-5 ">
       <Header categories={[...categories.map((category) => category.name)]} />
       <InfiniteScroll
         containerRef={containerRef}
         hasMore={products.length < totalItems}
         next={handleFetchMore}
-        className={` ml-2 ${
-          data.length <= 3 ? " flex " : "flex flex-wrap"
-        } transition-all duration-300 ease w-full flex-grow`}
+        className={clsx(
+          "transition-all duration-300 ease w-full grid grid-cols-2 gap-2 md:grid-cols-4",
+        )}
         loader={<Loader />}
       >
         {data.map((item: any, index: number) => (
-          <Card
-            key={index}
-            {...item}
-            updateFavorite={updateFavorite}
-          />
+          <Card key={index} {...item} updateFavorite={updateFavorite} />
         ))}
       </InfiniteScroll>
     </div>

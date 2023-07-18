@@ -39,11 +39,11 @@ const updateInboxInput = inputRule()((yup) =>
     .required()
 );
 
-const inboxesQuery = {
+const queries = {
   inboxes: and(inboxesInput, isAuthenticated),
 };
 
-const inboxesMutation = {
+const mutations = {
   createInbox: and(
     isDashboard,
     createInboxInput,
@@ -60,4 +60,4 @@ const inboxesMutation = {
   ),
 };
 
-export { inboxesMutation, inboxesQuery };
+export default { mutations, queries };

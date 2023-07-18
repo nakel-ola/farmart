@@ -1,3 +1,18 @@
+declare module "next-auth" {
+  interface Session {
+    user: UserType & Tokens;
+  }
+
+  interface JWT {
+    uid: string;
+  }
+}
+
+export type Tokens = {
+  accessToken: string;
+  refreshToken: string;
+};
+
 export type Image = {
   name: string;
   url: string;
@@ -57,6 +72,10 @@ export type UserType = {
   blocked: boolean;
   createdAt: Date;
   updatedAt: Date;
+};
+
+export type UserResponse = {
+  user: UserType;
 };
 
 export type OrderProduct = {
@@ -150,7 +169,6 @@ export type ValidateCodeType = {
   validationToken: string;
 };
 
-
 export type AddressType = {
   id: string;
   userId: string;
@@ -164,3 +182,30 @@ export type AddressType = {
   phoneNumber2?: string;
   default?: boolean;
 };
+
+export type LoginResponse = {
+  login: Tokens;
+};
+export type RegisterResponse = {
+  register: Tokens;
+};
+export type ChangePasswordResponse = {
+  changePassword: Tokens;
+};
+export type RefreshResponse = {
+  refresh: {
+    accessToken: string;
+  };
+};
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      SERVER_URL: string;
+      NEXTAUTH_SECRET: string;
+      NEXTAUTH_URL: string;
+      BASE_URL: string;
+      PAYSTACK_API_KEY: string;
+    }
+  }
+}

@@ -1,6 +1,7 @@
 /* importing required files and packages */
 import { gql, useMutation } from "@apollo/client";
 import { Eye, EyeSlash } from "iconsax-react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -51,18 +52,16 @@ const LogInCard = (props: any) => {
 
     setLoading(true);
 
-    await loginUser({
-      variables: { input: form },
-      onCompleted: (data) => {
+    await signIn("login", { redirect: false, ...form })
+      .then(() => {
         toast.success("Login Successfully", { id: loginToast });
         router.replace("/");
-      },
-      onError: (error: any) => {
+      })
+      .catch((error) => {
         setLoading(false);
-        toast.error("Email or Password incorrect",{ id: loginToast });
+        toast.error("Email or Password incorrect", { id: loginToast });
         console.error(error);
-      },
-    });
+      });
     setLoading(false);
   };
 
@@ -123,7 +122,6 @@ const LogInCard = (props: any) => {
         />
 
         <div className="w-[80%] flex items-center justify-between my-5">
-
           <strong
             className="cursor-pointer text-[1rem] ml-auto py-2 text-blue-600 hover:underline w-fit font-medium"
             onClick={() => router.push("?type=forget")}
@@ -131,7 +129,9 @@ const LogInCard = (props: any) => {
             Forget password ?
           </strong>
         </div>
-        <Button type="submit" className="my-2" disabled={validate(form)}>Sign In</Button>
+        <Button type="submit" className="my-2" disabled={validate(form)}>
+          Sign In
+        </Button>
       </form>
 
       <Footer

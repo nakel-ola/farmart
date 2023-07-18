@@ -3,7 +3,7 @@ import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   // https://github.com/stripe/stripe-node#configuration
-  apiVersion: "2022-08-01",
+  apiVersion: "2022-11-15",
 });
 
 interface BodyType {
@@ -21,9 +21,7 @@ export default async function handler(
       const checkoutSession = await stripe.paymentIntents.create({
         amount,
         currency: "usd",
-        automatic_payment_methods: {
-          enabled: true,
-        },
+        payment_method_types: ['card'],
       });
 
       res.status(200).json({

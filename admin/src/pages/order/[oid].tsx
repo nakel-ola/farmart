@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import ReactLoading from "react-loading";
-import NumberFormat from "react-number-format";
+import NumberFormat, { numericFormatter } from "react-number-format";
 import { OrderType } from "../../../typing";
 import Header from "../../components/Header";
 import DetailsTemplate, {
@@ -55,7 +55,7 @@ const OrderQuery = gql`
         updatedAt
       }
       products {
-        productId
+        id
         quantity
         price
       }
@@ -104,14 +104,22 @@ const Order = () => {
       {
         name: "Total price",
         value: (
-          <NumberFormat
-            displayType="text"
-            value={Number(data?.totalPrice).toFixed(2)}
-            prefix="$"
-            renderText={(value) => (
-              <p className="text-neutral-700 dark:text-neutral-400">{value}</p>
-            )}
-          />
+          <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap ">
+            {data
+              ? numericFormatter(data.totalPrice.toString(), {
+                  thousandSeparator: true,
+                  prefix: "$ ",
+                })
+              : null}
+          </p>
+          // <NumberFormat
+          //   displayType="text"
+          //   value={Number(data?.totalPrice).toFixed(2)}
+          //   prefix="$"
+          //   renderText={(value) => (
+          //     <p className="text-neutral-700 dark:text-neutral-400">{value}</p>
+          //   )}
+          // />
         ),
       },
       data?.deliveryMethod === "Pickup Station" && data?.phoneNumber

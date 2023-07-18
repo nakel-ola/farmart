@@ -1,17 +1,17 @@
 {
-  "version": 2,
-
+  "installCommand": "npm install",
+  "outputDirectory": "dist",
+  "public": true,
   "builds": [
     {
-      "src": "dist/index.js",
-      "use": "@vercel/node",
-      "config": { "includeFiles": ["dist/**"] }
+      "src": "/src/index.ts",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "dist/index.js"
+      "src": "/.*",
+      "dest": "/src/index.ts"
     }
   ]
 }

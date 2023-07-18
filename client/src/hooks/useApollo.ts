@@ -3,6 +3,11 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { createUploadLink } from "apollo-upload-client";
 import { useMemo } from "react";
 import useApolloMerge from "./useApolloMerge";
+import { getSession } from "next-auth/react";
+import { setContext } from "@apollo/client/link/context";
+import clean from "../helper/clean";
+
+
 
 let apolloClient: any;
 
@@ -13,6 +18,23 @@ const httpLink = createUploadLink({
     "Apollo-Require-Preflight": "true",
   },
 });
+
+
+const authLink = setContext(async (_, { headers }) => {
+  // get the authorization token from local storage
+
+  const session = await getSession();
+
+  const accessToken = session ? session?.user.accessToken : null;
+
+  return {
+    headers: clean({
+      ...headers,
+      "x-access-token": accessToken,
+    }),
+  };
+});
+
 
 const cache = new InMemoryCache({
   typePolicies: {
@@ -86,7 +108,7 @@ const cache = new InMemoryCache({
 export function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
-    link: httpLink,
+    link: authLink.concat(httpLink),
     cache,
   });
 }

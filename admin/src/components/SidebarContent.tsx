@@ -8,6 +8,7 @@ import {
   User,
   UserOctagon,
 } from "iconsax-react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,7 +27,8 @@ const SidebarContent = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { user } = useSelector((store: any) => store.user);
+  const { data } = useSession();
+  const user = data?.user;
 
   const [logOut] = useMutation(LogoutMutation);
   const client = useApolloClient();
@@ -61,15 +63,13 @@ const SidebarContent = () => {
 
   const handleClick = async () => {
     if (user) {
-      await logOut({
-        onCompleted: () => {
-          client.resetStore().then(() => {
-            dispatch(logout());
-            router.push("/");
-          });
-        },
-        onError: (er) => console.table(er),
-      });
+      await signOut({ redirect: false })
+        .then(() => {
+          client.resetStore();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
   return (

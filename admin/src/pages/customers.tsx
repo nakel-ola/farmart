@@ -46,7 +46,6 @@ let limit = 10;
 
 const Customers = () => {
   const router = useRouter();
-  const [page, setPage] = useState(1);
   const { data, refetch } = useQuery<GraphQLUserResponse>(UsersQuery, {
     variables: { input: { limit, page: 1 } },
     fetchPolicy: "network-only",
@@ -58,7 +57,6 @@ const Customers = () => {
   );
 
   const handlePageChange = (e: ChangeEvent, page: number): void => {
-    setPage(page);
     refetch({
       input: { page, limit, admin: false },
     });

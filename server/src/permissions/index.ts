@@ -1,42 +1,44 @@
 import { deny, shield } from "graphql-shield";
-import merge from "lodash.merge";
-import { addressMutation, addressQuery } from "./address";
-import { bannerMutation, bannerQuery } from "./banners";
-import { couponsMutation, couponsQuery } from "./coupons";
-import { favoriteMutation, favoriteQuery } from "./favorite";
-import { inboxesMutation, inboxesQuery } from "./inboxes";
-import { ordersMutation, ordersQuery } from "./orders";
-import { uploadMutation } from "./upload";
-import { userMutation, userQuery } from "./user";
-import { productsMutation, productsQuery } from "./products";
+import { merge } from "lodash";
+import address from "./address";
+import banners from "./banners";
+import coupons from "./coupons";
+import favorite from "./favorite";
+import inboxes from "./inboxes";
+import orders from "./orders";
+import products from "./products";
+import upload from "./upload";
+import user from "./user";
 
 const permissions = shield(
   {
     Query: merge(
       { "*": deny },
-      userQuery,
-      bannerQuery,
-      favoriteQuery,
-      couponsQuery,
-      inboxesQuery,
-      ordersQuery,
-      addressQuery,
-      productsQuery
+      address.queries,
+      banners.queries,
+      coupons.queries,
+      favorite.queries,
+      inboxes.queries,
+      orders.queries,
+      products.queries,
+      user.queries
     ),
     Mutation: merge(
       { "*": deny },
-      userMutation,
-      uploadMutation,
-      bannerMutation,
-      favoriteMutation,
-      couponsMutation,
-      inboxesMutation,
-      ordersMutation,
-      addressMutation,
-      productsMutation
+      address.mutations,
+      banners.mutations,
+      coupons.mutations,
+      favorite.mutations,
+      inboxes.mutations,
+      orders.mutations,
+      products.mutations,
+      upload.mutations,
+      user.mutations
     ),
   },
-  { allowExternalErrors: true }
+  {
+    allowExternalErrors: true,
+  }
 );
 
 export default permissions;

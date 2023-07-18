@@ -4,19 +4,16 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ReactLoading from "react-loading";
-import { useDispatch, useSelector } from "react-redux";
 import { ProductType } from "../../../typing";
 import Button from "../../components/Button";
 import DeleteCard from "../../components/DeleteCard";
 import ImageCard from "../../containers/product/ImageCard";
 import ProductDetails from "../../containers/product/ProductDetails";
 import ReviewCard from "../../containers/product/ReviewCard";
-import Popup from "../../containers/products/Popup";
 import setting from "../../data/setting";
 import reverseSlug from "../../helper/reverseSlug";
 import Layout from "../../layout/Layout";
-import { add, selectDialog } from "../../redux/features/dialogSlice";
-import { selectUser } from "../../redux/features/userSlice";
+import { useSession } from "next-auth/react";
 
 export const ProductQuery = gql`
   query Product($slug: String!) {
@@ -58,9 +55,8 @@ const ProductDeleteMutation = gql`
 
 const Product = () => {
   const router = useRouter();
-
-  const dialog = useSelector(selectDialog);
-  const user = useSelector(selectUser);
+  const { data: sessionData } = useSession()
+  const user = sessionData?.user;
 
   const [toggle, setToggle] = useState(false);
 

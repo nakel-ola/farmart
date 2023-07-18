@@ -12,7 +12,7 @@ import EmployeeEdit from "../../containers/employee/EmployeeEdit";
 import setting from "../../data/setting";
 import { UserQuery } from "../../hooks/useUser";
 import Layout from "../../layout/Layout";
-import { selectUser } from "../../redux/features/userSlice";
+import { useSession } from "next-auth/react";
 
 const DeleteMutation = gql`
   mutation DeleteEmployee($id: ID!) {
@@ -26,7 +26,8 @@ const Employee = () => {
   const router = useRouter();
 
   let employeeId = router.query.eid;
-  const user = useSelector(selectUser);
+  const { data: sessionData } = useSession()
+  const user = sessionData?.user;
   const [toggle, setToggle] = useState({ edit: false, delete: false });
 
   const { data, loading, refetch } = useQuery(UserQuery, {

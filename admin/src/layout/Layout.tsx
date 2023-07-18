@@ -17,7 +17,7 @@ function Layout({ children, className }: LayoutProps, ref: any) {
   const [toggle, setToggle] = useState(false);
 
   return (
-    <div className="relative h-screen bg-white dark:bg-dark overflow-hidden transition-all duration-300 ease-in-out w-[100vw] 2xl:w-fit">
+    <div className="relative h-screen bg-white dark:bg-dark overflow-hidden transition-all duration-300 ease-in-out">
       <Navbar setToggle={setToggle} toggle={toggle} />
       {toggle && <MenuCard toggle={toggle} setToggle={setToggle} />}
 
@@ -28,7 +28,7 @@ function Layout({ children, className }: LayoutProps, ref: any) {
         <div
           ref={ref}
           className={clsx(
-            "relative w-full lg:flex-1 2xl:w-[805px] h-full md:mr-[5px] overflow-y-scroll lg:rounded-tl-xl 2xl:rounded-t-xl bg-slate-100 overflow-x-hidden dark:bg-neutral-800 scrollbar transition-all duration-300 ease-in-out",
+            "relative w-full lg:flex-1 h-full md:mr-[5px] overflow-y-scroll lg:rounded-tl-xl 2xl:rounded-t-xl bg-slate-100 overflow-x-hidden dark:bg-neutral-800 scrollbar transition-all duration-300 ease-in-out",
             className
           )}
         >

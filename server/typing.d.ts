@@ -1,31 +1,39 @@
 import type DataLoader from "dataloader";
 import type { Request, Response } from "express";
 import type { Redis } from "ioredis";
-import type { HydratedDocument, Model } from "mongoose";
+import { db } from "./src/db/entities";
+import { Gender } from "./src/db/entities/user.entity";
 
-export type Context = {
-  res: Response;
-  req: Request & { admin?: boolean };
-  db: DBType;
-  redis: Redis;
-  user: User | null;
-  userLoader: DataLoader<unknown, User, unknown>;
-  addressLoader: DataLoader<unknown, Address, unknown>;
-  productLoader: DataLoader<unknown, Product, unknown>;
+export type Loaders = {
+  userLoader: DataLoader<unknown, UserType, unknown>;
+  addressLoader: DataLoader<unknown, AddressType, unknown>;
+  productLoader: DataLoader<unknown, ProductType, unknown>;
 };
+
+export type Context = Loaders & {
+  res: Response;
+  req: Request;
+  db: dbType;
+  redis: Redis;
+  user: Omit<UserType, "password"> | null;
+  isAdmin: boolean;
+};
+
+export type dbType = typeof db;
 
 export type ResolverFn<Args = any, Results = any> = (
   _: any,
   args: Args,
   ctx: Context,
   info: any
-) => Results;
+) => Promise<Results>;
 
 export type MsgType = {
   message: string;
 };
 
 export type AddressType = {
+  id: string;
   userId: string;
   name: string;
   street: string;
@@ -41,21 +49,17 @@ export type AddressType = {
 export type Level = "Gold" | "Silver" | "Bronze" | null;
 
 export type UserType = {
+  id: string;
   email: string;
   name: string;
-  photoUrl?: string;
+  photoUrl: string | null;
   password: string;
-  gender?: string;
-  birthday?: string;
-  phoneNumber: string;
+  gender: Gender | null;
+  birthday: string | null;
+  phoneNumber: string | null;
   blocked: boolean;
   level: Level;
 };
-
-export type User = HydratedDocument<Omit<UserType, "password">>;
-export type Address = HydratedDocument<AddressType>;
-export type Product = HydratedDocument<ProductType>;
-
 
 export type CurrencyType = {
   name: string;
@@ -82,6 +86,7 @@ export type ReviewType = {
 };
 
 export type ProductType = {
+  id: string;
   title: string;
   slug: string;
   category: string;
@@ -159,18 +164,27 @@ export type InviteType = {
   level: Level;
   status: string;
   inviteCode: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
-export type DBType = {
-  users: Model<UserType>;
-  products: Model<ProductType>;
-  banners: Model<BannerType>;
-  favorites: Model<FavoriteType>;
-  orders: Model<OrderType>;
-  coupons: Model<CouponType>;
-  categories: Model<CategoryType>;
-  inboxes: Model<InboxType>;
-  invites: Model<InviteType>;
-  addresses: Model<AddressType>;
-  reviews: Model<ReviewType>;
-};
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      PORT: string;
+      JWT_SECRET: string;
+      EXPIRES_IN: string;
+      REFRESH_EXPIRES_IN: string;
+      STMP_PASSWORD: string;
+      STMP_EMAIL: string;
+      ALLOWED_ORIGINS: string;
+      REDIS_URL: string;
+      REDIS_PORT: string;
+      REDIS_USERNAME: string;
+      REDIS_PASSWORD: string;
+      REDIS_HOST: string;
+      STORAGE_BUCKET_NAME: string;
+      STORAGE_PROJECT_ID: string;
+    }
+  }
+}

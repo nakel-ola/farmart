@@ -133,17 +133,17 @@ const categoriesInput = inputRule()((yup) =>
     .required()
 );
 
-const productsQuery = {
+const queries = {
   categories: allow,
   products: productsInput,
   product: productInput,
   productsById: productsByIdInput,
   productSearch: productSearchInput,
   reviews: reviewInput,
-  productsSummary: and(isDashboard, isAuthenticated, isAdmin),
+  productsSummary: and(isDashboard, isAuthenticated, isAdmin)
 };
 
-const productsMutation = {
+const mutations = {
   createReview: and(createReviewInput, isAuthenticated),
   deleteReview: and(deleteReviewInput, isAuthenticated),
   createProduct: and(
@@ -182,4 +182,5 @@ const productsMutation = {
     isEditor
   ),
 };
-export { productsMutation, productsQuery };
+
+export default { mutations, queries };

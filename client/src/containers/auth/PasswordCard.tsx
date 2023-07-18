@@ -1,44 +1,27 @@
 /* importing required files and packages */
-import { gql, useMutation } from "@apollo/client";
 import { Eye, EyeSlash } from "iconsax-react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
-import { login, selectValidateUser } from "../../redux/features/userSlice";
+import { selectValidateUser } from "../../redux/features/userSlice";
 import TitleCard from "./TitleCard";
-
-const PasswordMutation = gql`
-  mutation ChangePassword($input: ChangePasswordInput!) {
-    changePassword(input: $input) {
-      id
-      email
-      name
-      photoUrl
-      blocked
-      gender
-      birthday
-      phoneNumber
-      createdAt
-      updatedAt
-    }
-  }
-`;
 
 
 type FormType = {
   password: string;
-  confirmPassword: string
-}
+  confirmPassword: string;
+};
 const validateForm = (form: FormType): boolean => {
-  const { confirmPassword,password } = form;
-  if(password.length >= 8 && confirmPassword.length >= 8) {
-    return false
+  const { confirmPassword, password } = form;
+  if (password.length >= 8 && confirmPassword.length >= 8) {
+    return false;
   }
-  return true
-}
+  return true;
+};
 // test21@gmail.com
 // password21
 
@@ -51,34 +34,26 @@ const PasswordCard = (props: any) => {
 
   const [toggle, setToggle] = useState(false);
 
-  const dispatch = useDispatch();
-
   const router = useRouter();
-
-  const [changePassword] = useMutation(PasswordMutation);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     let loginToast = toast.loading("Loading......");
     setLoading(true);
 
-    await changePassword({
-      variables: {
-        input: {
-          password: form.confirmPassword,
-          ...validate,
-        },
-      },
-      onCompleted: (data) => {
-        dispatch(login(data.changePassword));
+    await signIn("change_password", {
+      redirect: false,
+      password: form.confirmPassword,
+      ...validate,
+    }).then(({ ok, error }: any) => {
+      if (ok) {
         toast.success("Successfully changed password", { id: loginToast });
         router.replace("/profile");
-      },
-      onError: (error: any) => {
+      } else {
         setLoading(false);
-        toast.error("Something went wrong", { id: loginToast });
+        toast.error(error ?? "Something went wrong", { id: loginToast });
         console.table(error);
-      },
+      }
     });
     setLoading(false);
   };

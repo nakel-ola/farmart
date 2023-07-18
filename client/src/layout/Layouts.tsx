@@ -25,7 +25,7 @@ const Layouts = forwardRef(
     const dialogState = useSelector(selectDialog);
 
     return (
-      <div className="h-screen bg-white dark:bg-dark overflow-hidden transition-all duration-300 ease-in-out w-[100vw] 2xl:w-fit">
+      <div className="h-screen bg-white dark:bg-dark overflow-hidden transition-all duration-300 ease-in-out">
         <Navbar toggle={toggle} setToggle={setToggle} />
         {toggle && <MenuCard toggle={toggle} setToggle={setToggle} />}
         <main className="flex h-[calc(100vh-60px)] justify-between overflow-hidden transition-all duration-300 ease-in-out">
@@ -33,7 +33,7 @@ const Layouts = forwardRef(
           <div
             ref={ref}
             className={clsx(
-              "relative w-full lg:flex-1 2xl:w-[805px] h-full md:mr-[5px] overflow-y-scroll lg:rounded-tl-xl 2xl:rounded-t-xl bg-slate-100 overflow-x-hidden dark:bg-neutral-800 scrollbar transition-all duration-300 ease-in-out",
+              "relative w-full lg:flex-1 h-full md:mr-[5px] overflow-y-scroll lg:rounded-tl-xl 2xl:rounded-t-xl bg-slate-100 overflow-x-hidden dark:bg-neutral-800 scrollbar transition-all duration-300 ease-in-out",
               className
             )}
           >

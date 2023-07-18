@@ -50,20 +50,20 @@ function Banners() {
         ))}
       </div>
       {active !== 0 && (
-        <div
+        <button
           className="absolute hidden md:inline top-[45%] left-0 translate-y-[-45%] p-[5px] hover:scale-110 transition-transform duration-300 ease hover:bg-slate-50/5 rounded-full"
           onClick={handleBack}
         >
           <ArrowLeft2 size={48} className="text-white drop-shadow-xl" />
-        </div>
+        </button>
       )}
       {active !== items.length - 1 && (
-        <div
+        <button
           className="absolute hidden md:inline top-[45%] right-2 rounded-full translate-y-[-45%] p-[5px] hover:scale-110 hover:bg-slate-50/5 transition-transform duration-300 ease"
           onClick={handleForward}
         >
           <ArrowRight2 size={48} className="text-white drop-shadow-xl" />
-        </div>
+        </button>
       )}
 
       <div className="flex items-center justify-evenly">

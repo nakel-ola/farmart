@@ -13,7 +13,7 @@ import IndoxCard from "../../containers/customer/IndoxCard";
 import UserOrders from "../../containers/customer/UserOrders";
 import setting from "../../data/setting";
 import Layout from "../../layout/Layout";
-import { selectUser } from "../../redux/features/userSlice";
+import { useSession } from "next-auth/react";
 
 const CustomerQuery = gql`
   query user($uid: ID, $input: InboxInput!) {
@@ -66,7 +66,8 @@ let limit: number = 5;
 const Customer = () => {
   const router = useRouter();
   let customerId = router.query.cid;
-  const user = useSelector(selectUser);
+  const { data: sessionData } = useSession()
+  const user = sessionData?.user;
 
   const [toggle, setToggle] = useState(false);
 

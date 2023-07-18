@@ -1,112 +1,39 @@
+require("dotenv").config();
+
+import http from "http";
+import app from "./app";
+
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import RedisStore from "connect-redis";
-import cookieParser from "cookie-parser";
-import cors, { CorsOptions } from "cors";
-import express from "express";
-import session from "express-session";
-import { writeFileSync } from "fs";
-import type { GraphQLSchema } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { graphqlUploadExpress } from "graphql-upload-minimal";
-import http from "http";
-import mongoose from "mongoose";
-import path from "path";
 import config from "./config";
-import context, { redis } from "./context";
+
+import context from "./context";
+import dbDataSource from "./db";
 import permissions from "./permissions";
 import { resolvers, typeDefs } from "./schema";
 
-/** @ts-ignore */
-const redisStore = new RedisStore({
-  /** @ts-ignore */
-  client: redis,
-  prefix: config.session_prefix,
-  ttl: 60 * 60 * 24 * 7,
-});
 
-var whitelist = [config.client_url, config.admin_url];
 
 async function bootstrap() {
-  const app = express();
-
-  var corsOptions: CorsOptions = {
-    origin: function (origin, callback) {
-      const index = whitelist.indexOf(origin ?? "");
-      if (index !== -1) callback(null, true);
-      else callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-  };
-
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: false }));
-  app.use(cors(corsOptions));
-  app.use(express.static(path.resolve(__dirname, "../public")));
-  app.use(cookieParser());
-  app.use((req, res, next) => {
-    if (req.headers.origin === config.admin_url) {
-      (req as any).admin = true;
-    }
-
-    res.setHeader("Access-Control-Allow-Origin", req.headers.origin!);
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
-    );
-    next();
-  });
-
-  let production = false;
-
-  if (app.get("env") === "production") {
-    app.set("trust proxy", 1); // trust first proxy
-    production = true;
-  }
-
-  const sessionMiddleware = session({
-    name: config.session_name,
-    secret: config.session_key,
-    resave: false,
-    store: redisStore,
-    saveUninitialized: false,
-    cookie: {
-      maxAge: 60 * 60 * 24 * 7 * 1000,
-      sameSite: production ? "none" : false,
-      httpOnly: true,
-      secure: production,
-    },
-  });
-
-  app.use(sessionMiddleware);
-
+  await dbDataSource.initialize();
   const httpServer = http.createServer(app);
 
-  const schema: GraphQLSchema = makeExecutableSchema({
-    typeDefs,
-    resolvers,
-  });
+  const schema: any = makeExecutableSchema({ typeDefs, resolvers });
 
   const middlewareSchema = applyMiddleware(schema, permissions);
-  const plugins = [ApolloServerPluginDrainHttpServer({ httpServer })];
 
   const server = new ApolloServer({
     schema: middlewareSchema,
-    plugins,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
     csrfPrevention: true,
     cache: "bounded",
   });
 
   await server.start();
-
-  await mongoose
-    .connect(config.mongodb_uri!)
-    .then(() => console.log("Database connected successfully"))
-    .catch((e) => {
-      throw new Error("Something went wrong when connecting to Database");
-    });
 
   app.use(
     "/graphql",
@@ -116,9 +43,9 @@ async function bootstrap() {
 
   await new Promise<void>((resolve) =>
     httpServer.listen({ port: config.port }, resolve)
-  ).then(() =>
-    console.log(`🚀 Server ready at http://localhost:${config.port}/graphql`)
-  );
+  ).then(() => {
+    console.log(`🚀 Server ready at http://localhost:${config.port}/graphql`);
+  });
 }
 
 bootstrap();

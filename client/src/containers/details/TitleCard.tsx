@@ -2,11 +2,10 @@ import { useMutation } from "@apollo/client";
 import { Heart, Star1 } from "iconsax-react";
 import React from "react";
 import { toast } from "react-hot-toast";
-import { useSelector } from "react-redux";
 import { Currency, RatingType } from "../../../typing";
 import calculateRating from "../../helper/calculateRating";
-import { selectUser } from "../../redux/features/userSlice";
 import { AddToFavorites, RemoveFromFavorites } from "../home/Card";
+import { useSession } from "next-auth/react";
 
 type Props = {
   id: string;
@@ -37,7 +36,9 @@ const TitleCard: React.FC<Props> = (props) => {
   const capitalizeFirstLetter = (string: string) =>
     string?.charAt(0).toUpperCase() + string?.slice(1);
 
-  const user = useSelector(selectUser);
+  const { data } = useSession()
+
+  const user = data?.user;
 
   const [addToFavorites] = useMutation(AddToFavorites, {
     onError: (e) => console.table(e),

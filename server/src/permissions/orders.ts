@@ -96,7 +96,7 @@ const updateProgress = inputRule()((yup) =>
   })
 );
 
-const ordersQuery = {
+const queries = {
   orders: and(ordersInput, isAuthenticated),
   order: and(orderInput, isAuthenticated),
   filterById: and(filterByIdInput, isAuthenticated),
@@ -105,9 +105,9 @@ const ordersQuery = {
   ordersStatistics: and(isDashboard, isAuthenticated, isAdmin),
 };
 
-const ordersMutation = {
+const mutations = {
   createOrder: and(createOrderInput, isAuthenticated),
   updateProgress: and(updateProgress, isAuthenticated),
 };
 
-export { ordersMutation, ordersQuery };
+export default { mutations, queries };

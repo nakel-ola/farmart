@@ -2,6 +2,7 @@
 import React, { useMemo } from "react";
 import clsx from "clsx";
 import useImageLoader from "../hooks/useImageLoader";
+import { twMerge } from "tailwind-merge";
 
 const colors = [
   "bg-red-100",
@@ -72,10 +73,9 @@ function Avatar({
   return (
     <div
       {...other}
-      className={clsx(
-        `${
-          bgColor ?? color
-        } shrink-0 w-[40px] h-[40px] rounded-full overflow-hidden`,
+      className={twMerge(
+        bgColor ?? color,
+        `shrink-0 w-[40px] h-[40px] rounded-full overflow-hidden`,
         !src && "bg-[#999999]",
         className
       )}

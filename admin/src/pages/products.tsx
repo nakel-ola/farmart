@@ -2,17 +2,18 @@
 import { gql, useQuery } from "@apollo/client";
 import Head from "next/head";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Banners from "../containers/products/Banners";
 import ProductCards from "../containers/products/ProductCards";
 import Layout from "../layout/Layout";
 import { add } from "../redux/features/categorySlice";
-import { selectUser } from "../redux/features/userSlice";
+import { useSession } from "next-auth/react";
 
 const Products = () => {
   const dispatch = useDispatch();
 
-  const user = useSelector(selectUser);
+  const { data: sessionData } = useSession()
+  const user = sessionData?.user;
 
   const { data, refetch } = useQuery(CategoriesQuery, {
     onCompleted: (data) => dispatch(add(data.categories)),

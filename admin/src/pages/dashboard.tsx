@@ -93,7 +93,7 @@ const Dashboard = () => {
               />
             )}
 
-            <div className="flex w-full md:w-[90%] flex-col md:flex-row justify-center items-center md:items-start md:justify-between mb-0 md:mb-8">
+            <div className="flex w-full md:w-[90%] flex-col md:flex-row justify-center items-center md:items-start md:justify-between mb-0 md:mb-8 lg:space-x-5">
               {data.ordersSummary &&
                 validate(
                   (data as { ordersSummary: OrderSummaryType }).ordersSummary

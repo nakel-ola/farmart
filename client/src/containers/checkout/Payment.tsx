@@ -7,6 +7,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { StripeElementsOptions } from "@stripe/stripe-js";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import {
   IoRadioButtonOffOutline,
@@ -22,11 +23,11 @@ import calculateDiscount from "../../helper/calculateDiscount";
 import getStripe from "../../helper/getStripe";
 import { formatAmountForStripe } from "../../helper/stripe-helpers";
 import { addCoupon, getBasketTotal } from "../../redux/features/basketSlice";
-import { selectUser } from "../../redux/features/userSlice";
 import { RootState } from "../../redux/store";
 import { useTheme } from "../../styles/theme";
 import { VerifyCouponQuery } from "../sidecart/Footer";
 import PromoCard from "../sidecart/PromoCard";
+import PaymentForm from "./PaymentForm";
 
 const stripePromise = getStripe();
 
@@ -35,6 +36,7 @@ const Payment = ({
 }: {
   onNext: (value: string, id: string) => void;
 }) => {
+  const { data } = useSession();
   const [paymentMethod, setPaymentMethod] = useState("");
   const [input, setInput] = useState("");
   const [clientSecret, setClientSecret] = useState("");
@@ -44,7 +46,7 @@ const Payment = ({
   const { basket, coupon, shippingFee } = useSelector(
     (store: RootState) => store.basket
   );
-  const user = useSelector(selectUser);
+  const user = data?.user;
 
   const price = getBasketTotal(basket);
 
@@ -222,19 +224,25 @@ const Payment = ({
 
       {loading ? (
         <LoadingCard title="" />
-      ) : (
-        clientSecret &&
-        stripePromise &&
-        !success && (
-          <CardTemplate showHeader={false} className="mb-4">
-            <div className="flex w-[90%] items-center justify-center my-2 ml-[25px] cursor-pointer">
-              <Elements stripe={stripePromise} options={options}>
-                <CheckoutForm onNext={onNext} setSuccess={setSuccess} />
-              </Elements>
-            </div>
-          </CardTemplate>
-        )
-      )}
+      ) : (clientSecret && stripePromise) ? (
+        <PaymentForm
+          clientSecret={clientSecret}
+          stripePromise={stripePromise}
+          onNext={onNext}
+          setSuccess={setSuccess}
+        />
+        // clientSecret &&
+        // stripePromise &&
+        // !success && (
+        // <CardTemplate showHeader={false} className="mb-4">
+        //   <div className="flex w-[90%] items-center justify-center my-2 ml-[25px] cursor-pointer">
+        //     <Elements stripe={stripePromise} options={options}>
+        //       <CheckoutForm onNext={onNext} setSuccess={setSuccess} />
+        //     </Elements>
+        //   </div>
+        // </CardTemplate>
+        // )
+      ): null}
     </div>
   );
 };
@@ -246,7 +254,8 @@ interface CheckoutFormProps {
 const CheckoutForm = ({ onNext, setSuccess }: CheckoutFormProps) => {
   const elements = useElements();
   const stripe = useStripe();
-  const user = useSelector(selectUser);
+  const { data } = useSession();
+  const user = data?.user;
 
   const [loading, setLoading] = useState(false);
 

@@ -1,6 +1,9 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 import { createUploadLink } from "apollo-upload-client";
+import { getSession } from "next-auth/react";
 import { useMemo } from "react";
+import clean from "../helper/clean";
 
 let apolloClient: any;
 
@@ -11,12 +14,27 @@ const httpLink = createUploadLink({
   fetchOptions: { credentials: "include" },
 });
 
+const authLink = setContext(async (_, { headers }) => {
+  // get the authorization token from local storage
+
+  const session = await getSession();
+
+  const accessToken = session ? session?.user.accessToken : null;
+
+  return {
+    headers: clean({
+      ...headers,
+      "x-access-token": accessToken,
+    }),
+  };
+});
+
 const cache = new InMemoryCache();
 
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
-    link: httpLink,
+    link: authLink.concat(httpLink),
     cache,
   });
 }

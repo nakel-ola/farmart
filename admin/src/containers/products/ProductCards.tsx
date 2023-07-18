@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 import { AnimatePresence } from "framer-motion";
-import NumberFormat from "react-number-format";
+import { NumericFormat, numericFormatter } from "react-number-format";
 import { useSelector } from "react-redux";
 import { GraphQLProductResponse, ProductType } from "../../../typing";
 import Button from "../../components/Button";
@@ -236,17 +236,12 @@ const ProductCards = ({ canEdit }: Props) => {
                       </p>
                     </TableContent>
                     <TableContent>
-                      <NumberFormat
-                        thousandSeparator
-                        displayType="text"
-                        value={product.price.toFixed(2)}
-                        prefix={product.currency.symbol}
-                        renderText={(value) => (
-                          <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                            {value}
-                          </p>
-                        )}
-                      />
+                      <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                        {numericFormatter(product.price.toString(), {
+                          thousandSeparator: true,
+                          prefix: "$ "
+                        })}
+                      </p>
                     </TableContent>
                     <TableContent>
                       <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">

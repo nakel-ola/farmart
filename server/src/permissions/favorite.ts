@@ -15,14 +15,14 @@ const favoritesInput = inputRule()((yup) =>
   })
 );
 
-const favoriteQuery = {
+const queries = {
   favorites: and(favoritesInput, isAuthenticated),
   favorite: and(favoriteInput, isAuthenticated),
 };
-const favoriteMutation = {
+const mutations = {
   addToFavorites: and(favoriteInput, isAuthenticated),
   removeFromFavorites: and(favoriteInput, isAuthenticated),
   removeAllFromFavorites: isAuthenticated,
 };
 
-export { favoriteQuery, favoriteMutation };
+export default { queries, mutations };

@@ -1,23 +1,13 @@
-import { gql, useMutation } from "@apollo/client";
 import { Eye, EyeSlash } from "iconsax-react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, FormEvent, ReactNode, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useDispatch } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import { Footer } from "../../pages";
-import { login } from "../../redux/features/userSlice";
 import TitleCard from "./TitleCard";
 
-
-const RegisterMutation = gql`
-  mutation Register($input: RegisterInput!) {
-    register(input: $input) {
-      message
-    }
-  }
-`;
 
 var emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -46,7 +36,6 @@ type FormType = {
 
 const SignUpCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
   const router = useRouter();
-  const dispatch = useDispatch();
 
   const [toggle, setToggle] = useState(false);
 
@@ -58,10 +47,6 @@ const SignUpCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
     phoneNumber: "",
     password: "",
   });
-
-
-  const [register] = useMutation(RegisterMutation);
-
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target;
@@ -80,21 +65,21 @@ const SignUpCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
       email: form.email,
       phoneNumber: form.phoneNumber,
       password: form.password,
-      inviteCode: router.query.code
+      inviteCode: router.query.code,
     };
 
-    await register({
-      variables: { input: newForm },
-      onCompleted: (data) => {
-        toast.success("Account created successfully", { id: loginToast });
-        router.replace("/dashboard");
-      },
-      onError: (error: any) => {
-        setLoading(false);
-        toast.error("Something went wrong", { id: loginToast });
-        console.table(error);
-      },
-    });
+    await signIn("register", { redirect: false, ...newForm }).then(
+      ({ ok, error }: any) => {
+        if (ok) {
+          toast.success("Account created successfully", { id: loginToast });
+          router.replace("/dashboard");
+        } else {
+          setLoading(false);
+          toast.error(error ?? "Something went wrong", { id: loginToast });
+          console.table(error);
+        }
+      }
+    );
     setLoading(false);
   };
 

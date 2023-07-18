@@ -1,5 +1,20 @@
+declare module "next-auth" {
+  interface Session {
+    user: UserType & Tokens;
+  }
+
+  interface JWT {
+    uid: string;
+  }
+}
+
+export type Tokens = {
+  accessToken: string;
+  refreshToken: string;
+};
+
 export type OrderProduct = {
-  productId: string;
+  id: string;
   quantity: number;
   price: string;
 };
@@ -240,3 +255,35 @@ export type UploadResponse = {
     url: string;
   };
 };
+
+export type LoginResponse = {
+  login: Tokens;
+};
+export type RegisterResponse = {
+  register: Tokens;
+};
+export type ChangePasswordResponse = {
+  changePassword: Tokens;
+};
+export type RefreshResponse = {
+  refresh: {
+    accessToken: string;
+  };
+};
+
+export type UserResponse = {
+  user: UserType;
+};
+
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      SERVER_URL: string;
+      NEXTAUTH_SECRET: string;
+      NEXTAUTH_URL: string;
+      BASE_URL: string;
+      PAYSTACK_API_KEY: string;
+    }
+  }
+}

@@ -1,6 +1,7 @@
 /* importing required files and packages */
 import { gql, useMutation } from "@apollo/client";
 import { Eye, EyeSlash } from "iconsax-react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, ReactNode, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -8,14 +9,6 @@ import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import { Footer } from "../../pages/auth";
 import TitleCard from "./TitleCard";
-
-const RegisterMutation = gql`
-  mutation Register($input: RegisterInput!) {
-    register(input: $input) {
-      message
-    }
-  }
-`;
 
 var emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -26,7 +19,7 @@ const validate = (data: FormType): boolean => {
     name.length >= 5 &&
     email.match(emailRegex) &&
     phoneNumber.length >= 10 &&
-    password.length === 8
+    password.length >= 8
   ) {
     return false;
   }
@@ -56,9 +49,6 @@ const SignUpCard = (props: any) => {
 
   const [toggle, setToggle] = useState(false);
 
-
-  const [register] = useMutation(RegisterMutation);
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     let loginToast = toast.loading("Loading......");
@@ -72,18 +62,16 @@ const SignUpCard = (props: any) => {
       password: form.password,
     };
 
-    await register({
-      variables: { input: newForm },
-      onCompleted: (data) => {
+    await signIn("register", { redirect: false, ...newForm })
+      .then(() => {
         toast.success("Account created successfully", { id: loginToast });
         router.replace("/profile");
-      },
-      onError: (error: any) => {
+      })
+      .catch((err) => {
         setLoading(false);
         toast.error("Something went wrong", { id: loginToast });
-        console.table(error);
-      },
-    });
+        console.table(err);
+      });
     setLoading(false);
   };
 

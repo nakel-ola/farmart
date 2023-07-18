@@ -1,17 +1,14 @@
 import { gql, useQuery } from "@apollo/client";
 import { TicketDiscount } from "iconsax-react";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { IoQrCode } from "react-icons/io5";
 import ReactLoading from "react-loading";
-import { useSelector } from "react-redux";
 import { Coupon } from "../../typing";
-import Button from "../components/Button";
 import EmptyCard from "../components/EmptyCard";
 import Header from "../components/Header";
 import LoginCard from "../components/LoginCard";
 import Layouts from "../layout/Layouts";
-import { selectUser } from "../redux/features/userSlice";
+import { useSession } from "next-auth/react";
 
 const CouponQuery = gql`
   query Coupons {
@@ -28,10 +25,10 @@ const CouponQuery = gql`
 `;
 
 const Coupons = () => {
-  const router = useRouter();
+  const { data: sessionData } = useSession()
 
   const { data, loading } = useQuery<{ coupons: Coupon[] }>(CouponQuery);
-  const user = useSelector(selectUser);
+  const user = sessionData?.user;
 
   return (
     <Layouts>

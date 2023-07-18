@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import React, { useEffect, useState } from "react";
-import NumberFormat from "react-number-format";
+import { NumericFormat } from "react-number-format";
 import { OrderProduct as OrderProductType, ProductType } from "../../../typing";
 import {
   Table,
@@ -60,53 +60,43 @@ interface Props {
   products: OrderProductType[];
 }
 const OrderProduct: React.FC<Props> = ({ products }) => {
-  const [getProductsById] = useLazyQuery<{ productsById: ProductType[] }>(
-    ProductsByIdQuery
+  const { data } = useQuery<{ productsById: ProductType[] }>(
+    ProductsByIdQuery,
+    {
+      variables: {
+        ids: products.map((p) => p.id),
+      },
+      onError: (err: any) => console,
+    }
   );
 
-  const [items, setItems] = useState<Item[]>([]);
-
-  useEffect(() => {
-    getProductsById({
-      variables: { ids: products.map((p) => p.productId) },
-      onCompleted: (data) => {
-        const results = data.productsById.map((d) => ({
-          ...d,
-          quantity: products.find((p) => p.productId === d.id)?.quantity!,
-        }));
-
-        setItems(results);
-      },
-      onError: (err) => console.table(err),
-    });
-  }, [getProductsById, products]);
+  const items = data?.productsById;
 
   return (
     <div className="w-[95%] md:w-[80%] overflow-hidden">
-      <Table headerComponent={<Header title="Products" showSearch={false} />}>
-        <TableHead
-          tableList={tableList}
-          disableDivider={products.length === 0}
-        />
-        <TableBody disableDivider>
-          {items.map((item, index: number) => (
-            <Card key={index} {...item} />
-          ))}
-        </TableBody>
-      </Table>
+      {items && (
+        <Table headerComponent={<Header title="Products" showSearch={false} />}>
+          <TableHead
+            tableList={tableList}
+            disableDivider={products.length === 0}
+          />
+          <TableBody disableDivider>
+            {items.map((item, index: number) => (
+              <Card
+                key={index}
+                {...item}
+                quantity={products.find((p) => p.id === item.id)?.quantity!}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 };
 
 const Card = (props: Item) => {
-  const { id, quantity, price, image, title,currency, } = props;
-  // const { data } = useQuery(ProductsByIdQuery, {
-  //   variables: { id },
-  //   onCompleted: (data) => console.log(data),
-  //   onError: (err) => console.table(err),
-  // });
-
-  // const item = data?.productById;
+  const { id, quantity, price, image, title, currency } = props;
 
   return (
     <TableRow className="cursor-pointer">
@@ -124,7 +114,7 @@ const Card = (props: Item) => {
       </TableContent>
 
       <TableContent>
-        <NumberFormat
+        <NumericFormat
           value={price.toFixed(2)}
           displayType="text"
           thousandSeparator
@@ -142,7 +132,7 @@ const Card = (props: Item) => {
         </p>
       </TableContent>
       <TableContent>
-        <NumberFormat
+        <NumericFormat
           className="bg-transparent border-transparent outline-transparent"
           value={(price * quantity).toFixed(2)}
           displayType="text"

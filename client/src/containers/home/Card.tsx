@@ -1,15 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
-import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import { AnimatePresence } from "framer-motion";
 import { Add, Heart, InfoCircle, Minus, Trash } from "iconsax-react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { Product } from "../../../typing";
 import DeleteCard from "../../components/DeleteCard";
 import { add, remove } from "../../redux/features/basketSlice";
-import { selectUser } from "../../redux/features/userSlice";
 
 export const FavoriteQuery = gql`
   query Favorite($id: ID!) {
@@ -57,6 +57,8 @@ const Card: React.FC<Props> = (props) => {
     updateFavorite,
   } = props;
 
+  const { data } = useSession();
+
   const [toggle, setToggle] = useState(false);
 
   const [addToFavorites] = useMutation(AddToFavorites, {
@@ -66,7 +68,7 @@ const Card: React.FC<Props> = (props) => {
   const [removeFromFavorites, { loading: removeLoading }] = useMutation(
     RemoveFromFavorites,
     {
-      onCompleted: () => () => updateFavorite(id, false),
+      onCompleted: () => updateFavorite(id, false),
     }
   );
 
@@ -77,7 +79,7 @@ const Card: React.FC<Props> = (props) => {
   // --- Accessing the redux state ---//
   const { basket } = useSelector((store: any) => store.basket);
 
-  const user = useSelector(selectUser);
+  const user = data?.user;
 
   const product = basket.find((item: any) => item.id === id);
 
@@ -129,7 +131,7 @@ const Card: React.FC<Props> = (props) => {
 
   return (
     <>
-      <div className="my-[7px] mx-[2px] lg:m-[7px] flex items-center justify-self-auto  flex-col bg-white dark:bg-dark pb-[5px] rounded-lg w-[150px] md:w-52 flex-grow max-w-[230px] shadow-sm dark:shadow-black/40">
+      <div className="mb-2 flex items-center justify-self-auto  flex-col bg-white dark:bg-dark pb-[5px] rounded-lg flex-grow  shadow-sm dark:shadow-black/40">
         <div className="w-[95%] mt-[2%] relative">
           <div
             onClick={() => router.push(`/product/${slug}`)}

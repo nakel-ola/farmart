@@ -1,34 +1,19 @@
-import dotenv from "dotenv";
-
-dotenv.config();
-
 const config = {
-  port: process.env.PORT || 4000,
-  session_key: process.env.SESSION_KEY!,
-
-  saltRounds: Number(process.env.SALTROUNDS),
-  jwt_key: process.env.JWT_KEY,
-  expiresIn: process.env.EXPIRESIN,
-  mongodb_uri: process.env.MONGODB_URI,
-  admin_url: process.env.ADMIN_URL!,
-  client_url: process.env.CLIENT_URL!,
+  port: Number(process.env.PORT) || 4000,
+  app_name: "Farmart",
+  jwt_secret: process.env.JWT_SECRET,
+  expires_in: process.env.EXPIRES_IN,
+  refresh_expires_in: process.env.REFRESH_EXPIRES_IN,
+  stmp_password: process.env.STMP_PASSWORD,
+  stmp_email: process.env.STMP_EMAIL,
+  allowedOrigins: JSON.parse(process.env.ALLOWED_ORIGINS!),
+  redis_uri: process.env.REDIS_URI!,
+  redis_port: Number(process.env.REDIS_PORT!),
+  redis_username: process.env.REDIS_USERNAME!,
+  redis_password: process.env.REDIS_PASSWORD!,
+  redis_host: process.env.REDIS_HOST!,
   storage_project_id: process.env.STORAGE_PROJECT_ID,
   storage_bucket_name: process.env.STORAGE_BUCKET_NAME,
-  storage_credentials_path: process.env.STORAGE_CREDENTIALS_PATH,
-  storage_credentials: process.env.STORAGE_CREDENTIALS,
-  stmp_email: process.env.STMP_EMAIL,
-  redis_host: process.env.REDIS_HOST,
-  redis_port: Number(process.env.REDIS_PORT),
-  redis_password: process.env.REDIS_PASSWORD,
-  stmp_password: process.env.STMP_PASSWORD,
-  email_from: '"Farmart Team" noreply@farmart.com',
-  app_name: "Farmart",
-  admin_session_name: "auth_admin",
-  client_session_name: "auth",
-
-  session_name: "farmart_auth",
-  session_prefix: "farmart:",
-
 };
 
 export default config;

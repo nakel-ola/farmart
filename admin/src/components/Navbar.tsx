@@ -9,8 +9,8 @@ import {
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import ProductNav from "../containers/products/ProductNav";
-import { selectUser } from "../redux/features/userSlice";
 import { useTheme } from "../styles/theme";
+import { useSession } from "next-auth/react"
 
 interface NavbarProps {
   toggle: boolean;
@@ -38,7 +38,8 @@ const config = {
 
 const Navbar = ({ toggle, setToggle }: NavbarProps) => {
   const router = useRouter();
-  const user = useSelector(selectUser);
+  const { data } = useSession()
+  const user = data?.user;
 
   const capitalizeFirstLetter = (string: string) =>
     string.charAt(0).toUpperCase() + string.slice(1);

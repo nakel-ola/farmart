@@ -2,7 +2,6 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { AnimatePresence } from "framer-motion";
 import { MessageText1, Star1, Trash } from "iconsax-react";
 import React, { Fragment, useState } from "react";
-import { useSelector } from "react-redux";
 import { RatingType, ReviewType } from "../../../typing";
 import CardTemplate from "../../components/CardTemplate";
 import DeleteCard from "../../components/DeleteCard";
@@ -11,9 +10,9 @@ import StarRating from "../../components/StarRating";
 import calculateRating, {
   RatingReturnValue,
 } from "../../helper/calculateRating";
-import { selectUser } from "../../redux/features/userSlice";
 import { ReviewResponse } from "../../types/graphql.types";
 import CreateReviewCard from "./CreateReviewCard";
+import { useSession } from "next-auth/react";
 
 const ReviewQuery = gql`
   query Reviews($productId: ID!) {
@@ -37,7 +36,10 @@ interface Props {
 const ReviewCard: React.FC<Props> = (props) => {
   const { productId, rating, refetch: productRefetch } = props;
 
-  const user = useSelector(selectUser);
+
+  const { data: sessionData } = useSession()
+
+  const user = sessionData?.user;
   const [toggle, setToggle] = useState(false);
 
   const { data, refetch } = useQuery<ReviewResponse>(ReviewQuery, {
@@ -120,7 +122,9 @@ interface CardProps extends ReviewType {
 
 const Card: React.FC<CardProps> = (props) => {
   const { message, rating, title, userId, id, productId, refetch } = props;
-  const user = useSelector(selectUser);
+
+  const { data } = useSession()
+  const user = data?.user;
   const [toggle, setToggle] = useState(false);
 
   const [deleteReview, { loading }] = useMutation(DeleteReview);

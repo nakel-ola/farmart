@@ -3,7 +3,6 @@ import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import React, { ChangeEvent, useState } from "react";
 import ReactLoading from "react-loading";
-import { useSelector } from "react-redux";
 import UserInfo from "../components/UserInfo";
 import ImageCard from "../containers/account/ImageCard";
 import InviteCard from "../containers/account/InviteCard";
@@ -14,7 +13,7 @@ import capitalizeFirstLetter from "../helper/capitalizeFirstLetter";
 import { toBase64 } from "../helper/toBase64";
 import useUser from "../hooks/useUser";
 import Layout from "../layout/Layout";
-import { selectUser } from "../redux/features/userSlice";
+import { useSession } from "next-auth/react";
 
 const EmployeeInvitesQuery = gql`
   query EmployeeInvites {
@@ -35,7 +34,9 @@ export type ImageType = {
 
 
 const Account = () => {
-  const user = useSelector(selectUser);
+
+  const { data: sessionData } = useSession()
+  const user = sessionData?.user;
   const [image, setImage] = useState<ImageType>({
     file: null,
     url: "",

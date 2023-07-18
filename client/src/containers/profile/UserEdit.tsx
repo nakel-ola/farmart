@@ -1,4 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
+import { useSession } from "next-auth/react";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { UserType } from "../../../typing";
 import Button from "../../components/Button";
@@ -6,8 +7,9 @@ import InputCard from "../../components/InputCard";
 import InputDropdown from "../../components/InputDropdown";
 import LoadingCard from "../../components/LoadingCard";
 import PopupTemplate from "../../components/PopupTemplate";
-import { Wrapper } from "../auth/SignUpCard";
 import capitalizeFirstLetter from "../../helper/capitalizeFirstLetter";
+import clean from "../../helper/clean";
+import { Wrapper } from "../auth/SignUpCard";
 
 export const UpdateUserMutation = gql`
   mutation UpdateUser($input: UserInput!) {
@@ -61,6 +63,7 @@ interface UserEditProps {
 }
 
 const UserEdit: React.FC<UserEditProps> = ({ func, onClose, user }) => {
+  const { data, update } = useSession();
 
   const [form, setForm] = useState<FormType>(splitData(user));
 
@@ -74,7 +77,16 @@ const UserEdit: React.FC<UserEditProps> = ({ func, onClose, user }) => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
+    if (!data?.user) return;
+
     let name = form.firstName + " " + form.lastName;
+
+    const input = clean({
+      name: name.length > 5 ? name : null,
+      gender: form.gender,
+      birthday: form.birthday,
+      phoneNumber: form.phoneNumber,
+    });
 
     await updateUser({
       variables: {
@@ -85,8 +97,8 @@ const UserEdit: React.FC<UserEditProps> = ({ func, onClose, user }) => {
           phoneNumber: form.phoneNumber,
         },
       },
-      onCompleted: (data) => {
-        console.log(data);
+      onCompleted: () => {
+        update({ ...data, user: { ...data, ...input } });
         func?.();
         onClose();
       },

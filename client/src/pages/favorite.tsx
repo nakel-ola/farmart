@@ -2,10 +2,10 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { AnimatePresence } from "framer-motion";
 import { HeartSlash } from "iconsax-react";
 import type { NextPage } from "next";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import React, { useRef, useState } from "react";
 import ReactLoading from "react-loading";
-import { useSelector } from "react-redux";
 import { Product } from "../../typing";
 import Button from "../components/Button";
 import DeleteCard from "../components/DeleteCard";
@@ -15,8 +15,7 @@ import LoginCard from "../components/LoginCard";
 import Card from "../containers/home/Card";
 import { HtmlDivElement } from "../containers/home/Cards";
 import Layouts from "../layout/Layouts";
-import { selectUser } from "../redux/features/userSlice";
-import { FavoritesResponse, ProductsQuerys } from "../types/graphql.types";
+import { FavoritesResponse } from "../types/graphql.types";
 
 const FavoritesQuery = gql`
   query Favorites($input: FavoriteInput) {
@@ -48,7 +47,8 @@ const RemoveAllMutation = gql`
 `;
 
 const Favorite: NextPage = () => {
-  const user = useSelector(selectUser);
+  const { data: sessionData } = useSession();
+  const user = sessionData?.user;
 
   const [data, setData] = useState<FavoritesResponse["favorites"] | null>(null);
   const [toggle, setToggle] = useState(false);
@@ -57,9 +57,7 @@ const Favorite: NextPage = () => {
     FavoritesQuery,
     {
       variables: { input: { offset: 0, limit: 10 } },
-      onCompleted: (data) => {
-        setData(data.favorites);
-      },
+      onCompleted: (data) => setData({ ...data.favorites }),
       onError: (err) => console.table(err),
     }
   );
@@ -97,7 +95,9 @@ const Favorite: NextPage = () => {
 
     if (inx === -1) return;
 
-    newProducts[inx].favorite = args;
+    const product = { ...newProducts[inx], favorite: args };
+
+    newProducts[inx] = product;
 
     setData({ ...data, results: newProducts });
   };
@@ -182,13 +182,13 @@ const CardsContainer = (props: Props) => {
   const { containerRef, data, totalItems, handleFetchMore, updateFavorite } =
     props;
   return (
-    <div className="my-[20px] w-[95%] h-full pb-2 ml-2">
+    <div className="my-[20px] w-[calc(100%-20px)] mr-5 h-full pb-2 ml-5">
       {data.length > 0 ? (
         <InfiniteScroll
           containerRef={containerRef}
           hasMore={data.length < totalItems}
           next={handleFetchMore}
-          className={`${"flex flex-wrap "} transition-all duration-300 ease w-full`}
+          className={`grid grid-cols-2 gap-2 md:grid-cols-4 transition-all duration-300 ease w-full`}
           loader={<Loader />}
         >
           {data.map(

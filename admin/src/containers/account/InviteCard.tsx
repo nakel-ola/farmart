@@ -3,7 +3,6 @@ import clsx from "clsx";
 import { AnimatePresence } from "framer-motion";
 import { SmsStar, Trash } from "iconsax-react";
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import { InviteType } from "../../../typing";
 import Button from "../../components/Button";
 import DeleteCard from "../../components/DeleteCard";
@@ -16,7 +15,7 @@ import {
 } from "../../components/tables";
 import Header from "../../components/tables/Header";
 import { statusColor } from "../../helper/statusColor";
-import { selectUser } from "../../redux/features/userSlice";
+import { useSession } from "next-auth/react";
 import CreateInviteCard from "./CreateInviteCard";
 
 interface Toggle {
@@ -24,7 +23,8 @@ interface Toggle {
   deleteInvite: false | string;
 }
 const InviteCard = ({ data, func }: { data: InviteType[]; func: any }) => {
-  const user = useSelector(selectUser);
+  const { data: sessionData } = useSession()
+  const user = sessionData?.user;
 
   const [toggle, setToggle] = useState<Toggle>({
     createInvite: false,
@@ -32,11 +32,11 @@ const InviteCard = ({ data, func }: { data: InviteType[]; func: any }) => {
   });
 
   let tableList = [
-    { title: "Email", className: "w-full" },
-    { title: "Level", className: "w-full" },
-    { title: "Status", className: "w-full" },
-    { title: "Created At", className: "w-full" },
-    { title: "", className: "w-full" },
+    { title: "Email", className: "flex-1" },
+    { title: "Level", className: "flex-1" },
+    { title: "Status", className: "flex-1" },
+    { title: "Created At", className: "flex-1" },
+    { title: "", className: "flex-1" },
   ];
 
   const [deleteEmployeeInvite, { loading }] = useMutation(DeleteInvite);
@@ -143,7 +143,8 @@ interface Props extends InviteType {
 const Card: React.FC<Props> = (props) => {
   const { email, level, status, createdAt, onDelete } = props;
 
-  const user = useSelector(selectUser);
+  const { data } = useSession()
+  const user = data?.user;
 
   return (
     <TableRow>

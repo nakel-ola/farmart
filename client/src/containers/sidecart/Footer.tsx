@@ -10,9 +10,9 @@ import {
   selectBasket,
   selectCoupon,
 } from "../../redux/features/basketSlice";
-import { selectUser } from "../../redux/features/userSlice";
 import PromoCard from "./PromoCard";
 import TotalCard from "./TotalCard";
+import { useSession } from "next-auth/react";
 
 export const VerifyCouponQuery = gql`
   query VerifyCoupon($input: VerifyCouponInput!) {
@@ -33,11 +33,12 @@ export const VerifyCouponQuery = gql`
 const Footer = ({ toggle }: { toggle?: boolean }) => {
   const router = useRouter();
 
+  const { data } = useSession()
   const [input, setInput] = useState("");
 
   const basket = useSelector(selectBasket);
   const coupon = useSelector(selectCoupon);
-  const user = useSelector(selectUser);
+  const user = data?.user;
 
   const dispatch = useDispatch();
 

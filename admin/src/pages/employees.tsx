@@ -1,11 +1,10 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { UserOctagon } from "iconsax-react";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { ChangeEvent, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { ChangeEvent } from "react";
 import {
-  GraphQLEmployeesResponse,
   GraphQLUserResponse,
   UserType,
 } from "../../typing";
@@ -20,7 +19,6 @@ import {
 import Header from "../components/tables/Header";
 import truncate from "../helper/truncate";
 import Layout from "../layout/Layout";
-import { selectUser } from "../redux/features/userSlice";
 import { UsersQuery } from "./customers";
 import { roundUp } from "./orders";
 
@@ -36,8 +34,9 @@ let limit = 10;
 
 const Employees = () => {
   const router = useRouter();
-  const [page, setPage] = useState(1);
-  const user = useSelector(selectUser);
+  const { data: sessionData } = useSession();
+
+  const user = sessionData?.user;
   const { data, refetch } = useQuery<GraphQLUserResponse>(UsersQuery, {
     variables: { input: { employee: true, limit, page: 1 } },
     fetchPolicy: "network-only",
@@ -47,7 +46,6 @@ const Employees = () => {
   let pageCount = roundUp(Math.abs(data?.users.totalItems! / limit));
 
   const handlePageChange = (e: ChangeEvent, page: number): void => {
-    setPage(page);
     refetch({
       input: { page, limit, admin: true },
     });

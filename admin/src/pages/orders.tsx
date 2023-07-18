@@ -12,7 +12,7 @@ import {
   useState,
 } from "react";
 import toast from "react-hot-toast";
-import NumberFormat from "react-number-format";
+import NumberFormat, { numericFormatter } from "react-number-format";
 import { GraphQLOrdersResponse, OrdersData } from "../../typing";
 import Pagination from "../components/Pagination";
 import {
@@ -322,17 +322,13 @@ const Orders = () => {
                       </TableContent>
 
                       <TableContent>
-                        <NumberFormat
-                          thousandSeparator
-                          displayType="text"
-                          value={Number(props.totalPrice).toFixed(2)}
-                          prefix="$"
-                          renderText={(value) => (
-                            <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
-                              {value}
-                            </p>
-                          )}
-                        />
+                        <p className="text-[0.9rem] font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap">
+                          {numericFormatter(props.totalPrice.toString(), {
+                            thousandSeparator: true,
+                            prefix: "$ ",
+                          })}
+                        </p>
+         
                       </TableContent>
 
                       <TableContent>

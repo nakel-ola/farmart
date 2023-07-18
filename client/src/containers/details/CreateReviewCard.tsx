@@ -1,13 +1,12 @@
 import { gql, useMutation } from "@apollo/client";
 import { ChangeEvent, FormEvent, useState } from "react";
-import { useSelector } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
 import LoadingCard from "../../components/LoadingCard";
 import PopupTemplate from "../../components/PopupTemplate";
 import StarRating from "../../components/StarRating";
 import Textarea from "../../components/Textarea";
-import { selectUser } from "../../redux/features/userSlice";
+import { useSession } from "next-auth/react";
 
 interface Props {
   productId: string;
@@ -25,7 +24,9 @@ const ReviewMutation = gql`
 const CreateReviewCard: React.FC<Props> = (props) => {
   const { productId, func,onClose } = props;
 
-  const user = useSelector(selectUser);
+  const { data } = useSession()
+
+  const user = data?.user;
 
   const [form, setForm] = useState({
     title: "",

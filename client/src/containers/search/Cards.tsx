@@ -22,9 +22,7 @@ const Cards = (props: Props) => {
           containerRef={containerRef}
           hasMore={data.length < totalItems}
           next={handleFetchMore}
-          className={`${
-            data.length <= 3 ? " flex mx-10" : "flex flex-wrap justify-center"
-          } transition-all duration-300 ease w-full`}
+          className={`grid grid-cols-2 gap-2 md:grid-cols-4 transition-all duration-300 ease w-full`}
           loader={<Loader />}
         >
           {data.map((item: Product, index: number) => (

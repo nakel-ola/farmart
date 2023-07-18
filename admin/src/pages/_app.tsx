@@ -1,17 +1,18 @@
-import { ApolloProvider, gql, useQuery } from "@apollo/client";
+import { ApolloProvider, gql } from "@apollo/client";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import Router, { useRouter } from "next/router";
-import { ReactNode, useEffect, useState } from "react";
+import Router from "next/router";
+import { useState } from "react";
 import { Toaster } from "react-hot-toast";
-import { Provider, useDispatch } from "react-redux";
+import { Provider } from "react-redux";
 import PageLoader from "../components/PageLoader";
 import { useApollo } from "../hooks/useApollo";
 import Wrapper from "../layout/Wrapper";
-import { login, logout } from "../redux/features/userSlice";
 import { wrapper } from "../redux/store";
 import "../styles/globals.css";
 import { ThemeProvider } from "../styles/theme";
+import { SessionProvider } from "next-auth/react";
+
 
 function MyApp({ Component, ...others }: AppProps) {
   const { store, props } = wrapper.useWrappedStore(others);
@@ -46,15 +47,17 @@ function MyApp({ Component, ...others }: AppProps) {
         storageKey="farmart-admin-theme"
         defaultTheme="light"
       >
-        <Provider store={store}>
-          <ApolloProvider client={client}>
-            <Wrapper>
-              <Toaster />
-              <Component {...pageProps} />
-              {loading && <PageLoader />}
-            </Wrapper>
-          </ApolloProvider>
-        </Provider>
+        <SessionProvider session={props.pageProps.session}>
+          <Provider store={store}>
+            <ApolloProvider client={client}>
+              <Wrapper>
+                <Toaster />
+                <Component {...pageProps} />
+                {loading && <PageLoader />}
+              </Wrapper>
+            </ApolloProvider>
+          </Provider>
+        </SessionProvider>
       </ThemeProvider>
     </>
   );

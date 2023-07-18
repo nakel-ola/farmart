@@ -2,14 +2,14 @@ import clsx from "clsx";
 import { ShoppingCart } from "iconsax-react";
 import { useRouter } from "next/router";
 import React from "react";
-import NumberFormat from "react-number-format";
+import { numericFormatter } from "react-number-format";
 import { OrderType } from "../../../typing";
 import {
-    Table,
-    TableBody,
-    TableContent,
-    TableHead,
-    TableRow
+  Table,
+  TableBody,
+  TableContent,
+  TableHead,
+  TableRow,
 } from "../../components/tables";
 import Header from "../../components/tables/Header";
 import capitalizeFirstLetter from "../../helper/capitalizeFirstLetter";
@@ -78,17 +78,12 @@ const Orders = ({ items }: { items: OrderType[] }) => {
                     </p>
                   </TableContent>
                   <TableContent>
-                    <NumberFormat
-                      thousandSeparator
-                      displayType="text"
-                      value={Number(props.totalPrice).toFixed(2)}
-                      prefix="$"
-                      renderText={(value) => (
-                        <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap ">
-                          {value}
-                        </p>
-                      )}
-                    />
+                    <p className="text-sm font-medium text-neutral-800 dark:text-neutral-300 whitespace-nowrap ">
+                      {numericFormatter(props.totalPrice.toString(), {
+                        thousandSeparator: true,
+                        prefix: "$ ",
+                      })}
+                    </p>
                   </TableContent>
                 </TableRow>
               );

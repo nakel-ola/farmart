@@ -1,7 +1,7 @@
 import { isAuthenticated } from "./user";
 
-const uploadMutation = {
+const mutations = {
   uploadFile: isAuthenticated,
 };
 
-export { uploadMutation };
+export default { mutations };

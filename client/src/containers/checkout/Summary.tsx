@@ -10,10 +10,9 @@ import TableList from "../../components/TableList";
 import TableRow from "../../components/TableRow";
 import calculateDiscount from "../../helper/calculateDiscount";
 import truncate from "../../helper/truncate";
-import { selectBasket } from "../../redux/features/basketSlice";
-import { selectUser } from "../../redux/features/userSlice";
 import { RootState } from "../../redux/store";
 import DetailsTemplate, { ItemDetails } from "../receipt/DetailsTemplate";
+import { useSession } from "next-auth/react";
 
 const tableList = ["Name", "Price", "Quantity", "Total Price"];
 
@@ -26,8 +25,10 @@ const Summary = ({
   pickup,
   shippingFee,
 }: any) => {
+
+  const { data } = useSession();
   const { basket, coupon } = useSelector((store: RootState) => store.basket);
-  const user = useSelector(selectUser);
+  const user = data?.user;
   let price = Number(
     (coupon ? calculateDiscount(totalPrice, coupon?.discount) : totalPrice) +
       shippingFee ?? 0

@@ -27,11 +27,11 @@ const deleteBannerInput = inputRule()((yup) =>
   yup.object({ id: yup.string().required() })
 );
 
-const bannerQuery = {
+const queries = {
   banners: allow,
 };
 
-const bannerMutation = {
+const mutations = {
   createBanner: and(
     isDashboard,
     createBannerInput,
@@ -55,4 +55,4 @@ const bannerMutation = {
   ),
 };
 
-export { bannerQuery, bannerMutation };
+export default { mutations, queries };

@@ -28,16 +28,15 @@ const PasswordCard = ({ setLoading }: { setLoading(value: boolean): void }) => {
 
   const { oldPassword, newPassword } = form;
 
-  const { user } = useSelector((store: any) => store.user);
-
   const [updatePassword] = useMutation(UpdatePassword, {
     onCompleted: (data) => {
       setForm({ oldPassword: "", newPassword: "" });
       setLoading(false);
     },
     onError: (error: any) => {
+      console.log(error)
       setLoading(false);
-      toast.error(error?.networkError?.result!.errors[0].message);
+      toast.error(error?.graphQLErrors?.map((e: any) => e.message).join(","));
     },
   });
 

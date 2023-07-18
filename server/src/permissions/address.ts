@@ -46,16 +46,16 @@ const deleteAddressInput = inputRule()((yup) =>
   })
 );
 
-const addressQuery = {
+const queries = {
   addresses: and(isAuthenticated),
   address: and(addressInput, isAuthenticated),
 };
 
-const addressMutation = {
+const mutations = {
   createAddress: and(createAddressInput, isAuthenticated),
   updateAddress: and(updateAddressInput, isAuthenticated),
   deleteAddress: and(deleteAddressInput, isAuthenticated),
 };
 
-export { addressMutation, addressQuery };
+export default { mutations, queries };
 

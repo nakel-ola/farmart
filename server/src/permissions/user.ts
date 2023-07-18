@@ -155,9 +155,7 @@ const isEditor = rule()((_: any, args: any, ctx: Context) => {
   return false;
 });
 
-const isDashboard = rule()(
-  (_: any, args: any, ctx: Context) => ctx.req.admin ?? false
-);
+const isDashboard = rule()((_: any, args: any, ctx: Context) => ctx.isAdmin);
 
 const ONE_DAY = 60 * 60 * 24;
 const rateLimit = rule()(
@@ -174,7 +172,7 @@ const rateLimit = rule()(
   }
 );
 
-const userMutation = {
+const mutations = {
   register: and(registerInput, rateLimit, not(isAuthenticated)),
   login: and(loginInput, rateLimit, not(isAuthenticated)),
   forgetPassword: and(forgetPasswordInput, rateLimit, not(isAuthenticated)),
@@ -208,16 +206,14 @@ const userMutation = {
   ),
 };
 
-const userQuery = {
+const queries = {
   user: and(userInput, isAuthenticated),
   users: and(usersInput, isAuthenticated),
   employeeInvites: and(isDashboard, isAuthenticated, isAdmin),
 };
-export {
-  isAuthenticated,
-  userMutation,
-  userQuery,
-  isAdmin,
-  isDashboard,
-  isEditor,
+export { isAdmin, isAuthenticated, isDashboard, isEditor };
+
+export default {
+  mutations,
+  queries,
 };

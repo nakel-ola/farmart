@@ -1,33 +1,15 @@
 /* importing required files and packages */
-import { gql, useMutation } from "@apollo/client";
 import { Eye, EyeSlash } from "iconsax-react";
-import { decode } from "jsonwebtoken";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEvent, useState } from "react";
 import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Button from "../../components/Button";
 import InputCard from "../../components/InputCard";
-import { login, selectValidateUser } from "../../redux/features/userSlice";
-import { JwtUserType } from "./LogInCard";
+import { selectValidateUser } from "../../redux/features/userSlice";
 import TitleCard from "./TitleCard";
 
-const PasswordMutation = gql`
-  mutation ChangePassword($input: ChangePasswordInput!) {
-    changePassword(input: $input) {
-      id
-      email
-      name
-      photoUrl
-      blocked
-      gender
-      birthday
-      phoneNumber
-      createdAt
-      updatedAt
-    }
-  }
-`;
 type FormProps = {
   password: string;
   confirmPassword: string;
@@ -40,14 +22,13 @@ const validate = (form: FormProps): boolean => {
     password.length >= 8 &&
     confirmPassword.length >= 8 &&
     password === confirmPassword
-  ) {
+  )
     return false;
-  }
 
   return true;
 };
 
-const PasswordCard = (props: { setLoading(value: boolean):void}) => {
+const PasswordCard = (props: { setLoading(value: boolean): void }) => {
   const validateForm = useSelector(selectValidateUser);
 
   const { setLoading } = props;
@@ -59,34 +40,26 @@ const PasswordCard = (props: { setLoading(value: boolean):void}) => {
 
   const [toggle, setToggle] = useState(false);
 
-  const dispatch = useDispatch();
-
   const router = useRouter();
-
-  const [updatePassword] = useMutation(PasswordMutation);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     let loginToast = toast.loading("Loading......");
     setLoading(true);
 
-    await updatePassword({
-      variables: {
-        input: {
-          password: form.confirmPassword,
-          ...validateForm,
-        },
-      },
-      onCompleted: (data) => {
-        dispatch(login(data.employeeChangePassword));
+    await signIn("change_password", {
+      redirect: false,
+      password: form.confirmPassword,
+      ...validateForm,
+    }).then(({ ok, error }: any) => {
+      if (ok) {
         toast.success("Login Successfully", { id: loginToast });
         router.replace("/dashboard");
-      },
-      onError: (error: any) => {
+      } else {
         setLoading(false);
         console.table(error);
         toast.error("Something went wrong", { id: loginToast });
-      },
+      }
     });
     setLoading(false);
   };

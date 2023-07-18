@@ -1,47 +1,42 @@
 import type { Request, Response } from "express";
 import Redis from "ioredis";
-import type { Context } from "../typing";
+import type { Context } from "../typing.d";
 import config from "./config";
+import { db } from "./db/entities";
 import { addressLoader, productLoader, userLoader } from "./loaders";
 import authenticated from "./middleware/authenticated";
-import db from "./models";
-
-const redis = new Redis({
-  host: config.redis_host!,
-  port: config.redis_port!,
-  password: config.redis_password!,
-});
 
 interface Props {
   res: Response;
   req: Request;
 }
+const redis = new Redis({
+  // username: config.redis_username,
+  password: config.redis_password,
+  host: config.redis_host,
+  port: config.redis_port,
+});
 
-const userSelect = {
-  birthday: 1,
-  email: 1,
-  gender: 1,
-  name: 1,
-  phoneNumber: 1,
-  photoUrl: 1,
-  blocked: 1,
-  level: 1,
-  updatedAt: 1,
-  createdAt: 1,
-};
 const context = async ({ req, res }: Props): Promise<Context> => {
   const user = await authenticated(req);
+
+  const isAdmin = user
+    ? user.level !== null && req.headers.origin === config.allowedOrigins[1]
+    : false;
+
   return {
     req,
     res,
-    db,
     redis,
     user,
+    isAdmin,
+    db,
     userLoader,
-    addressLoader,
     productLoader,
+    addressLoader,
   };
 };
 
-export { redis, db, userSelect };
+export { redis };
+
 export default context;
