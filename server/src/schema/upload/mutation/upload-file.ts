@@ -6,7 +6,7 @@ import config from "../../../config";
 
 const storage = new Storage({
   projectId: config.storage_project_id,
-  credentials: require("../../../data/farmart-8bdb8-firebase-adminsdk-dy37a-08706b1478.json"),
+  credentials: config.google_cloud_credentials,
 });
 
 const bucket = storage.bucket(config.storage_bucket_name!);
