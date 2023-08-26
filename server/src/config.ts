@@ -14,6 +14,7 @@ const config = {
   redis_host: process.env.REDIS_HOST!,
   storage_project_id: process.env.STORAGE_PROJECT_ID,
   storage_bucket_name: process.env.STORAGE_BUCKET_NAME,
+  google_cloud_credentials: JSON.parse(process.env.GOOGLE_CLOUD_CREDENTIALS || "{}")
 };
 
 export default config;
