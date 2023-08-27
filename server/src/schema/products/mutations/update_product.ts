@@ -1,6 +1,8 @@
 import { CurrencyType, MsgType, ResolverFn } from "../../../../typing";
 import clean from "../../../utils/clean";
 import getdel from "../../../utils/getdel";
+import { ObjectId } from "mongodb";
+
 
 interface Args {
   input: {
@@ -22,7 +24,7 @@ const updateProduct: ResolverFn<Args, MsgType> = async (_, args, ctx) => {
 
     const data = clean(others);
 
-    const user = await db.products.updateOne({ _id: id }, { $set: data });
+    const user = await db.products.updateOne({ _id: new ObjectId(id) }, { $set: data });
 
     if (!user) throw new Error("Something went wrong");
 
