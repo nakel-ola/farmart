@@ -1,5 +1,6 @@
 import { MsgType, ResolverFn } from "../../../../typing";
 import getdel from "../../../utils/getdel";
+import { ObjectId } from "mongodb";
 
 interface Args {
   id: string;
@@ -7,7 +8,7 @@ interface Args {
 const deleteProduct: ResolverFn<Args, MsgType> = async (_, args, ctx) => {
   try {
     const { db, redis } = ctx;
-    const data = await db.products.deleteOne({ _id: args.id });
+    const data = await db.products.deleteOne({ _id: new ObjectId(args.id) });
 
     const review = await db.reviews.deleteMany({ productId: args.id });
 
