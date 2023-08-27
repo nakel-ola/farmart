@@ -1,5 +1,7 @@
 import type { ResolverFn } from "../../../../typing";
 import getdel from "../../../utils/getdel";
+import { ObjectId } from "mongodb";
+
 
 interface Args {
   input: {
@@ -15,7 +17,7 @@ const updateProgress: ResolverFn<Args> = async (_, args, ctx) => {
     const userId = user?.id.toString();
 
     await db.orders.updateOne(
-      { _id: id, "progress.name": name },
+      { _id: new ObjectId(id), "progress.name": name },
       {
         status: name,
         $set: { "progress.$.name": name, "progress.$.checked": true },
